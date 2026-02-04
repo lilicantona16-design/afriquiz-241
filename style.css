@@ -78,4 +78,35 @@ body {
     color: var(--dark);
     width: 100%;
     margin-top: 10px;
+} 
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.option-btn {
+    background: white;
+    border: 2px solid var(--gabon-blue);
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.option-btn:active {
+    background: var(--gabon-yellow);
+    transform: scale(0.98);
+}
+
+.btn-exit {
+    margin-top: 40px;
+    background: none;
+    border: none;
+    color: #666;
+    text-decoration: underline;
+    width: 100%;
+    text-align: center;
 }

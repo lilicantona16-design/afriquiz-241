@@ -23,27 +23,30 @@
     </header>
 
     <main>
-        <div class="menu-grid">
-            <div class="menu-card primary" onclick="startQuiz('Provinces')">
-                <i class="fas fa-star"></i>
-                <h3>GABON MASTER</h3>
-                <p>9 Provinces à explorer</p>
-                <span class="lock-tag">Gratuit</span>
-            </div>
-
-            <div class="menu-card" onclick="startQuiz('africa')">
-                <i class="fas fa-globe-africa"></i>
-                <h3>AFRICA DISCOVERY</h3>
-                <p>Le continent vous attend</p>
-                <span class="lock-tag">VIP</span>
-            </div>
+       <main>
+    <div id="home-menu" class="menu-grid">
+        <div class="menu-card primary" onclick="startQuiz('Provinces')">
+            <i class="fas fa-star"></i>
+            <h3>GABON MASTER</h3>
+            <p>9 Provinces à explorer</p>
+            <span class="lock-tag">Gratuit</span>
         </div>
+    </div>
 
-        <div class="premium-banner">
-            <h3>Passez au niveau supérieur</h3>
-            <p>Débloquez 600+ questions & obtenez votre Passeport 241</p>
-            <button class="btn-premium" onclick="showPaywall()">Devenir VIP - 500 FCFA</button>
+    <div id="quiz-container" style="display: none; padding: 20px;">
+        <div class="quiz-header">
+            <span id="category-name">Catégorie</span>
+            <span id="score">Score : 0</span>
         </div>
+        
+        <h2 id="question-text">Chargement de la question...</h2>
+
+        <div id="options-container" class="options-grid">
+            </div>
+        
+        <button onclick="window.location.reload()" class="btn-exit">Quitter</button>
+    </div>
+</main>
     </main>
 
     <script src="script.js"></script>
