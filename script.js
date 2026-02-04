@@ -1,9 +1,8 @@
 // --- CONFIGURATION SUPABASE ---
 // REMPLACE LES TEXTES CI-DESSOUS PAR TES VRAIES CLÉS
 const SUPABASE_URL = "https://cjxbsrudyqumeuvedozo.supabase.co";
-const SUPABASE_KEY = "sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio
+const SUPABASE_KEY = "sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio";
 
-";
 
 // Fonction pour récupérer les questions depuis la base de données
 async function startQuiz(category) {
