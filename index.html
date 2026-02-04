@@ -23,30 +23,48 @@
     </header>
 
     <main>
-       <main>
     <div id="home-menu" class="menu-grid">
         <div class="menu-card primary" onclick="startQuiz('Provinces')">
-            <i class="fas fa-star"></i>
+            <i class="fas fa-star" style="color: var(--gabon-yellow);"></i>
             <h3>GABON MASTER</h3>
             <p>9 Provinces à explorer</p>
             <span class="lock-tag">Gratuit</span>
         </div>
+
+        <div class="menu-card" onclick="startQuiz('Afrique')" style="border-left-color: #000;">
+            <i class="fas fa-globe-africa"></i>
+            <h3>AFRICA DISCOVERY</h3>
+            <p>Le continent vous attend</p>
+            <span class="lock-tag">VIP</span>
+        </div>
+
+        <div class="menu-card" onclick="startQuiz('Monde')" style="border-left-color: var(--gabon-blue);">
+            <i class="fas fa-earth-americas"></i>
+            <h3>WORLD QUIZ</h3>
+            <p>Testez vos limites</p>
+            <span class="lock-tag">VIP</span>
+        </div>
+
+        <div class="premium-banner">
+            <h3>Passez au niveau supérieur</h3>
+            <p>Débloquez 600+ questions & obtenez votre Passeport 241</p>
+            <button class="btn-premium" onclick="showPaywall()">Devenir VIP - 500 FCFA</button>
+        </div>
     </div>
 
     <div id="quiz-container" style="display: none; padding: 20px;">
-        <div class="quiz-header">
+        <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: var(--gabon-blue);">
             <span id="category-name">Catégorie</span>
-            <span id="score">Score : 0</span>
+            <span id="score-display">Score : 0</span>
         </div>
         
-        <h2 id="question-text">Chargement de la question...</h2>
+        <h2 id="question-text" style="margin-bottom: 25px;">Chargement...</h2>
 
         <div id="options-container" class="options-grid">
             </div>
         
-        <button onclick="window.location.reload()" class="btn-exit">Quitter</button>
+        <button onclick="window.location.reload()" class="btn-exit">Quitter le jeu</button>
     </div>
-</main>
     </main>
 
     <script src="script.js"></script>
