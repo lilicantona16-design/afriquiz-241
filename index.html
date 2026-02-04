@@ -5,21 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AFRIQUIZ 241 - Gabon Expert</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="flag-bar">
-            <div class="green"></div><div class="yellow"></div><div class="blue"></div>
+    <div class="top-nav">
+        <div class="user-badge">
+            <i class="fas fa-user-circle"></i>
+            <span>Niveau : Curieux du Gabon</span>
         </div>
-        <h1>AFRIQUIZ <span>241</span></h1>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <h1>AFRIQUIZ <span>241</span></h1>
+            <p>L'expertise Gabonaise en s'amusant</p>
+        </div>
     </header>
 
     <main>
-        <section class="hero">
-            <h2>Deviens un Master du Gabon 🇬🇦</h2>
-            <p>Teste tes connaissances sur l'histoire, la culture et la nature du pays.</p>
-            <button onclick="alert('Lancement du quiz...')">Jouer gratuitement</button>
-        </section>
+        <div class="menu-grid">
+            <div class="menu-card primary" onclick="startQuiz('gabon')">
+                <i class="fas fa-star"></i>
+                <h3>GABON MASTER</h3>
+                <p>9 Provinces à explorer</p>
+                <span class="lock-tag">Gratuit</span>
+            </div>
+
+            <div class="menu-card" onclick="startQuiz('africa')">
+                <i class="fas fa-globe-africa"></i>
+                <h3>AFRICA DISCOVERY</h3>
+                <p>Le continent vous attend</p>
+                <span class="lock-tag">VIP</span>
+            </div>
+        </div>
+
+        <div class="premium-banner">
+            <h3>Passez au niveau supérieur</h3>
+            <p>Débloquez 600+ questions & obtenez votre Passeport 241</p>
+            <button class="btn-premium" onclick="showPaywall()">Devenir VIP - 500 FCFA</button>
+        </div>
     </main>
+
+    <script src="script.js"></script>
 </body>
 </html>

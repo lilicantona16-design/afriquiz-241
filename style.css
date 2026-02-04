@@ -2,42 +2,80 @@
     --gabon-green: #009E49;
     --gabon-yellow: #FCD116;
     --gabon-blue: #3A75C4;
+    --dark: #1a1a1a;
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--dark);
+    padding-bottom: 50px;
 }
 
-.flag-bar {
-    display: flex;
-    height: 10px;
-}
-.flag-bar div { flex: 1; }
-.green { background: var(--gabon-green); }
-.yellow { background: var(--gabon-yellow); }
-.blue { background: var(--gabon-blue); }
-
-header h1 { color: #333; margin-top: 20px; }
-header span { color: var(--gabon-blue); }
-
-.hero {
-    padding: 50px 20px;
+.top-nav {
     background: white;
-    margin: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--gabon-yellow);
 }
 
-button {
-    background: var(--gabon-green);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    border-radius: 50px;
+.logo-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0;
+}
+
+.logo-container span {
+    color: var(--gabon-blue);
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 20px;
+}
+
+.menu-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-left: 8px solid #ccc;
+    position: relative;
     cursor: pointer;
+}
+
+.menu-card.primary {
+    border-left-color: var(--gabon-green);
+}
+
+.lock-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.7rem;
+    background: #eee;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.premium-banner {
+    margin: 20px;
+    background: linear-gradient(135deg, var(--gabon-blue), #1e3a8a);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.btn-premium {
+    background: var(--gabon-yellow);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
     font-weight: bold;
+    color: var(--dark);
+    width: 100%;
+    margin-top: 10px;
 }
