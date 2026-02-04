@@ -1,0 +1,43 @@
+:root {
+    --gabon-green: #009E49;
+    --gabon-yellow: #FCD116;
+    --gabon-blue: #3A75C4;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.flag-bar {
+    display: flex;
+    height: 10px;
+}
+.flag-bar div { flex: 1; }
+.green { background: var(--gabon-green); }
+.yellow { background: var(--gabon-yellow); }
+.blue { background: var(--gabon-blue); }
+
+header h1 { color: #333; margin-top: 20px; }
+header span { color: var(--gabon-blue); }
+
+.hero {
+    padding: 50px 20px;
+    background: white;
+    margin: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+button {
+    background: var(--gabon-green);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+}

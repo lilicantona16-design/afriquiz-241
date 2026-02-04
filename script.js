@@ -1,0 +1,1 @@
+console.log("L'application Afriquiz est prête !");
