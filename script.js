@@ -6,47 +6,79 @@ let currentQuestionIndex = 0;
 let score = 0;
 
 async function startQuiz(category) {
-    // 1. On va chercher les questions
+    // 1. On cherche les questions dans Supabase
     const response = await fetch(`${SUPABASE_URL}/rest/v1/questions?category=eq.${category}`, {
         headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
     });
     currentQuestions = await response.json();
 
     if (currentQuestions.length > 0) {
-        // 2. On cache le menu et on montre le quiz
+        // Mélanger les questions pour ne pas avoir toujours le même ordre
+        currentQuestions.sort(() => Math.random() - 0.5);
+        
         document.getElementById('home-menu').style.display = 'none';
         document.getElementById('quiz-container').style.display = 'block';
+        currentQuestionIndex = 0;
+        score = 0;
         showQuestion();
+    } else {
+        alert("Contenu VIP bientôt disponible !");
     }
 }
 
 function showQuestion() {
     const q = currentQuestions[currentQuestionIndex];
+    
+    // On cache l'explication et on vide les anciens boutons
+    document.getElementById('explanation-box').style.display = 'none';
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    // Gestion de l'image
+    const imgTag = document.getElementById('question-image');
+    if (q.image_url && q.image_url !== "") {
+        imgTag.src = q.image_url;
+        imgTag.style.display = 'block';
+    } else {
+        imgTag.style.display = 'none';
+    }
+
+    // Affichage du texte
     document.getElementById('question-text').innerText = q.question;
     document.getElementById('category-name').innerText = q.category;
-    
-    const container = document.getElementById('options-container');
-    container.innerHTML = ''; // On vide les anciens boutons
+    document.getElementById('score-display').innerText = "Score : " + score;
 
-    // On crée les 4 boutons
+    // Création des boutons de réponse
     [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = 'option-btn';
-        btn.onclick = () => checkAnswer(opt, q.correct_answer);
+        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
         container.appendChild(btn);
     });
 }
 
-function checkAnswer(choice, correct) {
+function checkAnswer(choice, correct, explanation) {
+    // Désactiver les boutons pour ne pas cliquer deux fois
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    const expBox = document.getElementById('explanation-box');
+    const expText = document.getElementById('explanation-text');
+    
+    expBox.style.display = 'block';
+
     if (choice === correct) {
         score += 10;
-        document.getElementById('score-display').innerText = "Score : " + score;
-        alert("Bravo ! 🇬🇦 +10 points");
+        expText.innerHTML = `<span style="color: green;">✅ <b>BRAVO !</b></span><br>${explanation}`;
     } else {
-        alert("Oups ! La réponse était : " + correct);
+        expText.innerHTML = `<span style="color: red;">❌ <b>OUPS...</b></span><br>La réponse était : <b>${correct}</b><br><br>${explanation}`;
     }
     
+    document.getElementById('score-display').innerText = "Score : " + score;
+}
+
+function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < currentQuestions.length) {
         showQuestion();
@@ -54,4 +86,8 @@ function checkAnswer(choice, correct) {
         alert("Félicitations ! Quiz terminé. Score final : " + score);
         window.location.reload();
     }
+}
+
+function showPaywall() {
+    alert("🌟 Option VIP bientôt disponible ! Préparez vos 500 FCFA pour débloquer le 'Mapane' et toute la culture sacrée.");
 }
