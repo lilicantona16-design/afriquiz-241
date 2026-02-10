@@ -53,19 +53,27 @@
     </div>
 
     <div id="quiz-container" style="display: none; padding: 20px;">
-        <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: var(--gabon-blue);">
-            <span id="category-name">Catégorie</span>
+        <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold;">
+            <span id="category-name" style="color: var(--gabon-blue);">Catégorie</span>
             <span id="score-display">Score : 0</span>
         </div>
         
-        <h2 id="question-text" style="margin-bottom: 25px;">Chargement...</h2>
+        <img id="question-image" src="" style="display: none; width: 100%; max-height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 15px;">
+
+        <h2 id="question-text" style="margin-bottom: 25px; font-size: 1.3rem;">Chargement...</h2>
 
         <div id="options-container" class="options-grid">
             </div>
+
+        <div id="explanation-box" style="display: none; background: #f0f4ff; padding: 20px; border-radius: 15px; margin-top: 20px; border-left: 5px solid var(--gabon-yellow);">
+            <p id="explanation-text" style="font-size: 0.95rem; margin-bottom: 15px;"></p>
+            <button onclick="nextQuestion()" style="width: 100%; background: var(--gabon-green); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                QUESTION SUIVANTE >
+            </button>
+        </div>
         
         <button onclick="window.location.reload()" class="btn-exit">Quitter le jeu</button>
     </div>
-    </main>
 
     <script src="script.js"></script>
 </body>
