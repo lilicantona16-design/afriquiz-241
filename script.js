@@ -1,120 +1,66 @@
-// CONFIGURATION SUPABASE (REMPLIS AVEC TES CODES)
-const SUPABASE_URL = ' https://cjxbsrudyqumeuvedozo.supabase.co';
+const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let allQuestions = [];
 let questions = [];
-let currentQuestionIndex = 0;
+let currentIndex = 0;
 let score = 0;
-let currentCategory = "";
 
-// CHARGEMENT DES QUESTIONS AU DÉMARRAGE
-async function fetchQuestions() {
-    console.log("Chargement des questions...");
-    const { data, error } = await supabase
-        .from('questions')
-        .select('*');
-
-    if (error) {
-        console.error("Erreur de chargement :", error);
-    } else {
-        allQuestions = data;
-        console.log("Questions chargées avec succès :", allQuestions.length);
-    }
+async function loadData() {
+    const { data, error } = await _supabase.from('questions').select('*');
+    if (error) console.error("Erreur:", error);
+    else allQuestions = data;
 }
 
-// LANCER UN QUIZ
-function startQuiz(category) {
-    currentCategory = category;
+function startQuiz(cat) {
+    questions = allQuestions.filter(q => q.category.trim().toLowerCase() === cat.toLowerCase());
+    if (questions.length === 0) return alert("Bientôt disponible pour " + cat);
     
-    // Filtrage souple (insensible à la casse et aux espaces)
-    questions = allQuestions.filter(q => 
-        q.category && q.category.trim().toLowerCase() === category.trim().toLowerCase()
-    );
-
-    if (questions.length === 0) {
-        alert("Pas de questions trouvées pour : " + category);
-        return;
-    }
-
-    // On mélange et on prend 10 questions
-    questions = shuffleArray(questions).slice(0, 10);
-    currentQuestionIndex = 0;
-    score = 0;
-
-    // Mise à jour de l'affichage
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('quiz-screen').classList.add('active');
-    document.getElementById('result-screen').classList.remove('active');
-    document.getElementById('score-label').innerText = "Score : 0";
-    document.getElementById('category-label').innerText = category;
+    questions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
+    currentIndex = 0; score = 0;
     
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();
 }
 
-// AFFICHER UNE QUESTION
 function showQuestion() {
-    const q = questions[currentQuestionIndex];
+    const q = questions[currentIndex];
     document.getElementById('question-text').innerText = q.question;
-    document.getElementById('explanation-box').className = "explanation-hidden";
+    document.getElementById('explanation-box').style.display = 'none';
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
     
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '';
-
-    const options = [q.option1, q.option2, q.option3, q.option4];
-    options.forEach(opt => {
+    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
-        btn.classList.add('option-btn');
-        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
-        optionsContainer.appendChild(btn);
+        btn.style = "display:block; width:100%; margin:10px 0; padding:15px; cursor:pointer; background:white; border:1px solid #ddd; border-radius:8px;";
+        btn.onclick = () => {
+            const btns = container.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            if(opt === q.correct_answer) {
+                score++;
+                btn.style.background = "#2ecc71";
+            } else {
+                btn.style.background = "#e74c3c";
+            }
+            document.getElementById('score-label').innerText = "Score : " + score;
+            document.getElementById('explanation-text').innerHTML = "<b>Rép : " + q.correct_answer + "</b><br>" + q.explanation;
+            document.getElementById('explanation-box').style.display = 'block';
+        };
+        container.appendChild(btn);
     });
 }
 
-// VÉRIFIER LA RÉPONSE
-function checkAnswer(selected, correct, explanation) {
-    const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(btn => btn.disabled = true); // Bloquer les clics
-
-    if (selected === correct) {
-        score++;
-        document.getElementById('score-label').innerText = "Score : " + score;
-    }
-
-    // Afficher l'explication
-    const expBox = document.getElementById('explanation-box');
-    const expText = document.getElementById('explanation-text');
-    expText.innerHTML = `<strong>Réponse : ${correct}</strong><br>${explanation || ""}`;
-    expBox.className = "explanation-visible";
-}
-
-// QUESTION SUIVANTE
 function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
-    } else {
-        showResult();
+    currentIndex++;
+    if (currentIndex < questions.length) showQuestion();
+    else {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = "Score final : " + score + " / " + questions.length;
     }
 }
 
-// RÉSULTATS FINAUX
-function showResult() {
-    document.getElementById('quiz-screen').classList.remove('active');
-    document.getElementById('result-screen').classList.add('active');
-    document.getElementById('final-score').innerText = `Bravo ! Score final : ${score} / ${questions.length}`;
-}
-
-function showHome() {
-    document.getElementById('result-screen').classList.remove('active');
-    document.getElementById('home-screen').classList.add('active');
-}
-
-// UTILITAIRE : MÉLANGE
-function shuffleArray(array) {
-    return array.sort(() => Math.random() - 0.5);
-}
-
-// INITIALISATION
-fetchQuestions();
+loadData();
