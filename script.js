@@ -6,25 +6,30 @@ let currentQuestionIndex = 0;
 let score = 0;
 
 async function startQuiz(category) {
-    // 1. On cherche les questions dans Supabase
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/questions?category=eq.${category}`, {
-        headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-    });
-    currentQuestions = await response.json();
+    currentCategory = category;
 
-    if (currentQuestions.length > 0) {
-        // Mélanger les questions pour ne pas avoir toujours le même ordre
-        currentQuestions.sort(() => Math.random() - 0.5);
-        
-        document.getElementById('home-menu').style.display = 'none';
-        document.getElementById('quiz-container').style.display = 'block';
-        currentQuestionIndex = 0;
-        score = 0;
-        showQuestion();
-    } else {
-        alert("Contenu VIP bientôt disponible !");
+    // Cette ligne cherche les questions. 
+    // Elle dit : "Prends tout, enlève les espaces vides, et compare avec le bouton cliqué"
+    questions = allQuestions.filter(q => 
+        q.category.trim() === category
+    );
+
+    // Si le jeu ne trouve rien, il va t'afficher le nom exact du problème
+    if (questions.length === 0) {
+        alert("Le jeu ne trouve pas la catégorie : " + category);
+        return;
     }
+
+    // On mélange les questions
+    questions = shuffleArray(questions).slice(0, 10);
+    currentQuestionIndex = 0;
+    score = 0;
+
+    document.getElementById('home-screen').classList.remove('active');
+    document.getElementById('quiz-screen').classList.add('active');
+    showQuestion();
 }
+
 
 function showQuestion() {
     const q = currentQuestions[currentQuestionIndex];
