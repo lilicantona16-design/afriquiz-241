@@ -11,46 +11,30 @@
     <div class="container">
         <div id="home-screen" class="screen active">
             <h1>🇬🇦 GABON QUIZ VIP</h1>
-            <p>Testez vos connaissances sur le Gabon et le monde !</p>
             <div class="quiz-grid">
-                <div class="card" onclick="startQuiz('Provinces')">
-                    <h3>🇬🇦 Gabon Master</h3>
-                    <p>Les 9 provinces du pays.</p>
-                </div>
-                <div class="card" onclick="startQuiz('Afrique')">
-                    <h3>🌍 Africa Discovery</h3>
-                    <p>Le continent africain.</p>
-                </div>
-                <div class="card" onclick="startQuiz('Monde')">
-                    <h3>🌐 World Quiz</h3>
-                    <p>Culture générale mondiale.</p>
-                </div>
-                <div class="card" onclick="startQuiz('VIP')">
-                    <h3>💎 Mode VIP</h3>
-                    <p>Traditions, Argots et Secrets.</p>
-                </div>
+                <div class="card" onclick="startQuiz('Provinces')"><h3>🇬🇦 Gabon Master</h3></div>
+                <div class="card" onclick="startQuiz('Afrique')"><h3>🌍 Africa Discovery</h3></div>
+                <div class="card" onclick="startQuiz('Monde')"><h3>🌐 World Quiz</h3></div>
+                <div class="card" onclick="startQuiz('VIP')"><h3>💎 Mode VIP</h3></div>
             </div>
         </div>
 
-        <div id="quiz-screen" class="screen">
+        <div id="quiz-screen" class="screen" style="display:none;">
             <div class="quiz-header">
-                <span id="category-label">Catégorie</span>
                 <span id="score-label">Score : 0</span>
             </div>
-            <div id="question-container">
-                <h2 id="question-text">La question s'affichera ici</h2>
-                <div id="options-container" class="options-grid"></div>
-            </div>
-            <div id="explanation-box" class="explanation-hidden">
+            <h2 id="question-text">Chargement...</h2>
+            <div id="options-container" class="options-grid"></div>
+            <div id="explanation-box" style="display:none; background:#f0f0f0; padding:15px; margin-top:10px; border-radius:8px;">
                 <p id="explanation-text"></p>
-                <button onclick="nextQuestion()" class="next-btn">Question Suivante</button>
+                <button onclick="nextQuestion()" style="background:#2ecc71; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;">Suivant</button>
             </div>
         </div>
 
-        <div id="result-screen" class="screen">
-            <h2>Résultat Final</h2>
-            <p id="final-score">Votre score est de 0/10</p>
-            <button onclick="showHome()" class="retry-btn">Retour au Menu</button>
+        <div id="result-screen" class="screen" style="display:none;">
+            <h2>Fini !</h2>
+            <p id="final-score"></p>
+            <button onclick="location.reload()" style="padding:15px; background:#3498db; color:white; border:none; border-radius:5px;">Retour au menu</button>
         </div>
     </div>
     <script src="script.js"></script>
