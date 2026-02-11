@@ -3,74 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFRIQUIZ 241 - Gabon Expert</title>
+    <title>Gabon Quiz VIP</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="top-nav">
-        <div class="user-badge">
-            <i class="fas fa-user-circle"></i>
-            <span>Niveau : Curieux du Gabon</span>
-        </div>
-    </div>
-
-    <header>
-        <div class="logo-container">
-            <h1>AFRIQUIZ <span>241</span></h1>
-            <p>L'expertise Gabonaise en s'amusant</p>
-        </div>
-    </header>
-
-    <main>
-    <div id="home-menu" class="menu-grid">
-        <div class="card" onclick="startQuiz('Provinces')">
-    <h3>🇬🇦 Gabon Master</h3>
-</div>
-
-<div class="card" onclick="startQuiz('Afrique')">
-    <h3>🌍 Africa Discovery</h3>
-</div>
-
-<div class="card" onclick="startQuiz('Monde')">
-    <h3>🌐 World Quiz</h3>
-</div>
-
-<div class="card" onclick="startQuiz('VIP')">
-    <h3>💎 Mode VIP</h3>
-</div>
-        </div>
-
-        <div class="premium-banner">
-            <h3>Passez au niveau supérieur</h3>
-            <p>Débloquez 600+ questions & obtenez votre Passeport 241</p>
-            <button class="btn-premium" onclick="showPaywall()">Devenir VIP - 500 FCFA</button>
-        </div>
-    </div>
-
-    <div id="quiz-container" style="display: none; padding: 20px;">
-        <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold;">
-            <span id="category-name" style="color: var(--gabon-blue);">Catégorie</span>
-            <span id="score-display">Score : 0</span>
-        </div>
-        
-        <img id="question-image" src="" style="display: none; width: 100%; max-height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 15px;">
-
-        <h2 id="question-text" style="margin-bottom: 25px; font-size: 1.3rem;">Chargement...</h2>
-
-        <div id="options-container" class="options-grid">
+    <div class="container">
+        <div id="home-screen" class="screen active">
+            <h1>🇬🇦 GABON QUIZ VIP</h1>
+            <p>Testez vos connaissances sur le Gabon et le monde !</p>
+            <div class="quiz-grid">
+                <div class="card" onclick="startQuiz('Provinces')">
+                    <h3>🇬🇦 Gabon Master</h3>
+                    <p>Les 9 provinces du pays.</p>
+                </div>
+                <div class="card" onclick="startQuiz('Afrique')">
+                    <h3>🌍 Africa Discovery</h3>
+                    <p>Le continent africain.</p>
+                </div>
+                <div class="card" onclick="startQuiz('Monde')">
+                    <h3>🌐 World Quiz</h3>
+                    <p>Culture générale mondiale.</p>
+                </div>
+                <div class="card" onclick="startQuiz('VIP')">
+                    <h3>💎 Mode VIP</h3>
+                    <p>Traditions, Argots et Secrets.</p>
+                </div>
             </div>
-
-        <div id="explanation-box" style="display: none; background: #f0f4ff; padding: 20px; border-radius: 15px; margin-top: 20px; border-left: 5px solid var(--gabon-yellow);">
-            <p id="explanation-text" style="font-size: 0.95rem; margin-bottom: 15px;"></p>
-            <button onclick="nextQuestion()" style="width: 100%; background: var(--gabon-green); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer;">
-                QUESTION SUIVANTE >
-            </button>
         </div>
-        
-        <button onclick="window.location.reload()" class="btn-exit">Quitter le jeu</button>
-    </div>
 
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <span id="category-label">Catégorie</span>
+                <span id="score-label">Score : 0</span>
+            </div>
+            <div id="question-container">
+                <h2 id="question-text">La question s'affichera ici</h2>
+                <div id="options-container" class="options-grid"></div>
+            </div>
+            <div id="explanation-box" class="explanation-hidden">
+                <p id="explanation-text"></p>
+                <button onclick="nextQuestion()" class="next-btn">Question Suivante</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <h2>Résultat Final</h2>
+            <p id="final-score">Votre score est de 0/10</p>
+            <button onclick="showHome()" class="retry-btn">Retour au Menu</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

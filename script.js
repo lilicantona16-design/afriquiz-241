@@ -1,98 +1,120 @@
-const SUPABASE_URL = "https://cjxbsrudyqumeuvedozo.supabase.co";
-const SUPABASE_KEY = "sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio";
+// CONFIGURATION SUPABASE (REMPLIS AVEC TES CODES)
+const SUPABASE_URL = ' https://cjxbsrudyqumeuvedozo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentQuestions = [];
+let allQuestions = [];
+let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
+let currentCategory = "";
 
-async function startQuiz(category) {
+// CHARGEMENT DES QUESTIONS AU DÉMARRAGE
+async function fetchQuestions() {
+    console.log("Chargement des questions...");
+    const { data, error } = await supabase
+        .from('questions')
+        .select('*');
+
+    if (error) {
+        console.error("Erreur de chargement :", error);
+    } else {
+        allQuestions = data;
+        console.log("Questions chargées avec succès :", allQuestions.length);
+    }
+}
+
+// LANCER UN QUIZ
+function startQuiz(category) {
     currentCategory = category;
-
-    // Cette ligne cherche les questions. 
-    // Elle dit : "Prends tout, enlève les espaces vides, et compare avec le bouton cliqué"
+    
+    // Filtrage souple (insensible à la casse et aux espaces)
     questions = allQuestions.filter(q => 
-        q.category.trim() === category
+        q.category && q.category.trim().toLowerCase() === category.trim().toLowerCase()
     );
 
-    // Si le jeu ne trouve rien, il va t'afficher le nom exact du problème
     if (questions.length === 0) {
-        alert("Le jeu ne trouve pas la catégorie : " + category);
+        alert("Pas de questions trouvées pour : " + category);
         return;
     }
 
-    // On mélange les questions
+    // On mélange et on prend 10 questions
     questions = shuffleArray(questions).slice(0, 10);
     currentQuestionIndex = 0;
     score = 0;
 
+    // Mise à jour de l'affichage
     document.getElementById('home-screen').classList.remove('active');
     document.getElementById('quiz-screen').classList.add('active');
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('score-label').innerText = "Score : 0";
+    document.getElementById('category-label').innerText = category;
+    
     showQuestion();
 }
 
-
+// AFFICHER UNE QUESTION
 function showQuestion() {
-    const q = currentQuestions[currentQuestionIndex];
-    
-    // On cache l'explication et on vide les anciens boutons
-    document.getElementById('explanation-box').style.display = 'none';
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
-
-    // Gestion de l'image
-    const imgTag = document.getElementById('question-image');
-    if (q.image_url && q.image_url !== "") {
-        imgTag.src = q.image_url;
-        imgTag.style.display = 'block';
-    } else {
-        imgTag.style.display = 'none';
-    }
-
-    // Affichage du texte
+    const q = questions[currentQuestionIndex];
     document.getElementById('question-text').innerText = q.question;
-    document.getElementById('category-name').innerText = q.category;
-    document.getElementById('score-display').innerText = "Score : " + score;
+    document.getElementById('explanation-box').className = "explanation-hidden";
+    
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
 
-    // Création des boutons de réponse
-    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
+    const options = [q.option1, q.option2, q.option3, q.option4];
+    options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
-        btn.className = 'option-btn';
+        btn.classList.add('option-btn');
         btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
-        container.appendChild(btn);
+        optionsContainer.appendChild(btn);
     });
 }
 
-function checkAnswer(choice, correct, explanation) {
-    // Désactiver les boutons pour ne pas cliquer deux fois
+// VÉRIFIER LA RÉPONSE
+function checkAnswer(selected, correct, explanation) {
     const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(b => b.disabled = true);
+    buttons.forEach(btn => btn.disabled = true); // Bloquer les clics
 
+    if (selected === correct) {
+        score++;
+        document.getElementById('score-label').innerText = "Score : " + score;
+    }
+
+    // Afficher l'explication
     const expBox = document.getElementById('explanation-box');
     const expText = document.getElementById('explanation-text');
-    
-    expBox.style.display = 'block';
-
-    if (choice === correct) {
-        score += 10;
-        expText.innerHTML = `<span style="color: green;">✅ <b>BRAVO !</b></span><br>${explanation}`;
-    } else {
-        expText.innerHTML = `<span style="color: red;">❌ <b>OUPS...</b></span><br>La réponse était : <b>${correct}</b><br><br>${explanation}`;
-    }
-    
-    document.getElementById('score-display').innerText = "Score : " + score;
+    expText.innerHTML = `<strong>Réponse : ${correct}</strong><br>${explanation || ""}`;
+    expBox.className = "explanation-visible";
 }
 
+// QUESTION SUIVANTE
 function nextQuestion() {
     currentQuestionIndex++;
-    if (currentQuestionIndex < currentQuestions.length) {
+    if (currentQuestionIndex < questions.length) {
         showQuestion();
     } else {
-        alert("Félicitations ! Quiz terminé. Score final : " + score);
-        window.location.reload();
+        showResult();
     }
 }
 
-function showPaywall() {
-    alert("🌟 Option VIP bientôt disponible ! Préparez vos 500 FCFA pour débloquer le 'Mapane' et toute la culture sacrée.");
+// RÉSULTATS FINAUX
+function showResult() {
+    document.getElementById('quiz-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    document.getElementById('final-score').innerText = `Bravo ! Score final : ${score} / ${questions.length}`;
 }
+
+function showHome() {
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('home-screen').classList.add('active');
+}
+
+// UTILITAIRE : MÉLANGE
+function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// INITIALISATION
+fetchQuestions();
