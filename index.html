@@ -12,7 +12,7 @@
  <div id="home-screen">
     <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
     <p>🇬🇦 L'aventure commence ici</p>
-    
+    <button onclick="showStudyMode()" style="background: rgba(255,255,255,0.2); color:white; border:1px solid white; margin-top:10px; width:100%; padding:15px; border-radius:15px; font-weight:bold;">📖 LIRE LE MANUEL (ÉTUDIER)</button>
     <div class="menu-grid">
         <button onclick="startQuiz('Provinces')">🌳 Gabon Master (Gratuit)</button>
         <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
@@ -22,7 +22,19 @@
         <button onclick="shareGame()" class="action-btn-small" style="background:#00BFFF !important; box-shadow: 0 0 10px #00BFFF;">📢 Partager</button>
         <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
         <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2; margin-top: 5px; background: rgba(252, 209, 22, 0.2); border-color: #FCD116;">❓ Comment jouer ?</button>
+    <div id="study-screen" style="display:none; text-align:center;">
+    <h2 style="color: #FCD116;">📖 MANUEL D'ÉTUDE</h2>
+    <p>Lisez et apprenez pour revenir plus fort !</p>
+    
+    <div id="study-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; padding: 10px;">
+        </div>
+
+    <div class="action-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button onclick="shareGame()" style="background:#00BFFF; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold;">📢 PARTAGER LE MANUEL</button>
+        <button onclick="location.reload()" style="background:#009E60; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold;">🎮 REJOUER</button>
     </div>
+    <button onclick="location.reload()" class="back-link">Retour Menu</button>
+</div>
 </div>
 
 <div id="shop-screen" style="display:none;">
