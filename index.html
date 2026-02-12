@@ -184,3 +184,41 @@
         }
     });
 </script>
+<script>
+    // 1. On répare l'affichage mobile automatiquement
+    const metaViewport = document.createElement('meta');
+    metaViewport.name = "viewport";
+    metaViewport.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    document.head.appendChild(metaViewport);
+
+    // 2. On définit l'icône pour l'écran d'accueil (iPhone et Android)
+    const iconApp = document.createElement('link');
+    iconApp.rel = "apple-touch-icon";
+    // Remplace 'votre-icone.png' par le nom de l'image du bouclier que tu as enregistrée
+    iconApp.href = "icon-512x512.png"; 
+    document.head.appendChild(iconApp);
+
+    // 3. On force la couleur de la barre de navigation du téléphone en noir/or
+    const metaTheme = document.createElement('meta');
+    metaTheme.name = "theme-color";
+    metaTheme.content = "#000000";
+    document.head.appendChild(metaTheme);
+</script>
+
+<style>
+    /* Ce petit code force le jeu à bien rester dans l'écran du téléphone */
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        width: 100vw;
+        height: 100vh;
+        position: fixed; /* Empêche le rebond bizarre sur iPhone */
+    }
+    
+    #login-screen, #rating-screen, #shop-screen {
+        width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+</style>
