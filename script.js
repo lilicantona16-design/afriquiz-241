@@ -308,3 +308,34 @@ function submitReview() {
     alert("Merci ! Ton avis a été ajouté au Mur des Champions.");
     if(typeof displayComments === 'function') displayComments();
 }
+// --- DÉCLENCHEMENT DE L'AVIS À LA 5ÈME QUESTION ---
+
+// On crée une fonction qui vérifie si on est à la question 5
+function checkRatingMoment(currentQuestionIndex) {
+    // Si l'utilisateur n'a pas encore donné son avis et arrive à la question 5
+    if (currentQuestionIndex === 4 && !localStorage.getItem('quiz_rated')) { 
+        document.getElementById('rating-screen').style.display = 'flex';
+        localStorage.setItem('quiz_rated', 'true'); // Pour ne pas l'afficher à chaque fois
+    }
+}
+
+// On modifie légèrement la fonction saveUser pour qu'elle n'affiche PLUS l'avis tout de suite
+window.saveUser = function() {
+    const pseudo = document.getElementById('user-pseudo').value.trim();
+    if(pseudo.length < 2) return alert("Pseudo trop court !");
+    localStorage.setItem('quiz_pseudo', pseudo);
+    currentUser = pseudo;
+    document.getElementById('login-screen').style.display = 'none';
+    // L'avis ne s'affiche plus ici !
+};
+// Ce code s'exécute à chaque fois qu'une question change
+const originalShowQuestion = window.showQuestion; 
+if (typeof originalShowQuestion === "function") {
+    window.showQuestion = function() {
+        originalShowQuestion.apply(this, arguments);
+        // On vérifie si c'est le moment de noter (index 4 = 5ème question)
+        if (typeof currentQuestionIndex !== 'undefined') {
+            checkRatingMoment(currentQuestionIndex);
+        }
+    };
+}
