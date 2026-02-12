@@ -9,14 +9,9 @@
 </head>
 <body>
     <div id="game-container">
-        
         <div id="home-screen">
-            <h1>
-                <span class="title-g">GABON</span><br>
-                <span class="title-a">QUIZ</span> 
-                <span class="title-b">VIP</span>
-            </h1>
-            <p style="text-align:center; margin-bottom:30px; font-weight: 600;">🇬🇦 Explorez les merveilles du pays</p>
+            <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
+            <p>🇬🇦 Explorez les merveilles du pays</p>
             
             <div class="menu-grid">
                 <button onclick="startQuiz('Provinces')">🌳 Gabon Master</button>
@@ -24,66 +19,62 @@
                 <button onclick="startQuiz('Monde')">🌐 Monde</button>
                 <button onclick="showPayment()" class="vip-btn">💎 ACCÈS VIP (500F)</button>
             </div>
+
+            <div class="action-grid">
+                <button onclick="shareGame()" class="action-btn-small">📢 Partager</button>
+                <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
+                <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2; margin-top: 5px; background: rgba(252, 209, 22, 0.2); border-color: #FCD116;">❓ Comment jouer ?</button>
+            </div>
         </div>
 
         <div id="payment-section" style="display:none;">
-            <h2 style="text-align:center; color:#FCD116; font-weight: 800;">👑 ACCÈS PRIVILÈGE</h2>
-            <p style="text-align:center; font-size:0.95em; font-style: italic; margin-bottom: 20px;">
-                "Celui qui connaît son pays n'est jamais un étranger chez lui."
-            </p>
-
-            <div class="payment-card">
-                <div class="payment-row">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Airtel_logo.svg/256px-Airtel_logo.svg.png" width="35" alt="Airtel">
-    <div class="payment-info">
-        <small style="color: #e11900;">Airtel Money</small>
-        <b>076 36 73 82</b>
-    </div>
-</div>
-
-<div class="payment-row">
-    <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/4/4b/Moov_Africa_Logo.png/220px-Moov_Africa_Logo.png" width="35" alt="Moov">
-    <div class="payment-info">
-        <small style="color: #005696;">Moov Money</small>
-        <b>062 82 66 68</b>
-    </div>
-</div>
-                <div class="owner-name">👤 Titulaire : OLASSI LEKABI BRULLICE</div>
+            <h2 style="color: #FCD116;">👑 AVANTAGES VIP</h2>
+            <div class="vip-details-box">
+                <p>✅ <b>+500 Questions :</b> Accès total.</p>
+                <p>✅ <b>Explications :</b> Apprends l'histoire du Gabon.</p>
+                <p>✅ <b>Soutien :</b> Aide le projet local !</p>
             </div>
-
-            <div class="vip-perks">
-                <p>✅ <b>Questions Exclusives :</b> Les secrets du Gabon que vous ignorez.</p>
-                <p>✅ <b>Apprends :</b> Explications détaillées après chaque réponse.</p>
-                <p>✅ <b>Soutien :</b> Aide le premier quiz 100% Gabonais !</p>
+            <div class="payment-card-simple">
+                <p style="color:#e11900; font-weight:bold; margin:5px 0;">Airtel Money : 076 36 73 82</p>
+                <p style="color:#005696; font-weight:bold; margin:5px 0;">Moov Money : 062 82 66 68</p>
+                <p style="font-size: 0.8em; color: #666;">👤 OLASSI LEKABI BRULLICE</p>
             </div>
-
-            <div class="code-box">
-                <p>Tu as reçu ton code par WhatsApp ?</p>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="vip-code-input" placeholder="Code ici...">
-                    <button onclick="checkVipCode()" class="ok-btn">OK</button>
-                </div>
+            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                <input type="text" id="vip-code-input" placeholder="Code ici...">
+                <button onclick="checkVipCode()" class="ok-btn">OK</button>
             </div>
-
-            <button onclick="window.location.href='https://wa.me/24176367382?text=Salut! Je viens de payer 500F pour le mode VIP 🇬🇦'" class="wa-btn">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="22">
-                ENVOYER MON REÇU
-            </button>
-
+            <button onclick="window.location.href='https://wa.me/24176367382?text=Je veux mon code VIP 🇬🇦'" class="wa-btn">ENVOYER MON REÇU</button>
             <button onclick="quitGame()" class="back-link">Retour au menu</button>
         </div>
 
         <div id="quiz-screen" style="display:none;">
             <div class="quiz-header">
                 <span id="score-display">Score: 0</span>
-                <button onclick="quitGame()" class="quit-btn">✖ Quitter</button>
+                <button onclick="quitGame()" class="quit-btn">✖</button>
             </div>
             <h2 id="question-text">Chargement...</h2>
             <div id="options-container"></div>
-            
             <div id="feedback-area" style="display:none;">
                 <p id="explanation-text"></p>
                 <button onclick="nextQuestion()" class="continue-btn">CONTINUER</button>
+            </div>
+        </div>
+
+        <div id="install-guide" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h3>📲 Installation</h3>
+                <p><b>Android :</b> Menu (3 points) > "Installer".</p>
+                <p><b>iPhone :</b> Partager > "Sur l'écran d'accueil".</p>
+                <button onclick="closeInstallGuide()" class="continue-btn">OK</button>
+            </div>
+        </div>
+        <div id="how-to-play-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h3>🎮 Comment jouer ?</h3>
+                <div class="step"><span>1️⃣</span><p>Choisis une catégorie.</p></div>
+                <div class="step"><span>2️⃣</span><p>Vert = Juste 🟢 / Rouge = Faux 🔴.</p></div>
+                <div class="step"><span>👑</span><p>VIP = Secrets du Gabon.</p></div>
+                <button onclick="closeHowToPlay()" class="continue-btn">C'EST COMPRIS !</button>
             </div>
         </div>
     </div>
