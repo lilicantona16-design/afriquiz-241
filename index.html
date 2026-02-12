@@ -143,3 +143,44 @@
         }
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const shopScreen = document.getElementById('shop-screen');
+        if (shopScreen) {
+            const tableDiv = document.createElement('div');
+            tableDiv.innerHTML = `
+                <h3 style="color:#FCD116; margin-top:20px;">💎 CHOISIS TON PACK VIP</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Avantages</th>
+                        <th>300F</th>
+                        <th>500F</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Toutes les Questions</td>
+                        <td class="check-yes">✅</td>
+                        <td class="check-yes">✅</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Manuel des Réponses</td>
+                        <td class="check-no">❌</td>
+                        <td class="check-yes">✅</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Diplôme d'Expert</td>
+                        <td class="check-no">❌</td>
+                        <td class="check-yes">✅</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Support WhatsApp</td>
+                        <td class="check-no">❌</td>
+                        <td class="check-yes">✅</td>
+                    </tr>
+                </table>
+                <p style="font-size:0.8em; color:#aaa;">* Le pack 500F est le plus populaire au Gabon 🇬🇦</p>
+            `;
+            // On l'insère avant les boutons de paiement
+            shopScreen.insertBefore(tableDiv, shopScreen.querySelector('.wa-btn'));
+        }
+    });
+</script>

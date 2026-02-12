@@ -175,3 +175,28 @@ h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
     font-size: 0.8em;
     cursor: pointer;
 }
+/* Style du Tableau Comparatif VIP */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    font-size: 0.9em;
+}
+
+.comparison-table th {
+    background: #FCD116;
+    color: black;
+    padding: 10px;
+}
+
+.comparison-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+
+.check-yes { color: #009E60; font-weight: bold; }
+.check-no { color: #e74c3c; font-weight: bold; }
