@@ -1,126 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-
 body {
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop')no-repeat center center fixed;
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
     background-size: cover;
-    font-family: 'Poppins', sans-serif;
-    margin: 0; color: white; display: flex; justify-content: center; min-height: 100vh;
+    color: white; text-align: center;
 }
 
 #game-container {
-    width: 90%; max-width: 450px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);
-    padding: 25px; margin: 20px 0; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
+    max-width: 450px; margin: 30px auto;
+    background: rgba(40, 40, 40, 0.9);
+    padding: 25px; border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    min-height: 80vh;
 }
 
-h1 { font-size: 2.5em; font-weight: 900; line-height: 1.1; margin-bottom: 10px; }
+h1 { font-size: 2.5em; margin-bottom: 5px; line-height: 1; }
 .title-g { color: #009E60; } .title-a { color: #FCD116; } .title-b { color: #3A75C4; }
 
-.menu-grid button { width: 100%; padding: 18px; margin-bottom: 12px; border: none; border-radius: 15px; background: white; color: #1a1a1a; font-weight: 700; cursor: pointer; }
-.vip-btn { background: linear-gradient(135deg, #FCD116, #FF9900) !important; color: black !important; }
-
-.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.action-btn-small { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.8em; }
-
-.vip-details-box { background: white; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 5px solid #FCD116; }
-.payment-card-simple { background: #f1f1f1; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
-
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.modal-content { background: white; color: #1a1a1a; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; }
-
-.option-btn { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; text-align: left; cursor: pointer; font-size: 1em; }
-#feedback-area { background: white; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-top: 20px; text-align: left; }
-.continue-btn { width: 100%; padding: 15px; background: #009E60; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-
-.wa-btn { background: #25D366; color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-.back-link { background: none; border: none; color: white; text-decoration: underline; margin-top: 15px; cursor: pointer; }
-.ok-btn { background: #3A75C4; color: white; border: none; border-radius: 10px; padding: 0 20px; font-weight: bold; }
-input { flex: 2; padding: 12px; border-radius: 10px; border: none; font-size: 16px; }
-.step { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-align: left; }
-.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.quit-btn { background: #ff4444; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.action-btn-small:first-child {
-    background: #00BFFF !important; /* Bleu ciel brillant */
-    box-shadow: 0 0 10px #00BFFF;
-    border: none;
-}
-/* 1. STYLE DU MANUEL D'ÉTUDE */
-#study-list {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid rgba(252, 209, 22, 0.3);
-}
-
-.study-btn {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid white !important;
-    color: white !important;
-    margin-top: 10px;
-}
-
-/* 2. STYLE DES MODALS (Guides d'installation et Règles) */
-.modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    color: black;
-    padding: 20px;
-    border-radius: 20px;
-    width: 85%;
-    max-width: 400px;
-    text-align: center;
-}
-
-/* 3. BOUTON QUITTER (La petite croix ✖) */
-.quit-btn {
-    background: #ff4444 !important;
-    color: white !important;
-    border: none !important;
-    padding: 5px 12px !important;
-    border-radius: 8px !important;
-    font-size: 0.8em !important;
-    cursor: pointer;
-}
-
-/* 4. CHAMP DE CODE VIP */
-#vip-code-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin: 10px 0;
+.menu-grid button, .option-btn, .action-btn-small, .ok-btn, .wa-btn, .continue-btn {
+    width: 100%; padding: 15px; margin: 8px 0;
+    border: none; border-radius: 12px;
+    font-weight: bold; cursor: pointer; transition: 0.3s;
     font-size: 1em;
-    text-align: center;
-    text-transform: uppercase; /* Force les majuscules */
 }
 
-/* 5. CARTES DE LA BOUTIQUE */
-.shop-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    text-align: center;
-}
+/* Les couleurs de tes captures */
+.menu-grid button { background: white; color: black; }
+.vip-btn { background: #FCD116 !important; color: black !important; }
+.study-btn { background: #333 !important; color: white !important; border: 1px solid white !important; }
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.action-btn-small { background: rgba(255,255,255,0.1); color: white; border: 1px solid white; }
+.share-btn { background: #00BFFF !important; box-shadow: 0 0 15px #00BFFF; }
 
-/* 6. STYLE DU TIMER (Le chrono qui tourne) */
-#timer-text {
-    text-shadow: 0 0 10px rgba(252, 209, 22, 0.5);
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
+.quit-btn { background: #ff4444 !important; color: white; padding: 5px 12px; border-radius: 8px; float: left; }
+.payment-card { background: white; color: black; border-radius: 15px; padding: 15px; margin: 15px 0; }
+.wa-btn { background: #25D366; color: white; }

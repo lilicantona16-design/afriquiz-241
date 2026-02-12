@@ -10,48 +10,27 @@ let lives = 3;
 let timer;
 let timeLeft = 15;
 const FREE_LIMIT = 10;
-
+let isVip = false;
 async function loadData() {
     try {
         const { data, error } = await _supabase.from('questions').select('*');
         if (error) throw error;
         allQuestions = data;
-        console.log("✅ Données prêtes");
     } catch (e) { console.error(e); }
 }
 
-function showScreen(id) {
-    ['home-screen','shop-screen','study-screen','payment-section','quiz-screen'].forEach(s => {
-        document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
-    });
-}
-
-function showShop() { showScreen('shop-screen'); }
-function showPayment(title, price) { 
-    document.getElementById('pay-title').innerText = `PAYER ${price}F (${title})`;
-    showScreen('payment-section'); 
-}
-
-function showStudyMode() {
-    showScreen('study-screen');
-    const list = document.getElementById('study-list');
-    const categories = ["Provinces", "Afrique", "Monde"];
-    list.innerHTML = categories.map(cat => `
-        <h3 style="color:#FCD116; border-bottom:1px solid #FCD116;">📍 ${cat}</h3>
-        ${allQuestions.filter(q => q.category === cat).slice(0, 30).map(q => `
-            <div style="margin-bottom:10px; font-size:0.9em;">
-                <b>Q: ${q.question}</b><br><span style="color:#009E60;">R: ${q.correct_answer}</span>
-            </div>
-        `).join('')}
-    `).join('');
+function showShop() { 
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'block';
 }
 
 function startQuiz(cat) {
-    currentQuestions = allQuestions.filter(q => q.category === cat);
-    if(currentQuestions.length === 0) return alert("Bientôt !");
+    currentQuestions = allQuestions.filter(q => q.category && q.category.toLowerCase() === cat.toLowerCase());
+    if(currentQuestions.length === 0) return alert("Bientôt disponible !");
     currentQuestions.sort(() => 0.5 - Math.random());
     currentIndex = 0; score = 0; lives = 3;
-    showScreen('quiz-screen');
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();
 }
 
@@ -61,8 +40,8 @@ function showQuestion() {
         document.getElementById('quiz-screen').innerHTML = `
             <div style="background:white; color:black; padding:20px; border-radius:15px; text-align:center;">
                 <h2 style="color:red;">🔒 NIVEAU 2 BLOQUÉ</h2>
-                <p>Paye 300F pour voir les prochaines questions ou 500F pour le Pack VIP Total !</p>
-                <button onclick="showShop()" class="continue-btn">ALLER À LA BOUTIQUE</button>
+                <p>Tu as fini les 10 questions gratuites. Paye 300F ou 500F pour voir les 200 autres et avoir ton diplôme !</p>
+                <button onclick="showShop()" class="continue-btn" style="background:#FCD116; color:black;">DÉBLOQUER MAINTENANT</button>
             </div>`;
         return;
     }
@@ -79,13 +58,11 @@ function showQuestion() {
         btn.innerText = opt; btn.className = 'option-btn';
         btn.onclick = () => {
             clearInterval(timer);
-            const btns = container.querySelectorAll('button');
-            btns.forEach(b => b.disabled = true);
             if(opt === q.correct_answer) {
-                score++; btn.style.background = "#009E60";
+                score++; btn.style.background = "#009E60"; btn.style.color = "white";
                 showFeedback(true, q.correct_answer, q.explanation);
             } else {
-                btn.style.background = "#ff4444";
+                btn.style.background = "#ff4444"; btn.style.color = "white";
                 handleWrong(q.correct_answer, q.explanation);
             }
         };
@@ -95,9 +72,9 @@ function showQuestion() {
 
 function startTimer() {
     clearInterval(timer); timeLeft = 15;
-    document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
+    const tText = document.getElementById('timer-text');
     timer = setInterval(() => {
-        timeLeft--; document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
+        timeLeft--; tText.innerText = `⏱️ ${timeLeft}s`;
         if(timeLeft <= 0) { clearInterval(timer); handleWrong(currentQuestions[currentIndex].correct_answer, "Temps écoulé !"); }
     }, 1000);
 }
@@ -105,12 +82,13 @@ function startTimer() {
 function handleWrong(c, e) {
     lives--; updateHeader();
     showFeedback(false, c, e);
-    if(lives <= 0) setTimeout(() => { alert("💔 Plus de vies ! Étudie le manuel."); showStudyMode(); }, 2000);
+    if(lives <= 0) setTimeout(() => { alert("💔 Plus de vies ! Étudie le manuel."); showStudyMode(); }, 2500);
 }
 
 function showFeedback(isC, c, e) {
-    document.getElementById('explanation-text').innerHTML = `<b style="color:${isC?'green':'red'}">${isC?'✅ BRAVO':'❌ FAUX'}</b><br>La réponse est : <b>${c}</b><br><i>${e||""}</i>`;
-    document.getElementById('feedback-area').style.display = 'block';
+    const fb = document.getElementById('feedback-area');
+    document.getElementById('explanation-text').innerHTML = `<b style="color:${isC?'green':'red'}">${isC?'✅ BRAVO':'❌ DOMMAGE'}</b><br>La réponse était : <b>${c}</b><br><i>${e||""}</i>`;
+    fb.style.display = 'block';
 }
 
 function updateHeader() {
@@ -119,44 +97,32 @@ function updateHeader() {
 }
 
 function nextQuestion() { currentIndex++; showQuestion(); }
-function quitGame() { if(confirm("Quitter le quiz ?")) location.reload(); }
+
+function showStudyMode() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('study-screen').style.display = 'block';
+    const list = document.getElementById('study-list');
+    list.innerHTML = allQuestions.slice(0, 80).map(q => `
+        <div style="margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">
+            <b>Q: ${q.question}</b><br><span style="color:#FCD116;">R: ${q.correct_answer}</span>
+        </div>`).join('');
+}
 
 function checkVipCode() {
     const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    
-    // --- TON MARKETING DES CODES ---
-    if(val === "GABON2024" || val === "VIP500") {
-        isVip = true; 
-        alert("💎 PACK TOTAL DÉBLOQUÉ ! Tu as accès à tout en illimité.");
-        showScreen('home-screen'); // Retour au menu pour choisir n'importe quoi
-    } 
-    else if(val === "GAB300") {
-        isVip = true; 
-        alert("🌳 NIVEAU GABON DÉBLOQUÉ !");
-        startQuiz('Provinces');
-    }
-    else if(val === "AFR300") {
-        isVip = true; 
-        alert("🌍 NIVEAU AFRIQUE DÉBLOQUÉ !");
-        startQuiz('Afrique');
-    }
-    else if(val === "MON300") {
-        isVip = true; 
-        alert("🌐 NIVEAU MONDE DÉBLOQUÉ !");
-        startQuiz('Monde');
-    }
-    else {
-        alert("❌ Code incorrect. Vérifie bien ou contacte le service client.");
-    }
+    const validCodes = ["GABON2024", "VIP500", "GAB300", "AFR300", "MON300"];
+    if(validCodes.includes(val)) {
+        isVip = true; alert("💎 ACCÈS DÉBLOQUÉ !"); location.reload();
+    } else alert("Code incorrect.");
 }
 
 function shareGame() {
-    const t = "Deviens expert du Gabon 🇬🇦 ! " + window.location.href;
-    if(navigator.share) navigator.share({title:'Gabon Quiz', text:t, url:window.location.href});
-    else window.open(`https://wa.me/?text=${encodeURIComponent(t)}`);
+    const t = "Joue au Gabon Quiz VIP 🇬🇦 ! " + window.location.href;
+    window.open(`https://wa.me/?text=${encodeURIComponent(t)}`);
 }
 
 function showInstallGuide() { alert("Cliquez sur les 3 points du navigateur puis 'Ajouter à l'écran d'accueil'"); }
-function showHowToPlay() { alert("15s par question, 3 vies, payant après 10 questions !"); }
+function showHowToPlay() { alert("15 secondes par question. 3 vies ❤️. Après 10 questions, il faut débloquer le Niveau 2 !"); }
 
 loadData();
