@@ -1,17 +1,19 @@
-/* Couleurs du Gabon */
+/* --- VARIABLES ET FOND --- */
 :root {
-    --vert: #009E60;
-    --jaune: #FCD116;
-    --bleu: #3A75C4;
-    --fond: #f8f9fa;
+    --gabon-vert: #009E60;
+    --gabon-jaune: #FCD116;
+    --gabon-bleu: #3A75C4;
+    --rouge-quitter: #ff4444;
+    --gris-fond: #f4f7f6;
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--fond);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gris-fond);
     margin: 0;
     display: flex;
     justify-content: center;
+    color: #333;
 }
 
 #game-container {
@@ -21,72 +23,111 @@ body {
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    position: relative;
 }
 
+/* --- TITRES --- */
 h1 {
     text-align: center;
-    color: var(--vert);
-    font-size: 26px;
+    color: var(--gabon-vert);
+    font-size: 24px;
     margin-bottom: 30px;
+    text-transform: uppercase;
 }
 
-/* Boutons du menu */
+/* --- GRILLE DES BOUTONS DU MENU --- */
 .menu-grid {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
 }
 
 .menu-grid button {
-    padding: 18px;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
     border: none;
     border-radius: 15px;
     background: white;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border-bottom: 4px solid var(--bleu);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-bottom: 4px solid var(--gabon-bleu);
     cursor: pointer;
+    transition: transform 0.2s;
 }
 
-/* Bouton VIP Animé */
+.menu-grid button:active {
+    transform: scale(0.98);
+}
+
+/* --- BOUTON VIP ANIMÉ --- */
 .vip-btn {
-    animation: pulse 2s infinite;
+    background: linear-gradient(135deg, #f1c40f, #f39c12) !important;
+    color: white !important;
+    border-bottom: 4px solid #e67e22 !important;
+    animation: pulse-vip 2s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-vip {
     0% { transform: scale(1); }
-    50% { transform: scale(1.03); }
+    50% { transform: scale(1.03); box-shadow: 0 0 15px rgba(243, 156, 18, 0.4); }
     100% { transform: scale(1); }
 }
 
-/* Écran Quiz */
+/* --- BOUTONS DU QUIZ (OPTIONS) --- */
 .option-btn {
     width: 100%;
+    text-align: left;
     padding: 15px;
     margin: 10px 0;
+    font-size: 16px;
+    background: #fff;
     border: 2px solid #eee;
-    background: white;
     border-radius: 12px;
     cursor: pointer;
-    text-align: left;
-    font-size: 16px;
+    transition: 0.3s;
 }
 
-.next-btn {
+.option-btn:hover {
+    background: #f9f9f9;
+}
+
+/* --- BOUTON QUITTER --- */
+.quit-btn {
+    background: var(--rouge-quitter);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-/* Section Paiement */
-#payment-section {
-    border: 2px solid var(--jaune) !important;
+.quit-btn:hover {
+    background: #cc0000;
 }
 
-input#vip-code-input {
-    border: 1px solid #ddd;
+/* --- SECTION FEEDBACK (RÉPONSE) --- */
+#feedback-area {
+    border-left: 5px solid var(--gabon-bleu);
+    margin-top: 20px;
+}
+
+#explanation-text {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #555;
+}
+
+/* --- INPUTS --- */
+input[type="text"] {
+    border: 2px solid #eee;
+    border-radius: 10px;
     outline: none;
+    transition: 0.3s;
 }
 
-input#vip-code-input:focus {
-    border-color: var(--bleu);
+input[type="text"]:focus {
+    border-color: var(--gabon-bleu);
 }

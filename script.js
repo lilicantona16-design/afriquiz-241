@@ -1,72 +1,67 @@
-// 1. DÉCLARATION DES VARIABLES (On les met tout en haut pour éviter l'erreur d'initialisation)
+// 1. CONFIGURATION SUPABASE AVEC TA NOUVELLE CLÉ
+const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
+const _supabase = supabase.createClient(URL, KEY);
+
 let allQuestions = [];
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
 
-// 2. QUESTIONS DE SECOURS (Si Supabase plante, le jeu marchera quand même)
-const backupQuestions = [
-    { category: "Provinces", question: "Quelle est la capitale de l'Ogooué-Maritime ?", option1: "Lambaréné", option2: "Port-Gentil", option3: "Mouila", option4: "Oyem", correct_answer: "Port-Gentil", explanation: "Port-Gentil est le chef-lieu de l'Ogooué-Maritime." },
-    { category: "Afrique", question: "Dans quel pays se trouve le Kilimandjaro ?", option1: "Gabon", option2: "Kenya", option3: "Tanzanie", option4: "Sénégal", correct_answer: "Tanzanie", explanation: "C'est le plus haut sommet d'Afrique." }
-];
-
-// 3. CONFIGURATION SUPABASE (Vérifie bien qu'il n'y a pas d'espace avant https)
-const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
-
-let _supabase;
-try {
-    _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-} catch (e) {
-    console.error("Erreur de connexion Supabase, passage en mode secours.");
-}
-
-// 4. CHARGEMENT DES DONNÉES
+// 2. CHARGEMENT DES QUESTIONS DEPUIS TA TABLE SUPABASE
 async function loadData() {
     try {
         const { data, error } = await _supabase.from('questions').select('*');
-        if (error || !data || data.length === 0) {
-            allQuestions = backupQuestions;
-        } else {
-            allQuestions = data;
-        }
+        if (error) throw error;
+        allQuestions = data;
+        console.log("✅ Connexion Supabase réussie ! Questions chargées :", allQuestions.length);
     } catch (e) {
-        allQuestions = backupQuestions;
+        console.error("❌ Erreur Supabase :", e.message);
+        alert("Problème de connexion aux questions. Vérifie ta table Supabase.");
     }
-    console.log("Système prêt !");
 }
 
-// 5. FONCTIONS DU JEU
+// 3. FONCTIONS DE NAVIGATION
 function showPayment() {
+    document.getElementById('home-screen').style.display = 'none';
     document.getElementById('payment-section').style.display = 'block';
-    document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function quitGame() {
+    if(confirm("Voulez-vous vraiment quitter et revenir au menu ?")) {
+        location.reload(); 
+    }
 }
 
 function checkVipCode() {
     const val = document.getElementById('vip-code-input').value;
     if (val.trim() === "GABON2024") {
-        alert("✅ Accès VIP débloqué !");
+        alert("✅ Mode VIP Débloqué !");
         startQuiz('VIP');
     } else {
-        alert("❌ Code incorrect.");
+        alert("❌ Code incorrect. Payez 500F pour recevoir le code.");
     }
 }
 
+// 4. LOGIQUE DU QUIZ
 function startQuiz(category) {
+    // On filtre les questions par catégorie
     currentQuestions = allQuestions.filter(q => 
-        q.category && q.category.trim().toLowerCase() === category.trim().toLowerCase()
+        q.category && q.category.trim().toLowerCase() === category.toLowerCase()
     );
 
     if (currentQuestions.length === 0) {
-        alert("Désolé, pas encore de questions pour : " + category);
+        alert("Aucune question trouvée pour " + category + ". Vérifie l'orthographe dans ton Excel.");
         return;
     }
 
+    // Mélanger et prendre 10 questions max
     currentQuestions = currentQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
     currentIndex = 0;
     score = 0;
 
     document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('payment-section').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();
 }
@@ -80,7 +75,8 @@ function showQuestion() {
     const container = document.getElementById('options-container');
     container.innerHTML = '';
 
-    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
+    const options = [q.option1, q.option2, q.option3, q.option4];
+    options.forEach(opt => {
         if (opt) {
             const btn = document.createElement('button');
             btn.innerText = opt;
@@ -88,12 +84,16 @@ function showQuestion() {
             btn.onclick = () => {
                 const allBtns = container.querySelectorAll('button');
                 allBtns.forEach(b => b.disabled = true);
+                
                 if (opt === q.correct_answer) {
                     score++;
-                    btn.style.backgroundColor = "#d4edda";
+                    btn.style.background = "#d4edda"; // Vert
+                    btn.style.borderColor = "#28a745";
                 } else {
-                    btn.style.backgroundColor = "#f8d7da";
+                    btn.style.background = "#f8d7da"; // Rouge
+                    btn.style.borderColor = "#dc3545";
                 }
+
                 document.getElementById('explanation-text').innerHTML = `<b>Réponse: ${q.correct_answer}</b><br>${q.explanation || ""}`;
                 document.getElementById('feedback-area').style.display = 'block';
             };
@@ -107,10 +107,10 @@ function nextQuestion() {
     if (currentIndex < currentQuestions.length) {
         showQuestion();
     } else {
-        alert("Terminé ! Score : " + score + "/10");
+        alert("Félicitations ! Quiz terminé. Score : " + score + "/" + currentQuestions.length);
         location.reload();
     }
 }
 
-// Lancement automatique
+// Lancement au chargement de la page
 loadData();
