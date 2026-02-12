@@ -94,3 +94,37 @@
         padding-bottom: 20px;
     }
 </style>
+<div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1a1a1a; z-index:10000; display:flex; align-items:center; justify-content:center;">
+    <div class="modal-content" style="width:85%; max-width:350px;">
+        <h2 style="color:#FCD116;">BIENVENUE 🇬🇦</h2>
+        <p>Choisis un pseudo pour enregistrer tes scores.</p>
+        <input type="text" id="user-pseudo" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border-radius:10px; border:none; margin-bottom:15px; text-align:center;">
+        <button onclick="saveUser()" style="width:100%; background:#009E60; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold;">COMMENCER À JOUER</button>
+    </div>
+</div>
+
+<div id="comments-section" style="margin-top:30px; border-top:1px solid #444; padding-top:20px;">
+    <h3 style="color:#FCD116;">💬 MUR DES CHAMPIONS</h3>
+    <div id="comments-display" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:15px; padding:10px; margin-bottom:15px; text-align:left; font-size:0.9em;">
+        </div>
+    <input type="text" id="user-comment" placeholder="Laisse un message..." style="width:70%; padding:10px; border-radius:10px 0 0 10px; border:none;">
+    <button onclick="postComment()" style="width:25%; padding:10px; border-radius:0 10px 10px 0; border:none; background:#3A75C4; color:white; font-weight:bold;">OK</button>
+</div>
+<div id="rating-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10001; display:none; align-items:center; justify-content:center;">
+    <div class="modal-content" style="width:90%; max-width:400px; border-color:#FCD116;">
+        <h3 style="color:#FCD116;">TON AVIS COMPTE ! ⭐</h3>
+        <p>Note l'application pour nous aider :</p>
+        
+        <div id="star-rating" style="font-size: 30px; margin-bottom: 20px;">
+            <span onclick="setRate(1)" style="cursor:pointer;">☆</span>
+            <span onclick="setRate(2)" style="cursor:pointer;">☆</span>
+            <span onclick="setRate(3)" style="cursor:pointer;">☆</span>
+            <span onclick="setRate(4)" style="cursor:pointer;">☆</span>
+            <span onclick="setRate(5)" style="cursor:pointer;">☆</span>
+        </div>
+
+        <textarea id="user-feedback" placeholder="Quels changements veux-tu voir ? (Obligatoire)" style="width:100%; height:80px; padding:10px; border-radius:10px; border:none; margin-bottom:15px;"></textarea>
+        
+        <button onclick="submitReview()" style="width:100%; background:#FCD116; color:black; border:none; padding:15px; border-radius:10px; font-weight:bold;">ENVOYER MON AVIS</button>
+    </div>
+</div>

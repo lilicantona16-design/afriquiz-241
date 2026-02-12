@@ -204,3 +204,107 @@ window.showHowToPlay = function() {
         </div>`;
     document.body.appendChild(modal);
 }
+// --- LOGIQUE INSCRIPTION ET COMMENTAIRES ---
+let currentUser = localStorage.getItem('quiz_pseudo') || "";
+
+// Au chargement, vérifier si l'utilisateur existe
+if(currentUser) {
+    document.getElementById('login-screen').style.display = 'none';
+}
+
+function saveUser() {
+    const pseudo = document.getElementById('user-pseudo').value.trim();
+    if(pseudo.length < 2) return alert("Pseudo trop court !");
+    localStorage.setItem('quiz_pseudo', pseudo);
+    currentUser = pseudo;
+    document.getElementById('login-screen').style.display = 'none';
+    displayComments();
+}
+
+async function postComment() {
+    const msg = document.getElementById('user-comment').value.trim();
+    if(!msg) return;
+    
+    const newComment = {
+        pseudo: currentUser,
+        text: msg,
+        score: score || 0,
+        date: new Date().toLocaleDateString()
+    };
+
+    // Sauvegarde locale (pour l'instant, s'efface au refresh si pas de DB configurée pour ça)
+    let comments = JSON.parse(localStorage.getItem('quiz_comments') || "[]");
+    comments.unshift(newComment);
+    localStorage.setItem('quiz_comments', JSON.stringify(comments.slice(0, 20))); // Garde les 20 derniers
+    
+    document.getElementById('user-comment').value = "";
+    displayComments();
+}
+
+function displayComments() {
+    const display = document.getElementById('comments-display');
+    const comments = JSON.parse(localStorage.getItem('quiz_comments') || "[]");
+    
+    if(comments.length === 0) {
+        display.innerHTML = "<p style='text-align:center; color:#666;'>Soyez le premier à commenter !</p>";
+        return;
+    }
+
+    display.innerHTML = comments.map(c => `
+        <div>
+            <b>${c.pseudo}</b> <span>${c.date}</span><br>
+            ${c.text} <br>
+            <small style="color:#009E60;">🏆 Score: ${c.score}</small>
+        </div>
+    `).join('');
+}
+
+// Afficher les commentaires dès le début
+window.onload = () => { displayComments(); };
+let currentRating = 0;
+
+// Gérer la sélection des étoiles
+function setRate(val) {
+    currentRating = val;
+    const stars = document.querySelectorAll('#star-rating span');
+    stars.forEach((s, i) => {
+        s.innerHTML = i < val ? '★' : '☆';
+        s.classList.toggle('active', i < val);
+    });
+}
+
+// Forcer l'affichage de l'avis après l'inscription
+const originalSaveUser = window.saveUser;
+window.saveUser = function() {
+    const pseudo = document.getElementById('user-pseudo').value.trim();
+    if(pseudo.length < 2) return alert("Pseudo trop court !");
+    localStorage.setItem('quiz_pseudo', pseudo);
+    currentUser = pseudo;
+    document.getElementById('login-screen').style.display = 'none';
+    
+    // On affiche l'évaluation juste après l'entrée du pseudo
+    document.getElementById('rating-screen').style.display = 'flex';
+};
+
+// Soumettre l'avis
+function submitReview() {
+    const feedback = document.getElementById('user-feedback').value.trim();
+    if(currentRating === 0) return alert("Donne-nous une note en étoiles !");
+    if(feedback.length < 5) return alert("Dis-nous ce qu'on peut améliorer !");
+
+    // On enregistre l'avis dans les commentaires du mur
+    const reviewComment = {
+        pseudo: currentUser,
+        text: `⭐ ${currentRating}/5 - "${feedback}"`,
+        score: "Nouveau Joueur",
+        date: new Date().toLocaleDateString()
+    };
+
+    let comments = JSON.parse(localStorage.getItem('quiz_comments') || "[]");
+    comments.unshift(reviewComment);
+    localStorage.setItem('quiz_comments', JSON.stringify(comments));
+    
+    document.getElementById('rating-screen').style.display = 'none';
+    alert("Merci ! Ton avis a été ajouté au Mur des Champions.");
+    if(typeof displayComments === 'function') displayComments();
+}
