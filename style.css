@@ -1,40 +1,46 @@
-ody {
-    /* Image de fond réaliste (Forêt/Libreville) */
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+
+body {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
     background-size: cover;
-    font-family: 'Inter', -apple-system, sans-serif;
-    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    color: white;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 #game-container {
-    background: rgba(255, 255, 255, 0.1); /* Effet verre */
+    width: 100%;
+    max-width: 480px;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 0; /* Plein écran mobile */
-    box-shadow: none;
+    padding: 30px;
+    min-height: 100vh;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    text-align: center;
 }
 
-.menu-grid button {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: none !important;
-    border-radius: 20px !important;
-    color: #1a1a1a !important;
-    font-size: 17px !important;
-    letter-spacing: 0.5px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+h1 { font-size: 2.5em; font-weight: 900; margin-bottom: 30px; line-height: 1.1; }
+.title-g { color: #009E60; }
+.title-a { color: #FCD116; }
+.title-b { color: #3A75C4; }
+
+.menu-grid button, .option-btn {
+    width: 100%; padding: 18px; margin-bottom: 12px; border: none; border-radius: 15px;
+    background: white; color: #1a1a1a; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: 0.3s;
 }
 
-.vip-btn {
-    background: linear-gradient(135deg, #FFD700, #FFA500) !important;
-    color: #000 !important;
-    font-weight: 900 !important;
-    border: 2px solid rgba(255,255,255,0.5) !important;
-}
+.vip-btn { background: linear-gradient(135deg, #FCD116, #FF9900) !important; color: black !important; }
 
-h1 {
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-    margin-top: 50px;
-}
+.option-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); text-align: left; }
+.option-btn.correct { background: #009E60 !important; color: white; }
+.option-btn.wrong { background: #ff4444 !important; color: white; }
+
+#feedback-area { background: white; color: #1a1a1a; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: left; }
+
+.wa-btn { background: #25D366; color: white; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+
+.payment-card { background: white; color: #1a1a1a; border-radius: 20px; padding: 20px; text-align: left; margin: 20px 0; }

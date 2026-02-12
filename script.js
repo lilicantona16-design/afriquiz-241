@@ -1,46 +1,57 @@
-const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
-const _supabase = supabase.createClient(URL, KEY);
+// 1. Initialisation propre
+const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
 
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Variables d'état
 let allQuestions = [];
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
 
-async function loadData() {
-    try {
-        const { data, error } = await _supabase.from('questions').select('*');
-        if (error) throw error;
-        allQuestions = data;
-        console.log("✅ Questions chargées !");
-    } catch (e) {
-        console.error("❌ Erreur :", e.message);
-    }
-}
-
+// 2. Fonctions de Navigation
 function showPayment() {
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('payment-section').style.display = 'block';
 }
 
 function quitGame() {
-    if(confirm("Voulez-vous retourner au menu principal ?")) {
+    if(confirm("Retourner au menu ?")) {
         location.reload();
     }
 }
 
+// 3. Logique du Quiz
+async function loadData() {
+    try {
+        const { data, error } = await _supabase.from('questions').select('*');
+        if (error) throw error;
+        allQuestions = data;
+        console.log("✅ Questions prêtes");
+    } catch (e) {
+        console.error("❌ Erreur de chargement:", e.message);
+    }
+}
+
 function startQuiz(category) {
+    if (allQuestions.length === 0) {
+        alert("Chargement des questions en cours... réessayez dans un instant.");
+        return;
+    }
+
     currentQuestions = allQuestions.filter(q => 
         q.category && q.category.trim().toLowerCase() === category.toLowerCase()
     );
 
     if (currentQuestions.length === 0) {
-        alert("Bientôt disponible pour : " + category);
+        alert("Pas de questions trouvées pour " + category);
         return;
     }
 
     currentQuestions.sort(() => 0.5 - Math.random());
-    currentIndex = 0; score = 0;
+    currentIndex = 0;
+    score = 0;
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('payment-section').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
@@ -66,9 +77,9 @@ function showQuestion() {
                 allBtns.forEach(b => b.disabled = true);
                 if (opt === q.correct_answer) {
                     score++;
-                    btn.style.background = "rgba(0, 158, 96, 0.4)";
+                    btn.classList.add('correct');
                 } else {
-                    btn.style.background = "rgba(255, 68, 68, 0.4)";
+                    btn.classList.add('wrong');
                 }
                 document.getElementById('explanation-text').innerHTML = `<b>Réponse: ${q.correct_answer}</b><br><br>${q.explanation || ""}`;
                 document.getElementById('feedback-area').style.display = 'block';
@@ -83,7 +94,7 @@ function nextQuestion() {
     if (currentIndex < currentQuestions.length) {
         showQuestion();
     } else {
-        alert("Félicitations ! Score final : " + score + "/" + currentQuestions.length);
+        alert("Quiz terminé ! Score: " + score + "/" + currentQuestions.length);
         location.reload();
     }
 }
