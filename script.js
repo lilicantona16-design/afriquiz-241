@@ -163,8 +163,8 @@ window.showInstallGuide = function() {
             <div style="text-align:left; color:white; font-size:0.9em;">
                 <p><b>🤖 Sur ANDROID (Chrome) :</b><br>
                 1. Clique sur les <b>3 points</b> en haut à droite.<br>
-                2. Appuie sur <b>'Installer l'application'</b>.</p>
-                <p><b>🍎 Sur iPHONE (Safari) :</b><br>
+                2. Appuie sur <b>'Installer l'application ou ajouter a l'ecran d'acceuil'</b>.</p>
+                <p><b>🍎 Sur iPHONE (Safari)ou (Chrome) :</b><br>
                 1. Clique sur l'icône <b>Partager</b> (carré avec flèche).<br>
                 2. Descends et clique sur <b>'Sur l'écran d'accueil'</b>.</p>
             </div>
