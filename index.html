@@ -11,105 +11,81 @@
     <div id="game-container">
         
         <div id="home-screen">
-            <h1>🇬🇦 GABON QUIZ VIP</h1>
+            <h1>
+                <span class="title-g">GABON</span><br>
+                <span class="title-a">QUIZ</span> 
+                <span class="title-b">VIP</span>
+            </h1>
+            <p style="text-align:center; margin-bottom:30px; font-weight: 600;">🇬🇦 Explorez les merveilles du pays</p>
             
             <div class="menu-grid">
-                <button onclick="startQuiz('Provinces')">🇬🇦 Gabon Master</button>
+                <button onclick="startQuiz('Provinces')">🌳 Gabon Master</button>
                 <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
                 <button onclick="startQuiz('Monde')">🌐 Monde</button>
-                <button onclick="showPayment()" class="vip-btn">💎 ACCÈS VIP (500 FCFA)</button>
+                <button onclick="showPayment()" class="vip-btn">💎 ACCÈS VIP (500F)</button>
             </div>
         </div>
-<div id="payment-section" style="display:none; margin-top: 25px; padding: 25px; border-radius: 25px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3);">
-    
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h3 style="color: #1a1a1a; font-size: 24px; font-weight: 800; margin-bottom: 5px;">👑 ACCÈS PRIVILÈGE</h3>
-        <p style="color: #666; font-size: 0.9em;">Rejoins l'élite des connaisseurs du Gabon</p>
-    </div>
 
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 20px; margin-bottom: 20px;">
-        <div style="display: flex; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Airtel_logo.svg" style="width: 35px; margin-right: 15px;">
-            <div>
-                <small style="color: #e11900; font-weight: bold; display: block;">Airtel Money</small>
-                <span style="font-size: 1.1em; font-weight: 800; letter-spacing: 1px;">076 36 73 82</span>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <img src="https://upload.wikimedia.org/wikipedia/fr/4/4b/Moov_Africa_Logo.png" style="width: 35px; margin-right: 15px;">
-            <div>
-                <small style="color: #005696; font-weight: bold; display: block;">Moov Money Africa</small>
-                <span style="font-size: 1.1em; font-weight: 800; letter-spacing: 1px;">062 82 66 68</span>
-            </div>
-        </div>
-    </div>
+        <div id="payment-section" style="display:none;">
+            <h2 style="text-align:center; color:#FCD116; font-weight: 800;">👑 ACCÈS PRIVILÈGE</h2>
+            <p style="text-align:center; font-size:0.95em; font-style: italic; margin-bottom: 20px;">
+                "Celui qui connaît son pays n'est jamais un étranger chez lui."
+            </p>
 
-    <div style="margin-bottom: 20px;">
-        <input type="text" id="vip-code-input" placeholder="Entrez votre code secret" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #eee; font-size: 16px; text-align: center; margin-bottom: 10px;">
-        <button onclick="checkVipCode()" style="width: 100%; padding: 15px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; letter-spacing: 1px;">ACTIVER L'ACCÈS</button>
-    </div>
-
-    <button onclick="window.location.href='https://wa.me/24176367382'" style="background:#25D366; color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width: 20px; filter: brightness(0) invert(1);">
-        Envoyer mon reçu
-    </button>
-</div>
-        <div id="payment-section" style="display:none; margin-top: 25px; padding: 20px; border: 2px solid #f1c40f; border-radius: 20px; background: #fffdf0; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-            
-            <div style="text-align: center; margin-bottom: 15px;">
-                <h3 style="color: #d35400; font-size: 22px; margin-bottom: 5px;">🚀 Deviens un Expert VIP !</h3>
-                <p style="font-style: italic; color: #7f8c8d; font-size: 0.9em;">"Celui qui connaît son pays n'est jamais un étranger chez lui."</p>."</p>
+            <div class="payment-card">
+                <div class="payment-row">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Airtel_logo.svg" width="35">
+                    <div class="payment-info">
+                        <small style="color: #e11900;">Airtel Money</small>
+                        <b>076 36 73 82</b>
+                    </div>
+                </div>
+                <div class="payment-row">
+                    <img src="https://upload.wikimedia.org/wikipedia/fr/4/4b/Moov_Africa_Logo.png" width="35">
+                    <div class="payment-info">
+                        <small style="color: #005696;">Moov Money</small>
+                        <b>062 82 66 68</b>
+                    </div>
+                </div>
+                <div class="owner-name">👤 Titulaire : OLASSI LEKABI BRULLICE</div>
             </div>
 
-            <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid #FCD116;">
-                <p style="margin: 5px 0;">✅ <b>Questions Exclusives :</b> Les secrets du Gabon, ici tu trouves tout ce que tu ne connais pas.</p>
-                <p style="margin: 5px 0;">✅ <b>Apprends :</b> Explications après chaque réponse.</p>
-                <p style="margin: 5px 0;">✅ <b>Soutien :</b> Aide le premier quiz 100% Gabonais à percer !</p>
+            <div class="vip-perks">
+                <p>✅ <b>Questions Exclusives :</b> Les secrets du Gabon que vous ignorez.</p>
+                <p>✅ <b>Apprends :</b> Explications détaillées après chaque réponse.</p>
+                <p>✅ <b>Soutien :</b> Aide le premier quiz 100% Gabonais !</p>
             </div>
 
-            <p style="text-align: center; font-weight: bold; color: #3A75C4;">Accès complet pour 500 FCFA</p>
-            
-            <div style="text-align: left; background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ddd;">
-                <p style="margin: 5px 0; font-size: 1.1em;">🔴 <b>Airtel Money :</b> 076 36 73 82</p>
-                <p style="margin: 5px 0; font-size: 1.1em;">🔵 <b>Moov Money :</b> 062 82 66 68</p>
-                 <p style="margin: 5px 0; font-size: 1.1em;">👤 <b>Nom :</b> OLASSI LEKABI BRULLICE</p>
+            <div class="code-box">
+                <p>Tu as reçu ton code par WhatsApp ?</p>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="vip-code-input" placeholder="Code ici...">
+                    <button onclick="checkVipCode()" class="ok-btn">OK</button>
                 </div>
             </div>
 
-            <div style="margin-bottom: 20px; padding: 15px; background: #fff; border: 2px dashed #3A75C4; border-radius: 12px;">
-                <p style="margin-bottom: 8px; font-weight: bold; text-align: center;">Tu as reçu ton code par WhatsApp ?</p>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="vip-code-input" placeholder="Code ici..." style="flex: 2; padding: 12px; border-radius: 8px; border: 1px solid #ccc;">
-                    <button onclick="checkVipCode()" style="flex: 1; background: #3A75C4; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">OK</button>
-                </div>
-            </div>
-
-            <button onclick="window.location.href='https://wa.me/24176367382?text=Salut! Je viens de payer 500F pour le mode VIP 🇬🇦'" 
-                    style="background:#25D366; color:white; width:100%; padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 16px;">
-                📩 Envoyer mon reçu (WhatsApp)
+            <button onclick="window.location.href='https://wa.me/24176367382?text=Salut! Je viens de payer 500F pour le mode VIP 🇬🇦'" class="wa-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="22">
+                ENVOYER MON REÇU
             </button>
 
-            <button onclick="quitGame()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline; width:100%;">Retour au menu</button>
+            <button onclick="quitGame()" class="back-link">Retour au menu</button>
         </div>
 
         <div id="quiz-screen" style="display:none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span id="score-display" style="font-weight:bold; color: #3A75C4; font-size: 1.2em;">Score: 0</span>
+            <div class="quiz-header">
+                <span id="score-display">Score: 0</span>
                 <button onclick="quitGame()" class="quit-btn">✖ Quitter</button>
             </div>
-            
-            <h2 id="question-text" style="font-size: 1.3em; line-height: 1.4; min-height: 60px;">Chargement...</h2>
-            
+            <h2 id="question-text">Chargement...</h2>
             <div id="options-container"></div>
             
-            <div id="feedback-area" style="display:none; margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 10px; border-left: 5px solid #3A75C4;">
-                <p id="explanation-text" style="margin-bottom: 15px;"></p>
-                <button onclick="nextQuestion()" style="width:100%; padding:15px; background:#009E60; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; font-size: 16px;">Continuer</button>
+            <div id="feedback-area" style="display:none;">
+                <p id="explanation-text"></p>
+                <button onclick="nextQuestion()" class="continue-btn">CONTINUER</button>
             </div>
         </div>
-
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
