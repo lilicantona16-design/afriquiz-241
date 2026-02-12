@@ -1,6 +1,6 @@
 // CONFIGURATION SUPABASE
 const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const KEY = 'eyJsb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio';
+const KEY = 'sb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio';
 const _supabase = supabase.createClient(URL, KEY);
 
 let allQuestions = [];
