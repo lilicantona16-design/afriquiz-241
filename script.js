@@ -132,4 +132,10 @@ function showInstallGuide() {
 
 function closeInstallGuide() {
     document.getElementById('install-guide').style.display = 'none';
+}function showHowToPlay() {
+    document.getElementById('how-to-play-modal').style.display = 'flex';
+}
+
+function closeHowToPlay() {
+    document.getElementById('how-to-play-modal').style.display = 'none';
 }
