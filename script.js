@@ -1,4 +1,4 @@
-// 1. Configuration & Initialisation
+// 1. Initialisation propre
 const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
