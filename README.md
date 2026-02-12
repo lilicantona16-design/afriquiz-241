@@ -1,2 +1,0 @@
-# AFRIQUIZ-241
-Application Quiz spéciale Gabon
