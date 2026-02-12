@@ -1,11 +1,13 @@
-const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
-const _supabase = supabase.createClient(URL, KEY);
-
+// METTRE CECI TOUT EN HAUT DU FICHIER SCRIPT.JS
 let allQuestions = [];
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
+const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
+const _supabase = supabase.createClient(URL, KEY);
+
+
 
 async function loadData() {
     try {
