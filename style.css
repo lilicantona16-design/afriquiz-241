@@ -71,3 +71,50 @@ h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
     background: rgba(252, 209, 22, 0.2) !important;
     border-color: #FCD116 !important;
 }
+/* --- STYLE CHIC POUR LES MESSAGES ET FENÊTRES --- */
+
+/* Animation pour faire apparaître les messages en douceur */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Si tu utilises des fenêtres (modals) pour Comment jouer / Installer */
+.modal-content {
+    background: rgba(25, 25, 25, 0.95) !important;
+    border: 2px solid #FCD116 !important; /* Bordure Or Gabon */
+    border-radius: 25px !important;
+    color: white !important;
+    padding: 30px !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
+    animation: fadeIn 0.4s ease-out;
+    text-align: center;
+}
+
+/* Style des titres dans ces fenêtres */
+.modal-content h3 {
+    color: #FCD116 !important;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Style du texte explicatif */
+.modal-content p {
+    line-height: 1.6;
+    font-size: 1.1em;
+    color: #eeeeee;
+}
+
+/* Style du bouton "D'ACCORD" dans ces fenêtres */
+.modal-content button {
+    background: #009E60 !important; /* Vert Gabon */
+    color: white !important;
+    border: none !important;
+    padding: 12px 30px !important;
+    border-radius: 10px !important;
+    margin-top: 20px !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
