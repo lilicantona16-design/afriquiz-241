@@ -37,3 +37,15 @@ h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
 #study-list { max-height: 350px; overflow-y: auto; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; }
 #timer-text { font-size: 1.8em; color: #FCD116; font-weight: bold; margin: 10px 0; }
 #feedback-area { background: white; color: black; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: left; }
+/* Couleur Vert WhatsApp */
+.wa-btn {
+    background-color: #25D366 !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+/* Petit effet quand on clique dessus */
+.wa-btn:active {
+    background-color: #128C7E !important;
+    transform: scale(0.98);
+}
