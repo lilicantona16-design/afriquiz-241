@@ -8,55 +8,55 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <div id="home-screen" class="screen active">
-            <header>
-                <h1>🇬🇦 GABON QUIZ VIP</h1>
-                <p>Le quiz 100% Culture Gabonaise</p>
-            </header>
+    <div id="game-container">
+        <div id="home-screen" class="active">
+            <h1>🇬🇦 GABON QUIZ VIP</h1>
             
-            <div class="quiz-grid">
-                <div class="card" onclick="startQuiz('Provinces')">
-                    <div class="card-icon">🇬🇦</div>
-                    <h3>Gabon Master</h3>
+            <div class="menu-grid">
+                <button onclick="startQuiz('Provinces')">🇬🇦 Gabon Master</button>
+                <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
+                <button onclick="startQuiz('Monde')">🌐 Monde</button>
+                <button onclick="showPayment()" class="vip-btn" style="background: linear-gradient(to right, #f1c40f, #f39c12); color: white; border: 2px solid #e67e22; font-weight: bold;">💎 ACCÈS VIP (500 FCFA)</button>
+            </div>
+
+            <div id="payment-section" style="display:none; margin-top: 25px; padding: 15px; border: 2px solid #f1c40f; border-radius: 15px; background: #fffdf0;">
+                <h3 style="color: #d35400; margin-top: 0;">Activer le mode VIP</h3>
+                <p>Envoyez <b>500 FCFA</b> aux numéros ci-dessous :</p>
+                
+                <div style="text-align: left; background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #eee;">
+                    <p style="margin: 5px 0;">🔴 <b>Airtel Money :</b> 076 36 73 82</p>
+                    <p style="margin: 5px 0;">🔵 <b>Moov Money :</b> 062 82 66 68</p>
+                    <p style="margin: 5px 0;">👤 <b>Nom :</b> [OLASSI LEKABI BRULLICE]</p>
                 </div>
-                <div class="card" onclick="startQuiz('Afrique')">
-                    <div class="card-icon">🌍</div>
-                    <h3>Afrique</h3>
+
+                <div style="margin-bottom: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px;">
+                    <p style="margin-bottom: 5px; font-weight: bold;">Tu as déjà ton code ?</p>
+                    <input type="text" id="vip-code-input" placeholder="Entrez le code ici" style="width: 70%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                    <button onclick="checkVipCode()" style="padding: 10px; background: #3A75C4; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
                 </div>
-                <div class="card" onclick="startQuiz('Monde')">
-                    <div class="card-icon">🌐</div>
-                    <h3>Monde</h3>
-                </div>
-                <div class="card" onclick="startQuiz('VIP')">
-                    <div class="card-icon">💎</div>
-                    <h3>Mode VIP</h3>
-                </div>
+
+                <p style="font-size: 0.8em;">Envoyez votre reçu pour recevoir le code :</p>
+                <button onclick="window.location.href='https://wa.me/24176367382?text=J\'ai payé les 500F pour le Quiz Gabon'" 
+                        style="background:#25D366; color:white; width:100%; padding:15px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">
+                    Envoyer le reçu sur WhatsApp
+                </button>
+                <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline;">Fermer</button>
             </div>
         </div>
 
-        <div id="quiz-screen" class="screen">
+        <div id="quiz-screen" style="display:none;">
             <div class="quiz-header">
-                <span id="score-label">Score: 0</span>
+                <span id="score-display">Score: 0</span>
             </div>
-            <div id="question-container">
-                <h2 id="question-text">Chargement de la question...</h2>
-                <div id="options-container" class="options-grid"></div>
-            </div>
-            <div id="explanation-box" class="hidden">
+            <h2 id="question-text">Chargement...</h2>
+            <div id="options-container"></div>
+            <div id="feedback-area" style="display:none; margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 10px;">
                 <p id="explanation-text"></p>
-                <button onclick="nextQuestion()" class="next-btn">Continuer</button>
-            </div>
-        </div>
-
-        <div id="result-screen" class="screen">
-            <div class="result-card">
-                <h2>Terminé !</h2>
-                <p id="final-score">Score: 0/10</p>
-                <button onclick="location.reload()" class="retry-btn">Retour au Menu</button>
+                <button onclick="nextQuestion()" class="next-btn" style="background:#009E60; color:white; width:100%; padding:12px; border:none; border-radius:8px; cursor:pointer;">Continuer</button>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
