@@ -127,3 +127,27 @@ function showInstallGuide() { alert("Cliquez sur les 3 points (menu) du navigate
 function showHowToPlay() { alert("15 secondes par question. Tu as 3 vies ❤️. Le niveau 2 est payant !"); }
 
 loadData();
+// Remplace les alertes grises par des messages chics
+window.showHowToPlay = function() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; animation: fadeIn 0.3s;";
+    modal.innerHTML = `
+        <div class="modal-content" style="background:#1a1a1a; border:2px solid #FCD116; padding:30px; border-radius:25px; width:80%; max-width:350px; text-align:center;">
+            <h3 style="color:#FCD116; margin-top:0;">❓ COMMENT JOUER</h3>
+            <p style="color:white; line-height:1.5;">Répondez aux questions avant la fin du chrono ⏱️. Vous avez 3 vies ❤️. Le niveau 2 est réservé aux membres VIP !</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#009E60; color:white; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">J'AI COMPRIS</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
+
+window.showInstallGuide = function() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; animation: fadeIn 0.3s;";
+    modal.innerHTML = `
+        <div class="modal-content" style="background:#1a1a1a; border:2px solid #3A75C4; padding:30px; border-radius:25px; width:80%; max-width:350px; text-align:center;">
+            <h3 style="color:#3A75C4; margin-top:0;">📲 INSTALLATION</h3>
+            <p style="color:white; line-height:1.5;">Pour avoir l'icône sur ton écran :<br><br>1. Clique sur les <b>3 points</b> en haut à droite.<br>2. Choisis <b>'Ajouter à l'écran d'accueil'</b>.</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#3A75C4; color:white; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">FERMER</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
