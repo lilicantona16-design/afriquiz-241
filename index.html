@@ -128,3 +128,18 @@
         <button onclick="submitReview()" style="width:100%; background:#FCD116; color:black; border:none; padding:15px; border-radius:10px; font-weight:bold;">ENVOYER MON AVIS</button>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) {
+            const btnQuitter = document.createElement('button');
+            btnQuitter.innerHTML = "✖ Quitter";
+            // Style direct pour ne pas compliquer le CSS
+            btnQuitter.style = "position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.1); color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer; z-index:10001;";
+            btnQuitter.onclick = function() {
+                loginScreen.style.display = 'none';
+            };
+            loginScreen.appendChild(btnQuitter);
+        }
+    });
+</script>
