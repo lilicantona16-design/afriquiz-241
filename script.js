@@ -78,7 +78,7 @@ function updateHearts() {
 
 function startTimer() {
     clearInterval(timer);
-    timeLeft = 15;
+    timeLeft = 25;
     timer = setInterval(() => {
         timeLeft--;
         const timerText = document.getElementById('timer-text'); // Ajoute <p id="timer-text"></p> dans HTML
