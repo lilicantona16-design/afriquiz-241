@@ -72,3 +72,25 @@
     <script src="script.js"></script>
 </body>
 </html>
+<script>
+    // Ce petit script va ajouter le bouton Manuel dynamiquement à la fin de ton menu
+    document.addEventListener("DOMContentLoaded", function() {
+        const actionGrid = document.querySelector('.action-grid');
+        if (actionGrid) {
+            const btnManuel = document.createElement('button');
+            btnManuel.onclick = showManualInfo;
+            btnManuel.className = "action-btn-small";
+            btnManuel.style = "grid-column: span 2; margin-top: 10px; border-color: #FCD116 !important; color: #FCD116 !important;";
+            btnManuel.innerHTML = "📖 Pourquoi utiliser le Manuel ?";
+            actionGrid.appendChild(btnManuel);
+        }
+    });
+</script>
+
+<style>
+    /* Correction rapide pour l'espacement des boutons du bas */
+    .action-grid {
+        margin-top: 20px;
+        padding-bottom: 20px;
+    }
+</style>

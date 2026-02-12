@@ -151,3 +151,56 @@ window.showInstallGuide = function() {
         </div>`;
     document.body.appendChild(modal);
 }
+/* --- BLOC FINAL LOGIQUE CHIC (Android, iOS, Manuel) --- */
+
+// Guide d'installation complet
+window.showInstallGuide = function() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; animation: fadeIn 0.3s;";
+    modal.innerHTML = `
+        <div class="modal-content" style="width:85%; max-width:380px; text-align:center;">
+            <h3 style="color:#3A75C4; margin-top:0;">📲 INSTALLATION</h3>
+            <div style="text-align:left; color:white; font-size:0.9em;">
+                <p><b>🤖 Sur ANDROID (Chrome) :</b><br>
+                1. Clique sur les <b>3 points</b> en haut à droite.<br>
+                2. Appuie sur <b>'Installer l'application'</b>.</p>
+                <p><b>🍎 Sur iPHONE (Safari) :</b><br>
+                1. Clique sur l'icône <b>Partager</b> (carré avec flèche).<br>
+                2. Descends et clique sur <b>'Sur l'écran d'accueil'</b>.</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#3A75C4; color:white; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%; margin-top:10px;">D'ACCORD</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
+
+// Explication du Manuel
+window.showManualInfo = function() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; animation: fadeIn 0.3s;";
+    modal.innerHTML = `
+        <div class="modal-content" style="width:85%; max-width:380px; text-align:center;">
+            <h3 style="color:#FCD116; margin-top:0;">📖 LE MANUEL VIP</h3>
+            <p style="color:white; line-height:1.5; text-align:left; font-size:0.95em;">
+                Le manuel est ton guide stratégique :<br><br>
+                ✅ <b>Plus de 80 réponses</b> pour gagner à coup sûr.<br>
+                ✅ <b>Culture Générale</b> sur les 9 provinces.<br>
+                ✅ <b>Le pass idéal</b> pour briller en famille.<br><br>
+                <i>Deviens un Expert du Gabon !</i>
+            </p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#FCD116; color:black; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">GÉNIAL !</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
+
+// Comment jouer
+window.showHowToPlay = function() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; animation: fadeIn 0.3s;";
+    modal.innerHTML = `
+        <div class="modal-content" style="width:85%; max-width:350px; text-align:center;">
+            <h3 style="color:#009E60; margin-top:0;">🎮 RÈGLES DU JEU</h3>
+            <p style="color:white; line-height:1.5;">Chaque question a un chrono de ⏱️ 15s. Tu as 3 vies ❤️. Le niveau Gratuit s'arrête à 10 questions. Prends ton accès VIP pour tout débloquer !</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#009E60; color:white; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">C'EST PARTI</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
