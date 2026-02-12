@@ -49,3 +49,25 @@ h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
     background-color: #128C7E !important;
     transform: scale(0.98);
 }
+/* --- DERNIERS AJOUTS --- */
+
+/* Pour afficher le prix de 500F en haut de l'accès privilège */
+#shop-screen h2::after {
+    content: " (500F)";
+    color: #FCD116;
+}
+
+/* Rendre les boutons "Installer" et "Comment jouer" élégants */
+.action-btn-small {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(5px);
+    border-radius: 12px !important;
+    transition: all 0.3s ease;
+}
+
+/* Effet quand on appuie sur ces boutons */
+.action-btn-small:active {
+    background: rgba(252, 209, 22, 0.2) !important;
+    border-color: #FCD116 !important;
+}
