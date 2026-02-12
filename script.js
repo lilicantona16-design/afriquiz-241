@@ -73,20 +73,38 @@ function showQuestion() {
             btn.innerText = opt;
             btn.className = 'option-btn';
             btn.onclick = () => {
-                const allBtns = container.querySelectorAll('button');
-                allBtns.forEach(b => b.disabled = true);
-                if (opt === q.correct_answer) {
-                    score++;
-                    btn.classList.add('correct');
-                } else {
-                    btn.classList.add('wrong');
-                }
-                document.getElementById('explanation-text').innerHTML = `<b>Réponse: ${q.correct_answer}</b><br><br>${q.explanation || ""}`;
-                document.getElementById('feedback-area').style.display = 'block';
-            };
-            container.appendChild(btn);
-        }
-    });
+    const allBtns = container.querySelectorAll('button');
+    allBtns.forEach(b => b.disabled = true); // On bloque les autres clics
+
+    if (opt === q.correct_answer) {
+        score++;
+        btn.style.background = "#009E60"; // Vert si c'est juste
+    } else {
+        btn.style.background = "#ff4444"; // Rouge si c'est faux
+        
+        // ASTUCE : On cherche le bouton qui avait la bonne réponse pour l'afficher en vert
+        const buttons = container.querySelectorAll('button');
+        buttons.forEach(b => {
+            if(b.innerText === q.correct_answer) {
+                b.style.background = "#009E60"; // On montre la vérité en vert
+                b.style.color = "white";
+            }
+        });
+    }
+
+    // On affiche l'explication (Feedback)
+    document.getElementById('explanation-text').innerHTML = `
+        <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+            <strong style="color:${opt === q.correct_answer ? '#009E60' : '#ff4444'}">
+                ${opt === q.correct_answer ? '✅ Bravo !' : '❌ Dommage !'}
+            </strong><br>
+            <b>La réponse était : ${q.correct_answer}</b><br><br>
+            <i>${q.explanation || "Apprends-en plus en passant VIP !"}</i>
+        </div>
+    `;
+    document.getElementById('feedback-area').style.display = 'block';
+};
+
 }
 
 function nextQuestion() {
