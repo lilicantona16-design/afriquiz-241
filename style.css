@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
 
 body {
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('https://images.unsplash.com/photo-1549141075-80252668573c?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop') no-repeat center center fixed;
     background-size: cover;
     font-family: 'Poppins', sans-serif;
     margin: 0; color: white; display: flex; justify-content: center; min-height: 100vh;
@@ -13,26 +13,29 @@ body {
     padding: 25px; margin: 20px 0; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
 }
 
-h1 { font-size: 2.5em; font-weight: 900; line-height: 1.1; }
+h1 { font-size: 2.5em; font-weight: 900; line-height: 1.1; margin-bottom: 10px; }
 .title-g { color: #009E60; } .title-a { color: #FCD116; } .title-b { color: #3A75C4; }
 
 .menu-grid button { width: 100%; padding: 18px; margin-bottom: 12px; border: none; border-radius: 15px; background: white; color: #1a1a1a; font-weight: 700; cursor: pointer; }
-.vip-btn { background: linear-gradient(135deg, #FCD116, #FF9900) !important; }
+.vip-btn { background: linear-gradient(135deg, #FCD116, #FF9900) !important; color: black !important; }
 
 .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.action-btn-small { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+.action-btn-small { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.8em; }
 
 .vip-details-box { background: white; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 5px solid #FCD116; }
-.payment-card-simple { background: #f1f1f1; color: #1a1a1a; padding: 10px; border-radius: 15px; margin-bottom: 15px; }
+.payment-card-simple { background: #f1f1f1; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
 
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.modal-content { background: white; color: #1a1a1a; padding: 25px; border-radius: 20px; width: 80%; max-width: 350px; }
+.modal-content { background: white; color: #1a1a1a; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; }
 
-.option-btn { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; text-align: left; cursor: pointer; }
+.option-btn { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; text-align: left; cursor: pointer; font-size: 1em; }
 #feedback-area { background: white; color: #1a1a1a; padding: 15px; border-radius: 15px; margin-top: 20px; text-align: left; }
-.continue-btn { width: 100%; padding: 15px; background: #009E60; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.continue-btn { width: 100%; padding: 15px; background: #009E60; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
 .wa-btn { background: #25D366; color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
 .back-link { background: none; border: none; color: white; text-decoration: underline; margin-top: 15px; cursor: pointer; }
-.ok-btn { background: #3A75C4; color: white; border: none; border-radius: 10px; padding: 0 15px; font-weight: bold; }
-input { flex: 2; padding: 12px; border-radius: 10px; border: none; }
+.ok-btn { background: #3A75C4; color: white; border: none; border-radius: 10px; padding: 0 20px; font-weight: bold; }
+input { flex: 2; padding: 12px; border-radius: 10px; border: none; font-size: 16px; }
+.step { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-align: left; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.quit-btn { background: #ff4444; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }

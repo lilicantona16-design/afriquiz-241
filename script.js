@@ -12,8 +12,8 @@ async function loadData() {
         const { data, error } = await _supabase.from('questions').select('*');
         if (error) throw error;
         allQuestions = data;
-        console.log("✅ Questions prêtes");
-    } catch (e) { console.error(e.message); }
+        console.log("✅ Données prêtes");
+    } catch (e) { console.error("Erreur Supabase:", e.message); }
 }
 
 function showPayment() {
@@ -21,11 +21,13 @@ function showPayment() {
     document.getElementById('payment-section').style.display = 'block';
 }
 
-function quitGame() { location.reload(); }
+function quitGame() { 
+    if(confirm("Retourner au menu ?")) location.reload(); 
+}
 
 function startQuiz(category) {
     currentQuestions = allQuestions.filter(q => q.category && q.category.trim().toLowerCase() === category.toLowerCase());
-    if (currentQuestions.length === 0) { alert("Bientôt disponible !"); return; }
+    if (currentQuestions.length === 0) { alert("Arrive bientôt !"); return; }
     currentQuestions.sort(() => 0.5 - Math.random());
     currentIndex = 0; score = 0;
     document.getElementById('home-screen').style.display = 'none';
@@ -61,22 +63,29 @@ function showQuestion() {
 function nextQuestion() {
     currentIndex++;
     if (currentIndex < currentQuestions.length) { showQuestion(); } 
-    else { alert("Terminé ! Score: " + score); location.reload(); }
+    else { alert("Bravo ! Score final : " + score + "/" + currentQuestions.length); location.reload(); }
 }
 
 function shareGame() {
-    const text = "Découvre Gabon Quiz VIP ! 🇬🇦 : https://afrizquiz-241.vercel.app";
-    if (navigator.share) { navigator.share({ title: 'Gabon Quiz', text: text, url: window.location.href }); } 
-    else { window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
+    const text = "Viens tester tes connaissances sur le Gabon 🇬🇦 ! Joue ici : https://afrizquiz-241.vercel.app";
+    if (navigator.share) { 
+        navigator.share({ title: 'Gabon Quiz VIP', text: text, url: window.location.href }); 
+    } else { 
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); 
+    }
 }
 
 function showInstallGuide() { document.getElementById('install-guide').style.display = 'flex'; }
 function closeInstallGuide() { document.getElementById('install-guide').style.display = 'none'; }
 function showHowToPlay() { document.getElementById('how-to-play-modal').style.display = 'flex'; }
 function closeHowToPlay() { document.getElementById('how-to-play-modal').style.display = 'none'; }
+
 function checkVipCode() {
-    if (document.getElementById('vip-code-input').value.trim() === "GABON2024") { startQuiz('VIP'); } 
-    else { alert("Code incorrect"); }
+    const code = document.getElementById('vip-code-input').value.trim();
+    if (code === "GABON2024") { 
+        alert("✅ Code correct ! Bienvenue VIP.");
+        startQuiz('VIP'); 
+    } else { alert("❌ Code invalide."); }
 }
 
 loadData();
