@@ -12,7 +12,7 @@ const backupQuestions = [
 
 // 3. CONFIGURATION SUPABASE (Vérifie bien qu'il n'y a pas d'espace avant https)
 const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkzMTk3OTcsImV4cCI6MjAyNDg5NTc5N30.8V_X6Z_f7O8R-L5R6X_R-L5R6X_R-L5R6X_R-L5R6X_R';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
 
 let _supabase;
 try {
