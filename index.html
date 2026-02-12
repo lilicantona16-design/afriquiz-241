@@ -9,7 +9,8 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="home-screen" class="active">
+        
+        <div id="home-screen">
             <h1>🇬🇦 GABON QUIZ VIP</h1>
             
             <div class="menu-grid">
@@ -19,28 +20,41 @@
                 <button onclick="showPayment()" class="vip-btn" style="background: linear-gradient(to right, #f1c40f, #f39c12); color: white; border: 2px solid #e67e22; font-weight: bold;">💎 ACCÈS VIP (500 FCFA)</button>
             </div>
 
-            <div id="payment-section" style="display:none; margin-top: 25px; padding: 15px; border: 2px solid #f1c40f; border-radius: 15px; background: #fffdf0;">
-                <h3 style="color: #d35400; margin-top: 0;">Activer le mode VIP</h3>
-                <p>Envoyez <b>500 FCFA</b> aux numéros ci-dessous :</p>
+            <div id="payment-section" style="display:none; margin-top: 25px; padding: 20px; border: 2px solid #f1c40f; border-radius: 20px; background: #fffdf0; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
                 
-                <div style="text-align: left; background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #eee;">
-                    <p style="margin: 5px 0;">🔴 <b>Airtel Money :</b> 076 36 73 82</p>
-                    <p style="margin: 5px 0;">🔵 <b>Moov Money :</b> 062 82 66 68</p>
-                    <p style="margin: 5px 0;">👤 <b>Nom :</b> [OLASSI LEKABI BRULLICE]</p>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <h3 style="color: #d35400; font-size: 22px; margin-bottom: 5px;">🚀 Deviens un Expert VIP !</h3>
+                    <p style="font-style: italic; color: #7f8c8d; font-size: 0.9em;">"Celui qui connaît son pays n'est jamais un étranger chez lui."</p>
                 </div>
 
-                <div style="margin-bottom: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px;">
-                    <p style="margin-bottom: 5px; font-weight: bold;">Tu as déjà ton code ?</p>
-                    <input type="text" id="vip-code-input" placeholder="Entrez le code ici" style="width: 70%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                    <button onclick="checkVipCode()" style="padding: 10px; background: #3A75C4; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+                <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid #FCD116;">
+                    <p style="margin: 5px 0;">✅ <b>Questions Exclusives :</b> Les secrets du Gabon.</p>
+                    <p style="margin: 5px 0;">✅ <b>Apprends :</b> Explications après chaque réponse.</p>
+                    <p style="margin: 5px 0;">✅ <b>Soutien :</b> Aide le premier quiz 100% Gabonais !</p>
                 </div>
 
-                <p style="font-size: 0.8em;">Envoyez votre reçu pour recevoir le code :</p>
-                <button onclick="window.location.href='https://wa.me/24176367382?text=J\'ai payé les 500F pour le Quiz Gabon'" 
-                        style="background:#25D366; color:white; width:100%; padding:15px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">
-                    Envoyer le reçu sur WhatsApp
+                <p style="text-align: center; font-weight: bold; color: #3A75C4;">Accès complet pour 500 FCFA</p>
+                
+                <div style="text-align: left; background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ddd;">
+                    <p style="margin: 5px 0; font-size: 1.1em;">🔴 <b>Airtel Money :</b> 077 XX XX XX</p>
+                    <p style="margin: 5px 0; font-size: 1.1em;">🔵 <b>Moov Money :</b> 066 XX XX XX</p>
+                    <p style="margin: 5px 0; font-size: 1.1em;">👤 <b>Nom :</b> TON NOM ICI</p>
+                </div>
+
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff; border: 2px dashed #3A75C4; border-radius: 12px;">
+                    <p style="margin-bottom: 8px; font-weight: bold; text-align: center;">Tu as reçu ton code par WhatsApp ?</p>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="vip-code-input" placeholder="Code ici..." style="flex: 2; padding: 12px; border-radius: 8px; border: 1px solid #ccc;">
+                        <button onclick="checkVipCode()" style="flex: 1; background: #3A75C4; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">OK</button>
+                    </div>
+                </div>
+
+                <button onclick="window.location.href='https://wa.me/241077XXXXXX?text=Salut! Je veux devenir un Expert VIP 🇬🇦'" 
+                        style="background:#25D366; color:white; width:100%; padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 16px;">
+                    📩 Envoyer mon reçu (WhatsApp)
                 </button>
-                <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline;">Fermer</button>
+
+                <button onclick="document.getElementById('payment-section').style.display='none'" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline; width:100%;">Fermer la fenêtre</button>
             </div>
         </div>
 
@@ -48,7 +62,7 @@
             <div class="quiz-header">
                 <span id="score-display">Score: 0</span>
             </div>
-            <h2 id="question-text">Chargement...</h2>
+            <h2 id="question-text">Chargement des questions...</h2>
             <div id="options-container"></div>
             <div id="feedback-area" style="display:none; margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 10px;">
                 <p id="explanation-text"></p>

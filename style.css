@@ -1,19 +1,17 @@
-/* Couleurs Officielles Gabon */
+/* Couleurs du Gabon */
 :root {
-    --gabon-green: #009E60;
-    --gabon-yellow: #FCD116;
-    --gabon-blue: #3A75C4;
-    --dark: #2c3e50;
-    --light: #f4f7f6;
+    --vert: #009E60;
+    --jaune: #FCD116;
+    --bleu: #3A75C4;
+    --fond: #f8f9fa;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--light);
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--fond);
     margin: 0;
     display: flex;
     justify-content: center;
-    color: var(--dark);
 }
 
 #game-container {
@@ -23,111 +21,72 @@ body {
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 h1 {
     text-align: center;
-    color: var(--gabon-green);
-    font-size: 28px;
-    margin-top: 30px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    color: var(--vert);
+    font-size: 26px;
+    margin-bottom: 30px;
 }
 
-/* Grille du Menu */
+/* Boutons du menu */
 .menu-grid {
     display: grid;
-    grid-template-columns: 1fr;
     gap: 15px;
-    margin-top: 40px;
-}
-
-button {
-    transition: all 0.3s ease;
-    font-size: 16px;
-    border-radius: 12px;
 }
 
 .menu-grid button {
-    padding: 20px;
+    padding: 18px;
     border: none;
+    border-radius: 15px;
     background: white;
-    color: var(--dark);
-    font-weight: 600;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border-bottom: 4px solid var(--gabon-blue);
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 4px solid var(--bleu);
     cursor: pointer;
 }
 
-.menu-grid button:hover {
-    transform: translateY(-3px);
-    background: #fdfdfd;
-}
-
-/* Animation spéciale pour le bouton VIP */
+/* Bouton VIP Animé */
 .vip-btn {
     animation: pulse 2s infinite;
-    border-bottom: 4px solid #e67e22 !important;
 }
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.02); box-shadow: 0 0 15px rgba(241, 196, 15, 0.5); }
+    50% { transform: scale(1.03); }
     100% { transform: scale(1); }
 }
 
-/* Styles du Quiz */
-.quiz-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: var(--gabon-blue);
-}
-
-#question-text {
-    font-size: 20px;
-    margin-bottom: 25px;
-    line-height: 1.4;
-}
-
+/* Écran Quiz */
 .option-btn {
-    background: white;
-    border: 2px solid #eee;
-    padding: 15px;
-    margin-bottom: 12px;
     width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #eee;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
     text-align: left;
     font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
 }
 
-.option-btn:active {
-    background: #f0f0f0;
+.next-btn {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Section Paiement */
 #payment-section {
-    animation: slideUp 0.5s ease-out;
+    border: 2px solid var(--jaune) !important;
 }
 
-@keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-input[type="text"] {
-    font-size: 16px;
+input#vip-code-input {
+    border: 1px solid #ddd;
     outline: none;
 }
 
-input[type="text"]:focus {
-    border-color: var(--gabon-blue);
-}
-
-/* Responsive pour petits téléphones */
-@media (max-width: 380px) {
-    h1 { font-size: 22px; }
-    .menu-grid button { padding: 15px; }
+input#vip-code-input:focus {
+    border-color: var(--bleu);
 }

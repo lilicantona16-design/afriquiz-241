@@ -1,6 +1,6 @@
 // CONFIGURATION SUPABASE
 const URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkzMTk3OTcsImV4cCI6MjAyNDg5NTc5N30.8V_X6Z_f7O8R-L5R6X_R-L5R6X_R-L5R6X_R-L5R6X_R';
+const KEY = 'eyJsb_publishable_30ieuDVyx_XK30YyvrIFCA_w244ofio';
 const _supabase = supabase.createClient(URL, KEY);
 
 let allQuestions = [];
@@ -8,44 +8,48 @@ let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
 
-// Charger les questions au démarrage
+// Charger les données dès l'ouverture
 async function loadData() {
     const { data, error } = await _supabase.from('questions').select('*');
-    if (error) console.error("Erreur Supabase:", error);
-    else allQuestions = data;
+    if (error) {
+        console.error("Erreur de chargement:", error);
+    } else {
+        allQuestions = data;
+        console.log("Questions prêtes !");
+    }
 }
 
-// Afficher la section de paiement
+// Afficher la section VIP/Paiement
 function showPayment() {
     document.getElementById('payment-section').style.display = 'block';
     document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Vérifier le code VIP
+// Vérifier le code secret
 function checkVipCode() {
     const codeSaisi = document.getElementById('vip-code-input').value;
-    const codeCorrect = "GABON2024"; // CHANGE TON CODE ICI SI TU VEUX
+    const codeCorrect = "GABON2024"; 
 
-    if (codeSaisi === codeCorrect) {
-        alert("✅ Code correct ! Bienvenue dans le mode VIP.");
+    if (codeSaisi.trim() === codeCorrect) {
+        alert("✅ Code validé ! Bienvenue Expert VIP 🇬🇦");
         startQuiz('VIP');
     } else {
-        alert("❌ Code incorrect. Payez 500F pour recevoir le code.");
+        alert("❌ Code incorrect. Envoie tes 500F pour recevoir le code secret.");
     }
 }
 
-// Lancer le quiz
+// Lancer le Quiz
 function startQuiz(category) {
+    // On filtre les questions par catégorie (sans se soucier des majuscules/espaces)
     currentQuestions = allQuestions.filter(q => 
-        q.category && q.category.trim().toLowerCase() === category.toLowerCase()
+        q.category && q.category.trim().toLowerCase() === category.trim().toLowerCase()
     );
 
     if (currentQuestions.length === 0) {
-        alert("Aucune question trouvée pour " + category);
+        alert("Bientôt disponible ! Teste une autre catégorie.");
         return;
     }
 
-    // Mélanger et prendre 10 questions
     currentQuestions = currentQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
     currentIndex = 0;
     score = 0;
@@ -55,7 +59,6 @@ function startQuiz(category) {
     showQuestion();
 }
 
-// Afficher une question
 function showQuestion() {
     const q = currentQuestions[currentIndex];
     document.getElementById('question-text').innerText = q.question;
@@ -70,24 +73,16 @@ function showQuestion() {
         if (opt) {
             const btn = document.createElement('button');
             btn.innerText = opt;
-            btn.className = 'option-btn'; // Utilise ton style CSS
-            btn.style.display = "block";
-            btn.style.width = "100%";
-            btn.style.margin = "10px 0";
-            btn.style.padding = "12px";
-            btn.style.cursor = "pointer";
-            
+            btn.className = 'option-btn';
             btn.onclick = () => {
                 const allBtns = container.querySelectorAll('button');
-                allBtns.forEach(b => b.disabled = true); // Bloquer les clics
+                allBtns.forEach(b => b.disabled = true);
 
                 if (opt === q.correct_answer) {
                     score++;
                     btn.style.background = "#d4edda";
-                    btn.style.borderColor = "#28a745";
                 } else {
                     btn.style.background = "#f8d7da";
-                    btn.style.borderColor = "#dc3545";
                 }
 
                 document.getElementById('explanation-text').innerHTML = `<b>Réponse: ${q.correct_answer}</b><br>${q.explanation || ""}`;
@@ -98,14 +93,13 @@ function showQuestion() {
     });
 }
 
-// Question suivante
 function nextQuestion() {
     currentIndex++;
     if (currentIndex < currentQuestions.length) {
         showQuestion();
     } else {
-        alert("Quiz terminé ! Score final : " + score + "/" + currentQuestions.length);
-        location.reload(); // Retour à l'accueil
+        alert("Quiz terminé ! Score : " + score + "/10");
+        location.reload();
     }
 }
 
