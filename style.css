@@ -1,37 +1,39 @@
 body {
-    margin: 0; padding: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-    background-size: cover;
-    color: white; text-align: center;
+    margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover; color: white; text-align: center;
+    display: flex; justify-content: center; align-items: center; min-height: 100vh;
 }
 
 #game-container {
-    max-width: 450px; margin: 30px auto;
-    background: rgba(40, 40, 40, 0.9);
-    padding: 25px; border-radius: 30px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-    min-height: 80vh;
+    width: 90%; max-width: 420px; background: rgba(35, 35, 35, 0.92);
+    padding: 30px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
 }
 
-h1 { font-size: 2.5em; margin-bottom: 5px; line-height: 1; }
+h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
 .title-g { color: #009E60; } .title-a { color: #FCD116; } .title-b { color: #3A75C4; }
 
-.menu-grid button, .option-btn, .action-btn-small, .ok-btn, .wa-btn, .continue-btn {
-    width: 100%; padding: 15px; margin: 8px 0;
-    border: none; border-radius: 12px;
-    font-weight: bold; cursor: pointer; transition: 0.3s;
-    font-size: 1em;
+.menu-grid button, .option-btn, .continue-btn, .wa-btn {
+    width: 100%; padding: 16px; margin: 10px 0; border: none;
+    border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 1.05em;
 }
 
-/* Les couleurs de tes captures */
 .menu-grid button { background: white; color: black; }
-.vip-btn { background: #FCD116 !important; color: black !important; }
-.study-btn { background: #333 !important; color: white !important; border: 1px solid white !important; }
-.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.action-btn-small { background: rgba(255,255,255,0.1); color: white; border: 1px solid white; }
-.share-btn { background: #00BFFF !important; box-shadow: 0 0 15px #00BFFF; }
+.vip-btn { background: linear-gradient(45deg, #FCD116, #FF9900) !important; color: black !important; }
+.study-btn { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid white !important; }
 
-.quit-btn { background: #ff4444 !important; color: white; padding: 5px 12px; border-radius: 8px; float: left; }
-.payment-card { background: white; color: black; border-radius: 15px; padding: 15px; margin: 15px 0; }
-.wa-btn { background: #25D366; color: white; }
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.action-btn-small { background: rgba(255,255,255,0.1); color: white; border: 1px solid white; border-radius: 12px; padding: 12px; font-weight: bold; }
+.share-btn { background: #00BFFF !important; border: none !important; box-shadow: 0 0 15px #00BFFF; }
+
+.quit-btn { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 10px; float: left; cursor: pointer; }
+.payment-card { background: white; color: black; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left; }
+.marketing-box { text-align: left; font-size: 0.9em; margin-bottom: 20px; color: #ccc; }
+
+.code-input-group { display: flex; gap: 8px; margin-bottom: 15px; }
+.code-input-group input { flex: 1; padding: 15px; border-radius: 10px; border: none; font-size: 1em; text-align: center; }
+.code-input-group button { background: #3A75C4; color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; }
+
+#study-list { max-height: 350px; overflow-y: auto; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; }
+#timer-text { font-size: 1.8em; color: #FCD116; font-weight: bold; margin: 10px 0; }
+#feedback-area { background: white; color: black; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: left; }

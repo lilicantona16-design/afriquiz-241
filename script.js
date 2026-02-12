@@ -16,12 +16,22 @@ async function loadData() {
         const { data, error } = await _supabase.from('questions').select('*');
         if (error) throw error;
         allQuestions = data;
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Erreur de données", e); }
 }
 
 function showShop() { 
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('shop-screen').style.display = 'block';
+}
+
+function showStudyMode() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('study-screen').style.display = 'block';
+    const list = document.getElementById('study-list');
+    list.innerHTML = allQuestions.slice(0, 85).map(q => `
+        <div style="margin-bottom:12px; border-bottom:1px dotted #666; padding-bottom:5px;">
+            <b>Q: ${q.question}</b><br><span style="color:#FCD116;">R: ${q.correct_answer}</span>
+        </div>`).join('');
 }
 
 function startQuiz(cat) {
@@ -38,9 +48,9 @@ function showQuestion() {
     if (!isVip && currentIndex >= 10) {
         clearInterval(timer);
         document.getElementById('quiz-screen').innerHTML = `
-            <div style="background:white; color:black; padding:20px; border-radius:15px; text-align:center;">
-                <h2 style="color:red;">🔒 NIVEAU 2 BLOQUÉ</h2>
-                <p>Tu as fini les 10 questions gratuites. Paye 300F ou 500F pour voir les 200 autres et avoir ton diplôme !</p>
+            <div style="background:white; color:black; padding:25px; border-radius:20px; text-align:center;">
+                <h2 style="color:#d32f2f;">🔒 NIVEAU 2 BLOQUÉ</h2>
+                <p>Bravo pour ces 10 premières réponses ! Débloque la version complète (300F ou 500F) pour continuer l'aventure.</p>
                 <button onclick="showShop()" class="continue-btn" style="background:#FCD116; color:black;">DÉBLOQUER MAINTENANT</button>
             </div>`;
         return;
@@ -87,7 +97,9 @@ function handleWrong(c, e) {
 
 function showFeedback(isC, c, e) {
     const fb = document.getElementById('feedback-area');
-    document.getElementById('explanation-text').innerHTML = `<b style="color:${isC?'green':'red'}">${isC?'✅ BRAVO':'❌ DOMMAGE'}</b><br>La réponse était : <b>${c}</b><br><i>${e||""}</i>`;
+    document.getElementById('explanation-text').innerHTML = `
+        <b style="color:${isC?'green':'red'}">${isC?'✅ BRAVO':'❌ DOMMAGE'}</b><br>
+        La réponse était : <b>${c}</b><br><i>${e||""}</i>`;
     fb.style.display = 'block';
 }
 
@@ -98,31 +110,20 @@ function updateHeader() {
 
 function nextQuestion() { currentIndex++; showQuestion(); }
 
-function showStudyMode() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('quiz-screen').style.display = 'none';
-    document.getElementById('study-screen').style.display = 'block';
-    const list = document.getElementById('study-list');
-    list.innerHTML = allQuestions.slice(0, 80).map(q => `
-        <div style="margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">
-            <b>Q: ${q.question}</b><br><span style="color:#FCD116;">R: ${q.correct_answer}</span>
-        </div>`).join('');
-}
-
 function checkVipCode() {
     const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    const validCodes = ["GABON2024", "VIP500", "GAB300", "AFR300", "MON300"];
-    if(validCodes.includes(val)) {
-        isVip = true; alert("💎 ACCÈS DÉBLOQUÉ !"); location.reload();
+    const codes = ["GABON2024", "VIP500", "GAB300", "AFR300", "MON300"];
+    if(codes.includes(val)) {
+        isVip = true; alert("💎 ACCÈS DÉBLOQUÉ ! Profite bien."); location.reload();
     } else alert("Code incorrect.");
 }
 
 function shareGame() {
-    const t = "Joue au Gabon Quiz VIP 🇬🇦 ! " + window.location.href;
+    const t = "Deviens un expert du Gabon 🇬🇦 ! Joue ici : " + window.location.href;
     window.open(`https://wa.me/?text=${encodeURIComponent(t)}`);
 }
 
-function showInstallGuide() { alert("Cliquez sur les 3 points du navigateur puis 'Ajouter à l'écran d'accueil'"); }
-function showHowToPlay() { alert("15 secondes par question. 3 vies ❤️. Après 10 questions, il faut débloquer le Niveau 2 !"); }
+function showInstallGuide() { alert("Cliquez sur les 3 points (menu) du navigateur, puis sur 'Ajouter à l'écran d'accueil'."); }
+function showHowToPlay() { alert("15 secondes par question. Tu as 3 vies ❤️. Le niveau 2 est payant !"); }
 
 loadData();

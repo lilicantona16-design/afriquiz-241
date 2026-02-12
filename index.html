@@ -1,52 +1,74 @@
-<div id="game-container">
-    <div id="home-screen">
-        <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
-        <p>🇬🇦 L'aventure commence ici</p>
-        <div class="menu-grid">
-            <button onclick="startQuiz('Provinces')">🌳 Gabon Master</button>
-            <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
-            <button onclick="startQuiz('Monde')">🌐 Monde</button>
-            <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
-            <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE (80+ Rép)</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabon Quiz VIP</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div id="game-container">
+        
+        <div id="home-screen">
+            <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
+            <p>🇬🇦 L'aventure commence ici</p>
+            <div class="menu-grid">
+                <button onclick="startQuiz('Provinces')">🌳 Gabon Master</button>
+                <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
+                <button onclick="startQuiz('Monde')">🌐 Monde</button>
+                <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
+                <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE (80+ Rép)</button>
+            </div>
+            <div class="action-grid">
+                <button onclick="shareGame()" class="action-btn-small share-btn">📢 Partager</button>
+                <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
+                <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2;">❓ Comment jouer ?</button>
+            </div>
         </div>
-        <div class="action-grid">
-            <button onclick="shareGame()" class="action-btn-small share-btn">📢 Partager</button>
-            <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
-            <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2;">❓ Comment jouer ?</button>
-        </div>
-    </div>
 
-    <div id="quiz-screen" style="display:none;">
-        <div style="overflow: hidden; margin-bottom: 10px;">
+        <div id="quiz-screen" style="display:none;">
+            <div class="quiz-header">
+                <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
+                <span id="score-display">Score: 0 | ❤️❤️❤️</span>
+            </div>
+            <p id="timer-text">⏱️ 15s</p>
+            <h2 id="question-text">Chargement...</h2>
+            <div id="options-container"></div>
+            <div id="feedback-area" style="display:none;">
+                <p id="explanation-text"></p>
+                <button onclick="nextQuestion()" class="continue-btn">CONTINUER</button>
+            </div>
+        </div>
+
+        <div id="shop-screen" style="display:none;">
             <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
-            <span id="score-display" style="float: right;">Score: 0 | ❤️❤️❤️</span>
+            <h2 style="color:#FCD116; margin-top:40px;">👑 ACCÈS PRIVILÈGE</h2>
+            <div class="payment-card">
+                <p style="color:#d32f2f;">Airtel Money : <b>076 36 73 82</b></p>
+                <p style="color:#1976d2;">Moov Money : <b>062 82 66 68</b></p>
+                <p>👤 Titulaire : OLASSI LEKABI BRULLICE</p>
+            </div>
+            <div class="marketing-box">
+                <p>✅ Questions & Niveaux Exclusifs</p>
+                <p>✅ Explications après chaque réponse</p>
+                <p>✅ Soutien au 1er Quiz 100% Gabonais</p>
+            </div>
+            <div class="code-input-group">
+                <input type="text" id="vip-code-input" placeholder="Code reçu par WhatsApp...">
+                <button onclick="checkVipCode()">OK</button>
+            </div>
+            <button onclick="window.location.href='https://wa.me/24176367382'" class="wa-btn">ENVOYER MON REÇU WHATSAPP</button>
         </div>
-        <p id="timer-text" style="font-size: 1.8em; color: #FCD116; font-weight: bold;">⏱️ 15s</p>
-        <h2 id="question-text">Chargement...</h2>
-        <div id="options-container"></div>
-        <div id="feedback-area" style="display:none; background:white; color:black; padding:15px; border-radius:15px; margin-top:15px; text-align:left;">
-            <p id="explanation-text"></p>
-            <button onclick="nextQuestion()" class="continue-btn" style="background:#3A75C4; color:white;">CONTINUER</button>
-        </div>
-    </div>
 
-    <div id="shop-screen" style="display:none;">
-        <button onclick="location.reload()" class="quit-btn">✖ Quitter</button><br><br>
-        <h2 style="color:#FCD116;">PAYER 500F (Pack VIP)</h2>
-        <div class="payment-card">
-            <p>Airtel Money : <b>076 36 73 82</b></p>
-            <p>Moov Money : <b>062 82 66 68</b></p>
-            <p style="font-size: 0.7em;">Propriétaire : OLASSI LEKABI BRULLICE</p>
+        <div id="study-screen" style="display:none;">
+            <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
+            <h2 style="color:#FCD116; margin-top:40px;">📖 MANUEL D'ÉTUDE</h2>
+            <div id="study-list"></div>
+            <button onclick="location.reload()" class="continue-btn" style="background:#FCD116; color:black;">RETOURNER AU JEU</button>
         </div>
-        <input type="text" id="vip-code-input" placeholder="ENTREZ LE CODE REÇU..." style="width:100%; padding:15px; border-radius:10px; margin-bottom:10px;">
-        <button onclick="checkVipCode()" style="background:#3A75C4; color:white;">ACTIVER MON CODE</button>
-        <button onclick="window.location.href='https://wa.me/24176367382'" class="wa-btn">ENVOYER MON REÇU WHATSAPP</button>
-    </div>
 
-    <div id="study-screen" style="display:none;">
-        <button onclick="location.reload()" class="quit-btn">✖ Quitter</button><br><br>
-        <h2>📖 MANUEL (80+ RÉPONSES)</h2>
-        <div id="study-list" style="max-height: 400px; overflow-y: auto; text-align: left; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px;"></div>
-        <button onclick="location.reload()" class="continue-btn" style="background:#FCD116; color:black;">RETOURNER AU JEU</button>
     </div>
-</div>
+    <script src="script.js"></script>
+</body>
+</html>
