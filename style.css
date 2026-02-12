@@ -1,133 +1,40 @@
-/* --- VARIABLES ET FOND --- */
-:root {
-    --gabon-vert: #009E60;
-    --gabon-jaune: #FCD116;
-    --gabon-bleu: #3A75C4;
-    --rouge-quitter: #ff4444;
-    --gris-fond: #f4f7f6;
-}
-
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--gris-fond);
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    color: #333;
+    /* Image de fond réaliste (Forêt/Libreville) */
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #fff;
 }
 
 #game-container {
-    width: 100%;
-    max-width: 450px;
-    background: white;
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    position: relative;
-}
-
-/* --- TITRES --- */
-h1 {
-    text-align: center;
-    color: var(--gabon-vert);
-    font-size: 24px;
-    margin-bottom: 30px;
-    text-transform: uppercase;
-}
-
-/* --- GRILLE DES BOUTONS DU MENU --- */
-.menu-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    background: rgba(255, 255, 255, 0.1); /* Effet verre */
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0; /* Plein écran mobile */
+    box-shadow: none;
 }
 
 .menu-grid button {
-    padding: 20px;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 15px;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-bottom: 4px solid var(--gabon-bleu);
-    cursor: pointer;
-    transition: transform 0.2s;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    color: #1a1a1a !important;
+    font-size: 17px !important;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
 }
 
-.menu-grid button:active {
-    transform: scale(0.98);
-}
-
-/* --- BOUTON VIP ANIMÉ --- */
 .vip-btn {
-    background: linear-gradient(135deg, #f1c40f, #f39c12) !important;
-    color: white !important;
-    border-bottom: 4px solid #e67e22 !important;
-    animation: pulse-vip 2s infinite;
+    background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+    color: #000 !important;
+    font-weight: 900 !important;
+    border: 2px solid rgba(255,255,255,0.5) !important;
 }
 
-@keyframes pulse-vip {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); box-shadow: 0 0 15px rgba(243, 156, 18, 0.4); }
-    100% { transform: scale(1); }
-}
-
-/* --- BOUTONS DU QUIZ (OPTIONS) --- */
-.option-btn {
-    width: 100%;
-    text-align: left;
-    padding: 15px;
-    margin: 10px 0;
-    font-size: 16px;
-    background: #fff;
-    border: 2px solid #eee;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.option-btn:hover {
-    background: #f9f9f9;
-}
-
-/* --- BOUTON QUITTER --- */
-.quit-btn {
-    background: var(--rouge-quitter);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.quit-btn:hover {
-    background: #cc0000;
-}
-
-/* --- SECTION FEEDBACK (RÉPONSE) --- */
-#feedback-area {
-    border-left: 5px solid var(--gabon-bleu);
-    margin-top: 20px;
-}
-
-#explanation-text {
-    font-size: 15px;
-    line-height: 1.4;
-    color: #555;
-}
-
-/* --- INPUTS --- */
-input[type="text"] {
-    border: 2px solid #eee;
-    border-radius: 10px;
-    outline: none;
-    transition: 0.3s;
-}
-
-input[type="text"]:focus {
-    border-color: var(--gabon-bleu);
+h1 {
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    margin-top: 50px;
 }
