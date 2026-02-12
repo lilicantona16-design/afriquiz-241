@@ -10,85 +10,69 @@ let currentIndex = 0;
 let score = 0;
 let lives = 3;
 let timer;
-let timeLeft = 15;
-
-// 2. Fonctions de Navigation
-function showPayment() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('payment-section').style.display = 'block';
-}
-
-function quitGame() {
-    if(confirm("Retourner au menu ?")) {
-        location.reload();
-    }
-}
-
-// 3. Logique du Quiz
+let timeLeft = 25;
 async function loadData() {
     try {
         const { data, error } = await _supabase.from('questions').select('*');
         if (error) throw error;
         allQuestions = data;
         console.log("✅ Questions prêtes");
-    } catch (e) {
-        console.error("❌ Erreur de chargement:", e.message);
-    }
+    } catch (e) { console.error(e.message); }
+}
+
+function showShop() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'block';
+}
+
+function showPayment(levelName, price) {
+    document.getElementById('shop-screen').style.display = 'none';
+    document.getElementById('payment-section').style.display = 'block';
+    // On peut personnaliser le message de paiement si on veut
+    alert("Veuillez payer " + price + "F pour le niveau : " + levelName);
+}
+
+function quitGame() {
+    if(confirm("Retourner au menu ?")) location.reload();
 }
 
 function startQuiz(category) {
     if (lives <= 0) {
-        alert("❌ Vous n'avez plus de vies ! Partagez le jeu pour recharger.");
+        alert("❌ Plus de vies ! Partagez pour rejouer.");
         return;
     }
-
-    if (allQuestions.length === 0) {
-        alert("Chargement en cours...");
-        return;
-    }
-
     currentQuestions = allQuestions.filter(q => 
         q.category && q.category.trim().toLowerCase() === category.toLowerCase()
     );
-
-    if (currentQuestions.length === 0) {
-        alert("Pas de questions trouvées pour " + category);
-        return;
-    }
+    if (currentQuestions.length === 0) { alert("Bientôt disponible !"); return; }
 
     currentQuestions.sort(() => 0.5 - Math.random());
-    currentIndex = 0;
-    score = 0;
-    
+    currentIndex = 0; score = 0;
     document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'none';
     document.getElementById('payment-section').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();
 }
 
-function updateHearts() {
-    let heartsHtml = "";
-    for(let i=0; i<3; i++) {
-        heartsHtml += (i < lives) ? "❤️" : "🖤";
-    }
-    // On suppose que tu as un élément <div id="lives-display"></div> dans ton HTML
-    const liveBox = document.getElementById('score-display');
-    liveBox.innerHTML = `Score: ${score} | Vies: ${heartsHtml}`;
-}
-
 function startTimer() {
     clearInterval(timer);
-    timeLeft = 25;
+    timeLeft = 15;
+    document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
     timer = setInterval(() => {
         timeLeft--;
-        const timerText = document.getElementById('timer-text'); // Ajoute <p id="timer-text"></p> dans HTML
-        if(timerText) timerText.innerText = `⏱️ ${timeLeft}s`;
-        
+        document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
         if (timeLeft <= 0) {
             clearInterval(timer);
             handleWrongAnswer("Temps écoulé !");
         }
     }, 1000);
+}
+
+function updateHearts() {
+    let h = "";
+    for(let i=0; i<3; i++) h += (i < lives) ? "❤️" : "🖤";
+    document.getElementById('score-display').innerHTML = `Score: ${score} | ${h}`;
 }
 
 function showQuestion() {
@@ -97,7 +81,6 @@ function showQuestion() {
     const q = currentQuestions[currentIndex];
     document.getElementById('question-text').innerText = q.question;
     document.getElementById('feedback-area').style.display = 'none';
-    
     const container = document.getElementById('options-container');
     container.innerHTML = '';
 
@@ -110,7 +93,6 @@ function showQuestion() {
                 clearInterval(timer);
                 const allBtns = container.querySelectorAll('button');
                 allBtns.forEach(b => b.disabled = true);
-                
                 if (opt === q.correct_answer) {
                     score++;
                     btn.style.background = "#009E60";
@@ -129,23 +111,18 @@ function handleWrongAnswer(correct, explanation) {
     lives--;
     updateHearts();
     showFeedback(false, correct, explanation);
-    
     if (lives <= 0) {
-        setTimeout(() => {
-            alert("💔 GAME OVER ! Vous n'avez plus de vies. Partagez pour continuer.");
-            location.reload();
-        }, 2000);
+        setTimeout(() => { alert("💔 GAME OVER ! Partagez pour recharger vos vies."); location.reload(); }, 2000);
     }
 }
 
 function showFeedback(isCorrect, correct, explanation) {
-    const feedback = document.getElementById('feedback-area');
     document.getElementById('explanation-text').innerHTML = `
-        <b style="color:${isCorrect ? 'green':'red'}">${isCorrect ? 'BRAVO !':'DOMMAGE...'}</b><br>
+        <b style="color:${isCorrect ? 'green':'red'}">${isCorrect ? '✅ BRAVO !':'❌ DOMMAGE...'}</b><br>
         La réponse était : <b>${correct}</b><br><br>
-        <i>${explanation || ""}</i>
+        <i>${explanation || "Passe VIP pour plus de détails !"}</i>
     `;
-    feedback.style.display = 'block';
+    document.getElementById('feedback-area').style.display = 'block';
 }
 
 function nextQuestion() {
@@ -158,49 +135,36 @@ function nextQuestion() {
 }
 
 function finishGame() {
-    let message = `Quiz terminé ! Score: ${score}/${currentQuestions.length}`;
-    
     if (score >= 15) {
-        // AFFICHAGE DU CERTIFICAT
         document.getElementById('quiz-screen').innerHTML = `
-            <div style="background: white; color: black; padding: 20px; border: 10px double #FCD116; border-radius: 10px;">
-                <h1 style="color: #3A75C4;">🎓 DIPLÔME D'EXPERT</h1>
-                <p>Félicitations !</p>
-                <h2 style="text-decoration: underline;">Score : ${score}/${currentQuestions.length}</h2>
-                <p>Vous êtes officiellement un Expert du Gabon 🇬🇦</p>
-                <button onclick="shareGame()" style="background:#00BFFF; color:white; padding:10px; border:none; border-radius:5px;">📢 Partager mon Diplôme</button>
+            <div style="background: white; color: black; padding: 20px; border: 8px double #FCD116; border-radius: 15px;">
+                <h1 style="color: #3A75C4; font-size:1.5em;">🎓 DIPLÔME D'EXPERT</h1>
+                <p>Score : <b>${score}/${currentQuestions.length}</b></p>
+                <p>Félicitations ! Tu es un véritable Expert du Gabon 🇬🇦</p>
+                <button onclick="shareGame()" style="background:#00BFFF; color:white; border:none; padding:10px; border-radius:8px; width:100%;">📢 Partager mon Diplôme</button>
                 <hr>
-                <p><b>Niveau 2 bloqué !</b><br>Payez 300F pour débloquer la suite.</p>
-                <button onclick="showPayment()" style="background:#FCD116; padding:10px; border:none; border-radius:5px;">🔓 Débloquer Niveau 2 (300F)</button>
+                <button onclick="showShop()" style="background:#FCD116; border:none; padding:10px; border-radius:8px; width:100%; font-weight:bold;">🔓 Aller à la Boutique</button>
             </div>
-            <button onclick="location.reload()" class="back-link">Retour</button>
         `;
     } else {
-        alert(message);
+        alert("Quiz terminé ! Score: " + score);
         location.reload();
     }
 }
 
 function checkVipCode() {
-    const val = document.getElementById('vip-code-input').value;
-    if (val.trim() === "GABON2024") {
-        alert("✅ Mode VIP Débloqué !");
-        startQuiz('VIP');
-    } else if (val.trim() === "NIVEAU2") { // Exemple de code pour le niveau 2
-        alert("✅ Niveau 2 Débloqué !");
-        startQuiz('Niveau2');
-    } else {
-        alert("❌ Code incorrect.");
-    }
+    const val = document.getElementById('vip-code-input').value.trim();
+    const codes = { "GABON2024": "VIP", "AFRIQUE300": "Afrique", "MONDE300": "Monde" };
+    if (codes[val]) {
+        alert("✅ Niveau " + codes[val] + " Débloqué !");
+        startQuiz(codes[val]);
+    } else { alert("❌ Code incorrect."); }
 }
 
 function shareGame() {
-    const text = "J'ai obtenu mon diplôme d'Expert du Gabon 🇬🇦 sur Gabon Quiz ! Teste tes connaissances ici : https://afrizquiz-241.vercel.app";
-    if (navigator.share) {
-        navigator.share({ title: 'Gabon Quiz VIP', text: text, url: window.location.href });
-    } else {
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-    }
+    const text = "J'ai eu mon diplôme d'Expert du Gabon 🇬🇦 ! Teste-toi ici : https://afrizquiz-241.vercel.app";
+    if (navigator.share) { navigator.share({ title: 'Gabon Quiz', text: text, url: window.location.href }); }
+    else { window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
 }
 
 function showInstallGuide() { document.getElementById('install-guide').style.display = 'flex'; }
@@ -209,3 +173,4 @@ function showHowToPlay() { document.getElementById('how-to-play-modal').style.di
 function closeHowToPlay() { document.getElementById('how-to-play-modal').style.display = 'none'; }
 
 loadData();
+

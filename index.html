@@ -9,23 +9,60 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="home-screen">
-            <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
-            <p>🇬🇦 L'aventure commence ici</p>
-            
-            <div class="menu-grid">
-                <button onclick="startQuiz('Provinces')">🌳 Gabon Master</button>
-                <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
-                <button onclick="startQuiz('Monde')">🌐 Monde</button>
-                <button onclick="showPayment()" class="vip-btn">💎 ACCÈS VIP (500F)</button>
-            </div>
+ <div id="home-screen">
+    <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
+    <p>🇬🇦 L'aventure commence ici</p>
+    
+    <div class="menu-grid">
+        <button onclick="startQuiz('Provinces')">🌳 Gabon Master (Gratuit)</button>
+        <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
+    </div>
 
-            <div class="action-grid">
-                <button onclick="shareGame()" class="action-btn-small">📢 Partager</button>
-                <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
-                <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2; margin-top: 5px; background: rgba(252, 209, 22, 0.2); border-color: #FCD116;">❓ Comment jouer ?</button>
-            </div>
-        </div>
+    <div class="action-grid">
+        <button onclick="shareGame()" class="action-btn-small" style="background:#00BFFF !important; box-shadow: 0 0 10px #00BFFF;">📢 Partager</button>
+        <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
+        <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2; margin-top: 5px; background: rgba(252, 209, 22, 0.2); border-color: #FCD116;">❓ Comment jouer ?</button>
+    </div>
+</div>
+
+<div id="shop-screen" style="display:none;">
+    <h2 style="color: #FCD116;">🛒 BOUTIQUE</h2>
+    <p>Débloquez de nouveaux défis !</p>
+    
+    <div class="shop-item" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #3A75C4;">
+        <h3>🌍 Niveau Afrique</h3>
+        <p>50 questions sur le continent</p>
+        <button onclick="showPayment('Afrique', 300)" style="background:#3A75C4; color:white; border:none; padding:10px; border-radius:8px;">🔓 Débloquer (300F)</button>
+    </div>
+
+    <div class="shop-item" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #009E60;">
+        <h3>🌐 Niveau Monde</h3>
+        <p>Testez votre culture générale</p>
+        <button onclick="showPayment('Monde', 300)" style="background:#009E60; color:white; border:none; padding:10px; border-radius:8px;">🔓 Débloquer (300F)</button>
+    </div>
+
+    <div class="shop-item" style="background: linear-gradient(45deg, #FCD116, #FF9900); padding: 15px; border-radius: 15px; margin-bottom: 10px; color: black;">
+        <h3>💎 PACK VIP TOTAL</h3>
+        <p>Tout débloquer + Diplôme + Secrets</p>
+        <button onclick="showPayment('VIP', 500)" style="background:black; color:white; border:none; padding:10px; border-radius:8px;">👑 Acheter (500F)</button>
+    </div>
+
+    <button onclick="quitGame()" class="back-link">Retour au menu</button>
+</div>
+
+<div id="quiz-screen" style="display:none;">
+    <div class="quiz-header">
+        <div id="score-display" style="font-size: 0.9em;"></div>
+        <button onclick="quitGame()" class="quit-btn">✖</button>
+    </div>
+    <p id="timer-text" style="font-size: 1.5em; font-weight: bold; color: #FCD116; margin: 10px 0;"></p>
+    <h2 id="question-text">Chargement...</h2>
+    <div id="options-container"></div>
+    <div id="feedback-area" style="display:none; background:white; color:black; padding:15px; border-radius:15px; margin-top:15px; text-align:left;">
+        <p id="explanation-text"></p>
+        <button onclick="nextQuestion()" class="continue-btn">CONTINUER</button>
+    </div>
+</div>
 
         <div id="payment-section" style="display:none;">
             <h2 style="color: #FCD116;">👑 AVANTAGES VIP</h2>
