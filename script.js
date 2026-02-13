@@ -12,13 +12,18 @@ let timer;
 let isVip = localStorage.getItem('isVip') === 'true';
 let currentUser = localStorage.getItem('quiz_pseudo') || "";
 
-// MESSAGES PERSONNALISÉS
-function showHowToPlay() {
-    alert("🎮 RÈGLES DU JEU :\n\n- Réponds en 15s ⏱️\n- Tu as 3 vies ❤️\n- Mode gratuit : limité à 10 questions.\n- Prends l'accès VIP pour le manuel complet !");
-}
-
-function showInstallGuide() {
-    alert("📲 INSTALLER SUR TON MOBILE :\n\n- Sur Android : Clique sur les 3 points en haut à droite > 'Installer l'application'.\n- Sur iPhone : Clique sur le bouton 'Partager' en bas > 'Sur l'écran d'accueil'.");
+function showNotice(title, message) {
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal'; // Utilise le style CSS envoyé plus haut
+    modal.innerHTML = `
+        <div style="background:#1a1a1a; border:2px solid #FCD116; padding:20px; border-radius:15px; text-align:center;">
+            <h3 style="color:#FCD116">${title}</h3>
+            <p style="color:white">${message}</p>
+            <button onclick="this.parentElement.parentElement.remove()" class="main-btn">OK</button>
+        </div>
+    `;
+    modal.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:9999; width:90%;";
+    document.body.appendChild(modal);
 }
 
 // CHARGEMENT DES DONNÉES
@@ -54,10 +59,26 @@ async function showStudyMode() {
 
 // SYSTÈME DE QUIZ (Simplifié pour mobile)
 function startQuiz(cat) {
-    currentQuestions = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
-    if(currentQuestions.length === 0) return alert("Bientôt disponible !");
-    currentQuestions.sort(() => 0.5 - Math.random());
-    currentIndex = 0; score = 0; lives = 3;
+    // 1. Filtrer par catégorie
+    let availableQuestions = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
+
+    // 2. Gestion des accès selon le niveau VIP
+    if (!isVip) {
+        // Mode Gratuit : Uniquement les questions non-VIP
+        availableQuestions = availableQuestions.filter(q => q.is_vip === false || q.is_vip === undefined);
+    } 
+    // Si c'est un VIP 500 (isVipFull), il a tout. 
+    // Si c'est un VIP 300 (isVipLevel2), il a les questions normales mais sans limite de 10.
+
+    if(availableQuestions.length === 0) return alert("Bientôt disponible !");
+
+    // 3. Mélange aléatoire des questions disponibles
+    currentQuestions = availableQuestions.sort(() => 0.5 - Math.random());
+    
+    currentIndex = 0; 
+    score = 0; 
+    lives = 3;
+
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();

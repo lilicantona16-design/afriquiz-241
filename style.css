@@ -44,3 +44,20 @@ body {
 #comments-display { background: #111; border-radius: 10px; max-height: 180px; overflow-y: auto; padding: 10px; margin: 10px 0; font-size: 0.9rem; text-align: left; }
 .comment-input-area { display: flex; gap: 5px; }
 input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #222; color: white; }
+.wa-btn {
+    background-color: #25D366 !important; /* Vert WhatsApp officiel */
+    color: white !important;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    width: 100%;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    cursor: pointer;
+}
+
+.wa-btn:active {
+    transform: scale(0.98);
+    background-color: #128C7E !important;
+}
