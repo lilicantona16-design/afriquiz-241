@@ -1,202 +1,34 @@
 body {
-    margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-    background-size: cover; color: white; text-align: center;
-    display: flex; justify-content: center; align-items: center; min-height: 100vh;
+    margin: 0; padding: 0; font-family: sans-serif;
+    background: #121212; color: white; text-align: center;
+    display: flex; justify-content: center; min-height: 100vh;
 }
-
 #game-container {
-    width: 90%; max-width: 420px; background: rgba(35, 35, 35, 0.92);
-    padding: 30px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    width: 95%; max-width: 400px; padding: 15px; margin-top: 10px;
 }
-
-h1 { font-size: 2.5em; line-height: 1; margin-bottom: 10px; }
+h1 { font-size: 2em; }
 .title-g { color: #009E60; } .title-a { color: #FCD116; } .title-b { color: #3A75C4; }
 
-.menu-grid button, .option-btn, .continue-btn, .wa-btn {
-    width: 100%; padding: 16px; margin: 10px 0; border: none;
-    border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 1.05em;
+.menu-grid button, .option-btn, .continue-btn, .wa-btn, .btn-start {
+    width: 100%; padding: 16px; margin: 8px 0; border: none;
+    border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1em;
 }
-
 .menu-grid button { background: white; color: black; }
-.vip-btn { background: linear-gradient(45deg, #FCD116, #FF9900) !important; color: black !important; }
-.study-btn { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid white !important; }
+.vip-btn { background: #FCD116 !important; }
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.action-btn-small { background: #333; color: white; border: 1px solid #444; border-radius: 10px; padding: 10px; font-size: 0.8em; }
 
-.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.action-btn-small { background: rgba(255,255,255,0.1); color: white; border: 1px solid white; border-radius: 12px; padding: 12px; font-weight: bold; }
-.share-btn { background: #00BFFF !important; border: none !important; box-shadow: 0 0 15px #00BFFF; }
+.overlay-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+.modal-full { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 9999; padding: 20px; overflow-y: auto; }
+.modal-content { width: 85%; background: #222; border: 2px solid #FCD116; border-radius: 20px; padding: 20px; }
 
-.quit-btn { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 10px; float: left; cursor: pointer; }
-.payment-card { background: white; color: black; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left; }
-.marketing-box { text-align: left; font-size: 0.9em; margin-bottom: 20px; color: #ccc; }
+.quit-btn-top { position: absolute; top: 15px; right: 15px; background: #ff4444; color: white; border: none; padding: 6px 12px; border-radius: 8px; }
+.payment-card { background: white; color: black; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: left; font-size: 0.9em; }
+.comparison-table { width: 100%; background: #333; margin: 15px 0; border-radius: 10px; overflow: hidden; }
+.comparison-table th { background: #FCD116; color: black; padding: 8px; }
+.comparison-table td { padding: 8px; border-bottom: 1px solid #444; }
 
-.code-input-group { display: flex; gap: 8px; margin-bottom: 15px; }
-.code-input-group input { flex: 1; padding: 15px; border-radius: 10px; border: none; font-size: 1em; text-align: center; }
-.code-input-group button { background: #3A75C4; color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; }
-
-#study-list { max-height: 350px; overflow-y: auto; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; }
-#timer-text { font-size: 1.8em; color: #FCD116; font-weight: bold; margin: 10px 0; }
-#feedback-area { background: white; color: black; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: left; }
-/* Couleur Vert WhatsApp */
-.wa-btn {
-    background-color: #25D366 !important;
-    color: white !important;
-    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-}
-
-/* Petit effet quand on clique dessus */
-.wa-btn:active {
-    background-color: #128C7E !important;
-    transform: scale(0.98);
-}
-/* --- DERNIERS AJOUTS --- */
-
-/* Pour afficher le prix de 500F en haut de l'accès privilège */
-#shop-screen h2::after {
-    content: " (500F)";
-    color: #FCD116;
-}
-
-/* Rendre les boutons "Installer" et "Comment jouer" élégants */
-.action-btn-small {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    backdrop-filter: blur(5px);
-    border-radius: 12px !important;
-    transition: all 0.3s ease;
-}
-
-/* Effet quand on appuie sur ces boutons */
-.action-btn-small:active {
-    background: rgba(252, 209, 22, 0.2) !important;
-    border-color: #FCD116 !important;
-}
-/* --- STYLE CHIC POUR LES MESSAGES ET FENÊTRES --- */
-
-/* Animation pour faire apparaître les messages en douceur */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Si tu utilises des fenêtres (modals) pour Comment jouer / Installer */
-.modal-content {
-    background: rgba(25, 25, 25, 0.95) !important;
-    border: 2px solid #FCD116 !important; /* Bordure Or Gabon */
-    border-radius: 25px !important;
-    color: white !important;
-    padding: 30px !important;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
-    animation: fadeIn 0.4s ease-out;
-    text-align: center;
-}
-
-/* Style des titres dans ces fenêtres */
-.modal-content h3 {
-    color: #FCD116 !important;
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-/* Style du texte explicatif */
-.modal-content p {
-    line-height: 1.6;
-    font-size: 1.1em;
-    color: #eeeeee;
-}
-
-/* Style du bouton "D'ACCORD" dans ces fenêtres */
-.modal-content button {
-    background: #009E60 !important; /* Vert Gabon */
-    color: white !important;
-    border: none !important;
-    padding: 12px 30px !important;
-    border-radius: 10px !important;
-    margin-top: 20px !important;
-    font-weight: bold !important;
-    cursor: pointer;
-}
-/* --- BLOC FINAL DESIGN CHIC --- */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-content {
-    background: #1a1a1a !important;
-    border: 2px solid #FCD116 !important;
-    border-radius: 25px !important;
-    color: white !important;
-    padding: 25px !important;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Forcer l'élégance des petits boutons du bas */
-.action-btn-small {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    backdrop-filter: blur(5px);
-    border-radius: 12px !important;
-    transition: all 0.3s ease;
-}
-/* Style du Mur des Champions */
-#comments-display div {
-    background: rgba(255,255,255,0.05);
-    margin-bottom: 8px;
-    padding: 8px;
-    border-radius: 8px;
-    border-left: 3px solid #FCD116;
-}
-#comments-display b { color: #FCD116; }
-#comments-display span { font-size: 0.8em; color: #aaa; float: right; }
-/* Style des étoiles */
-#star-rating span { color: #ccc; transition: 0.2s; }
-#star-rating span.active { color: #FCD116; text-shadow: 0 0 10px #FCD116; }
-
-#user-feedback {
-    background: #333;
-    color: white;
-    font-family: inherit;
-    resize: none;
-}
-/* Bouton Quitter pour l'écran d'inscription */
-.quit-login {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 10px;
-    font-size: 0.8em;
-    cursor: pointer;
-}
-/* Style du Tableau Comparatif VIP */
-.comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    overflow: hidden;
-    font-size: 0.9em;
-}
-
-.comparison-table th {
-    background: #FCD116;
-    color: black;
-    padding: 10px;
-}
-
-.comparison-table td {
-    padding: 12px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
-}
-
-.check-yes { color: #009E60; font-weight: bold; }
-.check-no { color: #e74c3c; font-weight: bold; }
+#comments-display { max-height: 120px; overflow-y: auto; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: left; font-size: 0.85em; }
+input, textarea { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #333; color: white; margin-bottom: 8px; box-sizing: border-box; }
+.wa-btn { background: #25D366 !important; color: white !important; }
+.gold-text { color: #FCD116; }

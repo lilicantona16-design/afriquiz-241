@@ -2,14 +2,16 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabon Quiz VIP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gabon Quiz VIP 🇬🇦</title>
+    <link rel="icon" type="image/png" href="icon-512x512.png">
+    <link rel="apple-touch-icon" href="icon-512x512.png">
+    <meta name="theme-color" content="#000000">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="game-container">
-        
         <div id="home-screen">
             <h1><span class="title-g">GABON</span><br><span class="title-a">QUIZ</span> <span class="title-b">VIP</span></h1>
             <p>🇬🇦 L'aventure commence ici</p>
@@ -18,18 +20,26 @@
                 <button onclick="startQuiz('Afrique')">🌍 Afrique</button>
                 <button onclick="startQuiz('Monde')">🌐 Monde</button>
                 <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
-                <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE (80+ Rép)</button>
+                <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE</button>
             </div>
             <div class="action-grid">
                 <button onclick="shareGame()" class="action-btn-small share-btn">📢 Partager</button>
-                <button onclick="showInstallGuide()" class="action-btn-small">📲 Installer</button>
-                <button onclick="showHowToPlay()" class="action-btn-small" style="grid-column: span 2;">❓ Comment jouer ?</button>
+                <button onclick="alert('Menu > Installer')" class="action-btn-small">📲 Installer</button>
+                <button onclick="alert('Réponds en 15s. Tu as 3 vies ❤️')" class="action-btn-small" style="grid-column: span 2;">❓ Comment jouer ?</button>
+            </div>
+            <div id="comments-section">
+                <h3>💬 MUR DES CHAMPIONS</h3>
+                <div id="comments-display"></div>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="user-comment" placeholder="Message...">
+                    <button onclick="postComment()" style="width:60px; background:#3A75C4; color:white; border-radius:10px; border:none;">OK</button>
+                </div>
             </div>
         </div>
 
         <div id="quiz-screen" style="display:none;">
             <div class="quiz-header">
-                <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
+                <button onclick="location.reload()" class="quit-btn-top">✖ Quitter</button>
                 <span id="score-display">Score: 0 | ❤️❤️❤️</span>
             </div>
             <p id="timer-text">⏱️ 15s</p>
@@ -41,184 +51,52 @@
             </div>
         </div>
 
-        <div id="shop-screen" style="display:none;">
-            <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
-            <h2 style="color:#FCD116; margin-top:40px;">👑 ACCÈS PRIVILÈGE</h2>
+        <div id="shop-screen" class="modal-full" style="display:none;">
+            <button onclick="location.reload()" class="quit-btn-top">✖ Quitter</button>
+            <h2 class="gold-text">👑 ACCÈS PRIVILÈGE</h2>
             <div class="payment-card">
                 <p style="color:#d32f2f;">Airtel Money : <b>076 36 73 82</b></p>
                 <p style="color:#1976d2;">Moov Money : <b>062 82 66 68</b></p>
-                <p>👤 Titulaire : OLASSI LEKABI BRULLICE</p>
+                <p>👤 OLASSI LEKABI BRULLICE</p>
             </div>
-            <div class="marketing-box">
-                <p>✅ Questions & Niveaux Exclusifs</p>
-                <p>✅ Explications après chaque réponse</p>
-                <p>✅ Soutien au 1er Quiz 100% Gabonais</p>
-            </div>
+            <table class="comparison-table">
+                <tr><th>Packs</th><th>300F</th><th>500F</th></tr>
+                <tr><td>Questions VIP</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Manuel d'étude</td><td>❌</td><td>✅</td></tr>
+            </table>
             <div class="code-input-group">
-                <input type="text" id="vip-code-input" placeholder="Code reçu par WhatsApp...">
+                <input type="text" id="vip-code-input" placeholder="Code reçu...">
                 <button onclick="checkVipCode()">OK</button>
             </div>
             <button onclick="window.location.href='https://wa.me/24176367382'" class="wa-btn">ENVOYER MON REÇU WHATSAPP</button>
         </div>
 
-        <div id="study-screen" style="display:none;">
-            <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
-            <h2 style="color:#FCD116; margin-top:40px;">📖 MANUEL D'ÉTUDE</h2>
+        <div id="study-screen" class="modal-full" style="display:none;">
+            <button onclick="location.reload()" class="quit-btn-top">✖ Quitter</button>
+            <h2 class="gold-text">📖 MANUEL D'ÉTUDE</h2>
             <div id="study-list"></div>
-            <button onclick="location.reload()" class="continue-btn" style="background:#FCD116; color:black;">RETOURNER AU JEU</button>
+            <button onclick="location.reload()" class="continue-btn">RETOUR</button>
         </div>
 
+        <div id="login-screen" class="overlay-screen">
+            <div class="modal-content">
+                <h2 class="gold-text">BIENVENUE 🇬🇦</h2>
+                <input type="text" id="user-pseudo" placeholder="Ton Pseudo...">
+                <button onclick="saveUser()" class="btn-start" style="background:#009E60; color:white;">COMMENCER</button>
+            </div>
+        </div>
+
+        <div id="rating-screen" class="overlay-screen" style="display:none;">
+            <div class="modal-content">
+                <h3 class="gold-text">TON AVIS COMPTE ! ⭐</h3>
+                <div id="star-rating" style="font-size:30px; margin-bottom:10px;">
+                    <span onclick="setRate(1)">☆</span><span onclick="setRate(2)">☆</span><span onclick="setRate(3)">☆</span><span onclick="setRate(4)">☆</span><span onclick="setRate(5)">☆</span>
+                </div>
+                <textarea id="user-feedback" placeholder="Qu'est-ce qu'on peut améliorer ?"></textarea>
+                <button onclick="submitReview()" class="btn-start" style="background:#FCD116; color:black;">ENVOYER</button>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
-<script>
-    // Ce petit script va ajouter le bouton Manuel dynamiquement à la fin de ton menu
-    document.addEventListener("DOMContentLoaded", function() {
-        const actionGrid = document.querySelector('.action-grid');
-        if (actionGrid) {
-            const btnManuel = document.createElement('button');
-            btnManuel.onclick = showManualInfo;
-            btnManuel.className = "action-btn-small";
-            btnManuel.style = "grid-column: span 2; margin-top: 10px; border-color: #FCD116 !important; color: #FCD116 !important;";
-            btnManuel.innerHTML = "📖 Pourquoi utiliser le Manuel ?";
-            actionGrid.appendChild(btnManuel);
-        }
-    });
-</script>
-
-<style>
-    /* Correction rapide pour l'espacement des boutons du bas */
-    .action-grid {
-        margin-top: 20px;
-        padding-bottom: 20px;
-    }
-</style>
-<div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1a1a1a; z-index:10000; display:flex; align-items:center; justify-content:center;">
-    <div class="modal-content" style="width:85%; max-width:350px;">
-        <h2 style="color:#FCD116;">BIENVENUE 🇬🇦</h2>
-        <p>Choisis un pseudo pour enregistrer tes scores.</p>
-        <input type="text" id="user-pseudo" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border-radius:10px; border:none; margin-bottom:15px; text-align:center;">
-        <button onclick="saveUser()" style="width:100%; background:#009E60; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold;">COMMENCER À JOUER</button>
-    </div>
-</div>
-
-<div id="comments-section" style="margin-top:30px; border-top:1px solid #444; padding-top:20px;">
-    <h3 style="color:#FCD116;">💬 MUR DES CHAMPIONS</h3>
-    <div id="comments-display" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:15px; padding:10px; margin-bottom:15px; text-align:left; font-size:0.9em;">
-        </div>
-    <input type="text" id="user-comment" placeholder="Laisse un message..." style="width:70%; padding:10px; border-radius:10px 0 0 10px; border:none;">
-    <button onclick="postComment()" style="width:25%; padding:10px; border-radius:0 10px 10px 0; border:none; background:#3A75C4; color:white; font-weight:bold;">OK</button>
-</div>
-<div id="rating-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10001; display:none; align-items:center; justify-content:center;">
-    <div class="modal-content" style="width:90%; max-width:400px; border-color:#FCD116;">
-        <h3 style="color:#FCD116;">TON AVIS COMPTE ! ⭐</h3>
-        <p>Note l'application pour nous aider :</p>
-        
-        <div id="star-rating" style="font-size: 30px; margin-bottom: 20px;">
-            <span onclick="setRate(1)" style="cursor:pointer;">☆</span>
-            <span onclick="setRate(2)" style="cursor:pointer;">☆</span>
-            <span onclick="setRate(3)" style="cursor:pointer;">☆</span>
-            <span onclick="setRate(4)" style="cursor:pointer;">☆</span>
-            <span onclick="setRate(5)" style="cursor:pointer;">☆</span>
-        </div>
-
-        <textarea id="user-feedback" placeholder="Quels changements veux-tu voir ? (Obligatoire)" style="width:100%; height:80px; padding:10px; border-radius:10px; border:none; margin-bottom:15px;"></textarea>
-        
-        <button onclick="submitReview()" style="width:100%; background:#FCD116; color:black; border:none; padding:15px; border-radius:10px; font-weight:bold;">ENVOYER MON AVIS</button>
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const loginScreen = document.getElementById('login-screen');
-        if (loginScreen) {
-            const btnQuitter = document.createElement('button');
-            btnQuitter.innerHTML = "✖ Quitter";
-            // Style direct pour ne pas compliquer le CSS
-            btnQuitter.style = "position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.1); color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer; z-index:10001;";
-            btnQuitter.onclick = function() {
-                loginScreen.style.display = 'none';
-            };
-            loginScreen.appendChild(btnQuitter);
-        }
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const shopScreen = document.getElementById('shop-screen');
-        if (shopScreen) {
-            const tableDiv = document.createElement('div');
-            tableDiv.innerHTML = `
-                <h3 style="color:#FCD116; margin-top:20px;">💎 CHOISIS TON PACK VIP</h3>
-                <table class="comparison-table">
-                    <tr>
-                        <th>Avantages</th>
-                        <th>300F</th>
-                        <th>500F</th>
-                    </tr>
-                    <tr>
-                        <td style="text-align:left;">Toutes les Questions</td>
-                        <td class="check-yes">✅</td>
-                        <td class="check-yes">✅</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:left;">Manuel des Réponses</td>
-                        <td class="check-no">❌</td>
-                        <td class="check-yes">✅</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:left;">Diplôme d'Expert</td>
-                        <td class="check-no">❌</td>
-                        <td class="check-yes">✅</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:left;">Support WhatsApp</td>
-                        <td class="check-no">❌</td>
-                        <td class="check-yes">✅</td>
-                    </tr>
-                </table>
-                <p style="font-size:0.8em; color:#aaa;">* Le pack 500F est le plus populaire au Gabon 🇬🇦</p>
-            `;
-            // On l'insère avant les boutons de paiement
-            shopScreen.insertBefore(tableDiv, shopScreen.querySelector('.wa-btn'));
-        }
-    });
-</script>
-<script>
-    // 1. On répare l'affichage mobile automatiquement
-    const metaViewport = document.createElement('meta');
-    metaViewport.name = "viewport";
-    metaViewport.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-    document.head.appendChild(metaViewport);
-
-    // 2. On définit l'icône pour l'écran d'accueil (iPhone et Android)
-    const iconApp = document.createElement('link');
-    iconApp.rel = "apple-touch-icon";
-    // Remplace 'votre-icone.png' par le nom de l'image du bouclier que tu as enregistrée
-    iconApp.href = "icon-512x512.png"; 
-    document.head.appendChild(iconApp);
-
-    // 3. On force la couleur de la barre de navigation du téléphone en noir/or
-    const metaTheme = document.createElement('meta');
-    metaTheme.name = "theme-color";
-    metaTheme.content = "#000000";
-    document.head.appendChild(metaTheme);
-</script>
-
-<style>
-    /* Ce petit code force le jeu à bien rester dans l'écran du téléphone */
-    body {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        width: 100vw;
-        height: 100vh;
-        position: fixed; /* Empêche le rebond bizarre sur iPhone */
-    }
-    
-    #login-screen, #rating-screen, #shop-screen {
-        width: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-    }
-</style>
