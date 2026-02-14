@@ -134,3 +134,25 @@
     </script>
 </body>
 </html>
+<script>
+    // FORCE LE DÉBLOCAGE DU BOUTON D'ACCORD
+    document.addEventListener('click', function(e) {
+        // Si on clique sur un bouton qui contient le texte "D'ACCORD"
+        if (e.target && e.target.innerText.includes("D'ACCORD")) {
+            // On cherche l'écran noir de bienvenue
+            const loginScreen = document.getElementById('login-screen');
+            if (loginScreen) {
+                loginScreen.style.display = 'none'; // On le cache
+            }
+            // Au cas où l'ID est différent, on cache aussi tout écran superposé
+            const overlays = document.querySelectorAll('.overlay-screen');
+            overlays.forEach(ov => ov.style.display = 'none');
+        }
+    });
+
+    // MASQUAGE AUTOMATIQUE AU CHARGEMENT (SÉCURITÉ)
+    window.addEventListener('load', () => {
+        const rating = document.getElementById('rating-screen');
+        if (rating) rating.style.display = 'none';
+    });
+</script>
