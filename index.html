@@ -100,5 +100,19 @@
         </div>
     </div>
     <script src="script.js"></script>
+    <div id="extra-elements">
+        <script>
+            const shop = document.getElementById('shop-screen');
+            if (shop && !document.querySelector('.wa-btn')) {
+                const waBtn = document.createElement('button');
+                waBtn.className = 'wa-btn';
+                waBtn.innerHTML = "✅ ENVOYER MON REÇU WHATSAPP";
+                waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
+                shop.appendChild(waBtn);
+            }
+        </script>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -183,3 +183,164 @@ function shareGame() {
 
 if(currentUser) document.getElementById('login-screen').style.display = 'none';
 loadData();
+// =========================================================
+// DERNIÈRES MISES À JOUR : NOTIFICATIONS, VIP & ANTI-BUG
+// =========================================================
+
+// 1. Remplace les alertes moches par des fenêtres chic
+function showNotice(title, message) {
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal-overlay'; // Pour le fond sombre
+    modal.innerHTML = `
+        <div style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); 
+                    background:#1a1a1a; border:2px solid #FCD116; padding:25px; 
+                    border-radius:20px; text-align:center; z-index:10000; width:85%; max-width:350px;
+                    box-shadow: 0 0 30px rgba(0,0,0,0.8); color:white;">
+            <h3 style="color:#FCD116; margin-top:0;">${title}</h3>
+            <p>${message}</p>
+            <button onclick="this.parentElement.parentElement.remove()" 
+                    style="background:#FCD116; color:black; border:none; padding:12px 25px; 
+                    border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">D'ACCORD</button>
+        </div>
+        <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999;"></div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 2. Redéfinition des boutons pour ne plus utiliser "alert"
+window.showHowToPlay = function() {
+    showNotice("❓ COMMENT JOUER", "Réponds aux questions avant la fin du chrono ⏱️. Tu as 3 ❤️. Le mode gratuit s'arrête à 10 questions. Prends le Pack VIP pour débloquer les 500 questions !");
+};
+
+window.showInstallGuide = function() {
+    showNotice("📲 INSTALLATION", "Pour iPhone : Appuie sur 'Partager' puis 'Sur l'écran d'accueil'.<br><br>Pour Android : Appuie sur les 3 points puis 'Installer l'application'.");
+};
+
+// 3. Correction du Manuel (50% Gratuit / 50% VIP 500)
+// Cette fonction va écraser l'ancienne si elle existe
+window.showStudyMode = async function() {
+    document.getElementById('home-screen').style.display = 'none';
+    const screen = document.getElementById('study-screen');
+    screen.style.display = 'block';
+    
+    const { data } = await _supabase.from('questions').select('*').limit(100);
+    const list = document.getElementById('study-list');
+    
+    if (data) {
+        let vipStatus = localStorage.getItem('vip_type'); // '300' ou '500'
+        list.innerHTML = data.map((q, index) => {
+            const isLocked = (vipStatus !== '500' && index > 20);
+            return `
+                <div style="background:#222; padding:12px; margin-bottom:10px; border-radius:10px; 
+                            border-left:4px solid ${isLocked ? '#444' : '#FCD116'}; 
+                            filter: ${isLocked ? 'blur(3px)' : 'none'}; opacity: ${isLocked ? '0.5' : '1'}">
+                    <b>Q: ${q.question}</b><br>
+                    <span style="color:#FCD116;">R: ${q.correct_answer}</span>
+                    ${isLocked ? '<br><small style="color:red;">🔒 RÉSERVÉ VIP 500F</small>' : ''}
+                </div>`;
+        }).join('');
+        
+        if(vipStatus !== '500') {
+            const lockMsg = document.createElement('div');
+            lockMsg.innerHTML = `<button onclick="showShop()" class="vip-btn">DÉBLOQUER LES 80+ RÉPONSES (500F)</button>`;
+            list.prepend(lockMsg);
+        }
+    }
+};
+
+// 4. Correction de la validation des codes (300F vs 500F)
+window.checkVipCode = function() {
+    const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    if (val === "GAB300") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '300');
+        showNotice("💎 VIP 300 ACTIVÉ", "Niveau 2 débloqué ! Tu peux maintenant dépasser les 10 questions.");
+        setTimeout(() => location.reload(), 2000);
+    } else if (val === "GAB500") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '500');
+        showNotice("👑 VIP 500 ACTIVÉ", "Accès Total ! Questions VIP et Manuel d'étude complet débloqués.");
+        setTimeout(() => location.reload(), 2000);
+    } else {
+        showNotice("❌ ERREUR", "Code invalide. Contacte le support si besoin.");
+    }
+};
+
+// 5. Sécurité Anti-Bug pour les 500 questions
+// On s'assure que le jeu ne s'arrête pas par erreur
+const originalNextQuestion = window.nextQuestion;
+window.nextQuestion = function() {
+    let vType = localStorage.getItem('vip_type');
+    if (!vType && currentIndex >= 10) {
+        showNotice("🔒 LIMITE GRATUITE", "Bravo ! Tu as fini le mode gratuit. Débloque le Pack VIP pour jouer aux 500 questions !");
+        location.reload();
+        return;
+    }
+    // Si on est VIP 300 ou 500, on continue sans limite
+    if (typeof originalNextQuestion === "function") originalNextQuestion();
+};
+// =========================================================
+// GESTION DU MUR DES CHAMPIONS (SUPABASE)
+// =========================================================
+
+// 1. Envoyer le commentaire sur Supabase au lieu du téléphone
+window.postComment = async function() {
+    const msgInput = document.getElementById('user-comment');
+    const msg = msgInput.value.trim();
+    
+    if(!msg || !currentUser) {
+        showNotice("⚠️ ATTENTION", "Tu dois entrer un message et avoir un pseudo !");
+        return;
+    }
+
+    // On envoie à la table 'comments' que tu as créée sur Supabase
+    const { error } = await _supabase
+        .from('comments')
+        .insert([{ 
+            pseudo: currentUser, 
+            text: msg, 
+            score: score,
+            created_at: new Date() 
+        }]);
+
+    if (!error) {
+        msgInput.value = ""; // On vide le champ
+        displayComments(); // On rafraîchit la liste pour tout le monde
+    } else {
+        console.error("Erreur Supabase:", error);
+        // Si la table n'existe pas encore, on utilise l'ancien système de secours
+        let localC = JSON.parse(localStorage.getItem('quiz_comments') || "[]");
+        localC.unshift({pseudo: currentUser, text: msg, score: score});
+        localStorage.setItem('quiz_comments', JSON.stringify(localC.slice(0,10)));
+        displayComments();
+    }
+};
+
+// 2. Récupérer les messages de TOUS les joueurs
+window.displayComments = async function() {
+    const div = document.getElementById('comments-display');
+    if(!div) return;
+
+    // On essaie de récupérer les 10 derniers messages sur Supabase
+    const { data, error } = await _supabase
+        .from('comments')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(10);
+
+    if (data && data.length > 0) {
+        div.innerHTML = data.map(c => `
+            <div style="border-bottom:1px solid #333; padding:8px; margin-bottom:5px;">
+                <b style="color:#FCD116;">${c.pseudo}</b> : ${c.text} 
+                <br><small style="color:#009E60;">🏆 Score: ${c.score || 0} pts</small>
+            </div>
+        `).join('');
+    } else {
+        // Système de secours si Supabase n'est pas encore configuré pour les commentaires
+        const localC = JSON.parse(localStorage.getItem('quiz_comments') || "[]");
+        div.innerHTML = localC.map(c => `<div><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
+    }
+};
+
+// On lance l'affichage au démarrage
+setTimeout(() => { displayComments(); }, 2000);
