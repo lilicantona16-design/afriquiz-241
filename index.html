@@ -99,9 +99,17 @@
             </div>
         </div>
     </div>
-    <div id="extra-elements">
-        <script>
-            // Ce script s'assure que le bouton WhatsApp est bien présent dans le shop
+    </div> <div id="extra-elements"></div>
+    <div id="certificate-container"></div>
+    <div id="overlay-container"></div>
+    <div id="notification-area"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            // 1. Bouton WhatsApp
             const shop = document.getElementById('shop-screen');
             if (shop && !document.querySelector('.wa-btn')) {
                 const waBtn = document.createElement('button');
@@ -110,12 +118,27 @@
                 waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
                 shop.appendChild(waBtn);
             }
-        </script>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="script.js"></script>
-    <div id="certificate-container"></div>
+            // 2. Bouton "Passer" pour l'Avis (Ton code intégré)
+            const ratingContent = document.querySelector('#rating-screen .modal-content');
+            if (ratingContent && !document.querySelector('.skip-link')) {
+                const skipBtn = document.createElement('span');
+                skipBtn.className = 'skip-link';
+                skipBtn.innerHTML = "Passer pour l'instant";
+                skipBtn.style.display = "block";
+                skipBtn.style.marginTop = "15px";
+                skipBtn.style.cursor = "pointer";
+                skipBtn.style.textDecoration = "underline";
+                skipBtn.style.color = "#888";
+                skipBtn.onclick = () => {
+                    document.getElementById('rating-screen').style.display = 'none';
+                };
+                ratingContent.appendChild(skipBtn);
+            }
+        });
+    </script>
+</body>
+</html>
     <div id="overlay-container"></div>
 <div id="notification-area"></div>
 

@@ -712,3 +712,42 @@ window.checkAnswer = function(choice, correct, expl) {
         }, 1500);
     }
 };
+// --- CORRECTION DÉBLOCAGE AVIS COMPTE ---
+
+window.submitReview = async function() {
+    const feedback = document.getElementById('user-feedback').value.trim();
+    const ratingScreen = document.getElementById('rating-screen');
+
+    if (!feedback) {
+        showNotice("⚠️ ATTENTION", "Dis-nous au moins un petit mot avant d'envoyer !");
+        return;
+    }
+
+    // On tente l'envoi vers Supabase
+    try {
+        const { error } = await _supabase
+            .from('comments')
+            .insert([{ 
+                pseudo: currentUser || "Anonyme", 
+                text: feedback, 
+                score: score || 0,
+                type: 'review' 
+            }]);
+
+        if (error) throw error;
+        
+        showNotice("✅ MERCI !", "Ton avis a été bien reçu. Bon jeu !");
+    } catch (err) {
+        console.log("Mode local : Avis sauvegardé sur le téléphone.");
+        // Secours si Supabase n'est pas prêt
+        localStorage.setItem('last_review', feedback);
+    }
+
+    // FERMETURE AUTOMATIQUE DE LA FENÊTRE
+    if (ratingScreen) {
+        ratingScreen.style.display = 'none';
+    }
+    
+    // On retourne au menu ou on continue
+    location.reload(); 
+};
