@@ -627,3 +627,88 @@ window.checkVipCode = function() {
         showNotice("❌ ERREUR", "Code invalide. Réessayez.");
     }
 };
+// --- BLOC : PERSISTENCE ET HISTORIQUE ---
+
+// Sauvegarde l'ID des questions déjà répondues pour ne plus les montrer
+window.saveProgress = function(questionId) {
+    let answered = JSON.parse(localStorage.getItem('answered_questions') || "[]");
+    if (!answered.includes(questionId)) {
+        answered.push(questionId);
+        localStorage.setItem('answered_questions', JSON.stringify(answered));
+    }
+};
+
+// Charge les questions en filtrant celles déjà réussies
+window.getNewQuestions = function(category) {
+    let answered = JSON.parse(localStorage.getItem('answered_questions') || "[]");
+    // On filtre pour ne garder que les questions de la catégorie PAS ENCORE répondues
+    let freshQuestions = allQuestions.filter(q => 
+        q.category.toLowerCase() === category.toLowerCase() && 
+        !answered.includes(q.id)
+    );
+
+    // Si on a tout fini, on vide l'historique pour recommencer ou on informe
+    if (freshQuestions.length === 0) {
+        localStorage.removeItem('answered_questions');
+        return allQuestions.filter(q => q.category.toLowerCase() === category.toLowerCase());
+    }
+    return freshQuestions.sort(() => 0.5 - Math.random());
+};
+// --- BLOC : CERTIFICAT MOBILE ET REDIRECTION ---
+
+window.showCertificate = function(levelName, color) {
+    const certModal = document.createElement('div');
+    certModal.className = 'overlay-screen';
+    certModal.style.zIndex = "30000";
+    
+    certModal.innerHTML = `
+        <div style="width:85%; max-width:320px; background:#fff; color:#000; padding:20px; border-radius:10px; text-align:center; border:5px solid ${color}; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+            <h2 style="margin:0; color:${color}; font-size:1.5rem;">DIPLÔME</h2>
+            <p style="margin:5px 0;">Félicitations</p>
+            <h3 style="margin:5px 0; font-size:1.4rem;">${currentUser}</h3>
+            <p style="font-size:0.9rem;">Tu as validé le</p>
+            <div style="background:${color}; color:#fff; padding:5px; border-radius:5px; font-weight:bold; margin:10px 0;">${levelName}</div>
+            <p style="font-style:italic; font-size:0.8rem;">"L'Union fait la Force 🇬🇦"</p>
+            <button id="btn-next-step" style="margin-top:15px; width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">CONTINUER L'AVENTURE</button>
+        </div>
+    `;
+    document.body.appendChild(certModal);
+
+    // LOGIQUE DE REDIRECTION SUR LE BOUTON
+    document.getElementById('btn-next-step').onclick = function() {
+        certModal.remove();
+        let vType = localStorage.getItem('vip_type');
+        
+        if (!vType) {
+            // Fin Niveau 1 -> Direction Boutique
+            showNotice("PROCHAINE ÉTAPE", "Direction la Boutique pour débloquer le Niveau 2 (300F)");
+            showShop();
+        } else {
+            // Déjà VIP -> On relance le quiz pour les prochaines questions
+            location.reload(); 
+        }
+    };
+};
+// --- BLOC : LOGIQUE DE TRANSITION DE NIVEAU ---
+
+const originalCheckAnswer = window.checkAnswer;
+window.checkAnswer = function(choice, correct, expl) {
+    // On sauvegarde la progression si la réponse est juste
+    if (choice === correct) {
+        let qId = currentQuestions[currentIndex].id;
+        saveProgress(qId);
+    }
+    
+    // Appel de la fonction originale
+    if (typeof originalCheckAnswer === "function") originalCheckAnswer(choice, correct, expl);
+    
+    // Vérification de la fin de niveau
+    let vType = localStorage.getItem('vip_type');
+    
+    // Si fin Niveau 1 Gratuit
+    if (!vType && currentIndex === 9) { 
+        setTimeout(() => {
+            showCertificate("NIVEAU 1 : INITIÉ", "#009E60");
+        }, 1500);
+    }
+};
