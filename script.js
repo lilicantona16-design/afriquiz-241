@@ -845,3 +845,21 @@ document.querySelectorAll('#login-screen button').forEach(btn => {
         document.getElementById('login-screen').style.display = 'none';
     });
 });
+// --- SOLUTION RADICALE POUR DÉBLOQUER L'ÉCRAN ---
+document.addEventListener('click', function (e) {
+    // Si on clique sur un bouton qui dit "D'ACCORD"
+    if (e.target && e.target.textContent.includes("D'ACCORD")) {
+        // On cherche tous les écrans noirs possibles et on les cache
+        const screens = ['login-screen', 'welcome-screen', 'rating-screen'];
+        screens.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+        
+        // On force aussi la fermeture de n'importe quel écran "overlay"
+        const overlays = document.querySelectorAll('.overlay-screen');
+        overlays.forEach(ov => ov.style.display = 'none');
+        
+        console.log("Écran fermé de force par le script de secours.");
+    }
+});
