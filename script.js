@@ -751,3 +751,31 @@ window.submitReview = async function() {
     // On retourne au menu ou on continue
     location.reload(); 
 };
+// --- CORRECTION : AFFICHAGE DE L'AVIS UNIQUEMENT À LA FIN ---
+
+// 1. On s'assure que la fenêtre est cachée au démarrage
+document.addEventListener('DOMContentLoaded', () => {
+    const ratingScreen = document.getElementById('rating-screen');
+    if (ratingScreen) {
+        ratingScreen.style.display = 'none';
+    }
+});
+
+// 2. On modifie la fonction pour qu'elle ne s'active qu'après avoir joué
+window.showRatingScreenIfNeeded = function() {
+    // On ne demande l'avis que si le score est > 0 (donc après une partie)
+    if (score > 0) {
+        document.getElementById('rating-screen').style.display = 'flex';
+    } else {
+        console.log("Avis bloqué : Le joueur n'a pas encore fini de partie.");
+    }
+};
+
+// 3. Correction du bouton "Passer" (pour être sûr qu'il ferme tout)
+window.skipReview = function() {
+    const ratingScreen = document.getElementById('rating-screen');
+    if (ratingScreen) {
+        ratingScreen.style.display = 'none';
+        showNotice("INFO", "Tu pourras noter le jeu plus tard !");
+    }
+};
