@@ -868,3 +868,49 @@ document.addEventListener('click', function (e) {
         console.log("Écran fermé de force par le script de secours.");
     }
 });
+// =========================================================
+// BLOC DE SECOURS FINAL (À METTRE TOUT EN BAS)
+// =========================================================
+
+window.saveUser = function() {
+    const input = document.getElementById('user-pseudo');
+    if (!input) return;
+    
+    const p = input.value.trim();
+    if(p.length < 2) {
+        if (typeof showNotice === "function") {
+            showNotice("⚠️ ERREUR", "Choisis un pseudo d'au moins 2 lettres.");
+        } else {
+            alert("Choisis un pseudo d'au moins 2 lettres.");
+        }
+        return;
+    }
+    
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    
+    // Fermeture forcée de l'écran
+    const login = document.getElementById('login-screen');
+    if (login) login.style.display = 'none';
+    
+    console.log("Pseudo enregistré et écran fermé !");
+};
+
+window.forceLogin = function() {
+    const pseudoStored = localStorage.getItem('quiz_pseudo');
+    const loginScreen = document.getElementById('login-screen');
+    
+    if (loginScreen) {
+        if (!pseudoStored || pseudoStored === "") {
+            loginScreen.style.display = 'flex';
+        } else {
+            currentUser = pseudoStored;
+            loginScreen.style.display = 'none';
+        }
+    }
+};
+
+// Lancement automatique 1 seconde après le chargement
+setTimeout(() => {
+    window.forceLogin();
+}, 1000);
