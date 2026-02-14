@@ -779,3 +779,63 @@ window.skipReview = function() {
         showNotice("INFO", "Tu pourras noter le jeu plus tard !");
     }
 };
+// --- SYSTÈME PRO D'AVIS (FIN DE NIVEAU UNIQUEMENT) ---
+
+// 1. Fonction pour afficher l'avis (à appeler uniquement en fin de niveau)
+window.triggerRating = function() {
+    const ratingScreen = document.getElementById('rating-screen');
+    if (ratingScreen) {
+        ratingScreen.classList.add('active'); // On utilise la classe active du CSS
+    }
+};
+
+// 2. Fonction pour envoyer l'avis et FERMER
+window.submitReview = async function() {
+    const feedback = document.getElementById('user-feedback').value.trim();
+    const ratingScreen = document.getElementById('rating-screen');
+
+    if (!feedback) {
+        showNotice("⚠️ ATTENTION", "Donne-nous ton avis avant d'envoyer !");
+        return;
+    }
+
+    // Envoi Supabase (si configuré)
+    try {
+        await _supabase.from('comments').insert([{ 
+            pseudo: currentUser, text: feedback, score: score, type: 'review' 
+        }]);
+    } catch (e) { console.log("Avis sauvé localement"); }
+
+    // FERMETURE RADICALE
+    if (ratingScreen) {
+        ratingScreen.classList.remove('active');
+        ratingScreen.style.display = 'none'; // Double sécurité
+    }
+    showNotice("✅ MERCI", "Ton avis nous aide à améliorer le jeu !");
+};
+
+// 3. Fonction pour PASSER et FERMER
+window.skipReview = function() {
+    const ratingScreen = document.getElementById('rating-screen');
+    if (ratingScreen) {
+        ratingScreen.classList.remove('active');
+        ratingScreen.style.display = 'none';
+    }
+};
+
+// 4. Intégration à la fin du certificat
+// On modifie le bouton "Continuer" du certificat pour qu'il propose l'avis
+const oldShowCert = window.showCertificate;
+window.showCertificate = function(level, color) {
+    if (typeof oldShowCert === "function") oldShowCert(level, color);
+    
+    // On attend que l'utilisateur clique sur "Continuer" pour montrer l'avis
+    const btnCert = document.getElementById('btn-next-step');
+    if (btnCert) {
+        const originalAction = btnCert.onclick;
+        btnCert.onclick = function() {
+            originalAction(); // Exécute la redirection (Boutique ou suite)
+            setTimeout(triggerRating, 1000); // Affiche l'avis 1 sec après
+        };
+    }
+};

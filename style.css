@@ -168,3 +168,12 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
     text-decoration: underline;
     cursor: pointer;
 }
+/* FORCE LE MASQUAGE AU DÉMARRAGE */
+#rating-screen {
+    display: none !important;
+}
+
+/* LE RENDRE VISIBLE SEULEMENT QUAND ON AJOUTE LA CLASSE .active */
+#rating-screen.active {
+    display: flex !important;
+}
