@@ -99,20 +99,21 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
     <div id="extra-elements">
-    <script>
-        // Ce script s'assure que le bouton WhatsApp est bien présent dans le shop
-        const shop = document.getElementById('shop-screen');
-        if (shop && !document.querySelector('.wa-btn')) {
-            const waBtn = document.createElement('button');
-            waBtn.className = 'wa-btn';
-            waBtn.innerHTML = "✅ ENVOYER MON REÇU WHATSAPP";
-            waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
-            shop.appendChild(waBtn);
-        }
-    </script>
-</div>
+        <script>
+            // Ce script s'assure que le bouton WhatsApp est bien présent dans le shop
+            const shop = document.getElementById('shop-screen');
+            if (shop && !document.querySelector('.wa-btn')) {
+                const waBtn = document.createElement('button');
+                waBtn.className = 'wa-btn';
+                waBtn.innerHTML = "✅ ENVOYER MON REÇU WHATSAPP";
+                waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
+                shop.appendChild(waBtn);
+            }
+        </script>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

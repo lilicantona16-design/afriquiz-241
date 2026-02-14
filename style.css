@@ -61,3 +61,22 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
     transform: scale(0.98);
     background-color: #128C7E !important;
 }
+/* --- EFFET BRILLANT POUR LE CERTIFICAT --- */
+@keyframes certificateGlow {
+    0% { box-shadow: 0 0 10px rgba(252, 209, 22, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(252, 209, 22, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(252, 209, 22, 0.5); }
+}
+
+.overlay-screen div[style*="background: white"] {
+    animation: certificateGlow 3s infinite ease-in-out;
+    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%) !important;
+    font-family: 'Times New Roman', serif !important;
+}
+
+/* Style des étoiles sur le Mur des Champions */
+.star-glow {
+    color: #FCD116;
+    text-shadow: 0 0 5px rgba(252, 209, 22, 0.5);
+    font-weight: bold;
+}

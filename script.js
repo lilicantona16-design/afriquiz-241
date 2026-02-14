@@ -344,3 +344,199 @@ window.displayComments = async function() {
 
 // On lance l'affichage au démarrage
 setTimeout(() => { displayComments(); }, 2000);
+// =========================================================
+// LOGIQUE DE NIVEAUX ET REDIRECTION PAIEMENT
+// =========================================================
+
+window.checkLevelProgression = function() {
+    let vType = localStorage.getItem('vip_type'); // Peut être null, '300', ou '500'
+    let currentCat = currentQuestions[0].category.toLowerCase();
+
+    // BLOQUER APRÈS 10 QUESTIONS (Niveau 1 Gratuit terminé)
+    if (!vType && currentIndex >= 10) {
+        showNotice("🔒 NIVEAU 1 TERMINÉ", "Bravo ! Pour accéder au Niveau 2 (Difficile) et continuer l'aventure, le ticket est de 300F.");
+        setTimeout(() => { showShop(); }, 2000); // Envoie direct à la boutique
+        return true; // Bloque la suite
+    }
+
+    // BLOQUER LE PACK 300F S'IL JOUE DANS UNE AUTRE CATÉGORIE
+    if (vType === '300') {
+        let catAuth = localStorage.getItem('category_unlocked');
+        if (currentCat !== catAuth && currentIndex >= 10) {
+             showNotice("🔒 ACCÈS LIMITÉ", `Ton code 300F était uniquement pour ${catAuth}. Prends le PACK VIP TOTAL (500F) pour jouer partout !`);
+             setTimeout(() => { showShop(); }, 2000);
+             return true;
+        }
+    }
+    return false;
+};
+
+// MISE À JOUR DE LA VALIDATION DES CODES (GAB300, AFR300, MON300, VIP500)
+window.checkVipCode = function() {
+    const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    
+    if (val === "GAB300") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '300');
+        localStorage.setItem('category_unlocked', 'provinces');
+        showNotice("💎 NIVEAU 2 DÉBLOQUÉ", "Gabon Master est débloqué !");
+        location.reload();
+    } 
+    else if (val === "AFR300") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '300');
+        localStorage.setItem('category_unlocked', 'afrique');
+        showNotice("💎 NIVEAU 2 DÉBLOQUÉ", "Afrique est débloqué !");
+        location.reload();
+    }
+    else if (val === "MON300") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '300');
+        localStorage.setItem('category_unlocked', 'monde');
+        showNotice("💎 NIVEAU 2 DÉBLOQUÉ", "Monde est débloqué !");
+        location.reload();
+    }
+    else if (val === "VIP500" || val === "GABON2024") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', '500');
+        showNotice("👑 PACK VIP TOTAL ACTIVÉ", "Accès illimité à tous les niveaux et au Manuel d'étude !");
+        location.reload();
+    } 
+    else {
+        showNotice("❌ CODE INVALIDE", "Vérifie ton code ou contacte le 076 36 73 82.");
+    }
+};
+
+// On modifie la fonction nextQuestion pour inclure le blocage auto
+const previousNext = window.nextQuestion;
+window.nextQuestion = function() {
+    const isBlocked = checkLevelProgression();
+    if (!isBlocked && typeof previousNext === "function") {
+        previousNext();
+    }
+};
+// SAUVEGARDE DES QUESTIONS POUR LE MODE HORS-LIGNE
+async function cacheQuestions() {
+    if (allQuestions.length > 0) {
+        localStorage.setItem('cached_questions', JSON.stringify(allQuestions));
+    }
+}
+
+// Modifier la fonction loadData pour lire le cache si pas d'internet
+const oldLoadData = window.loadData;
+window.loadData = async function() {
+    if (!navigator.onLine) {
+        const cache = localStorage.getItem('cached_questions');
+        if (cache) {
+            allQuestions = JSON.parse(cache);
+            console.log("Mode Hors-Ligne : Questions chargées depuis la mémoire.");
+            displayComments(); // Affichera les anciens
+            return;
+        }
+    }
+    await oldLoadData();
+    cacheQuestions(); // Sauvegarde pour la prochaine fois
+};
+// --- BLOC : RÉACTIVATION DU PSEUDO ---
+function forceLogin() {
+    const pseudoStored = localStorage.getItem('quiz_pseudo');
+    if (!pseudoStored || pseudoStored === "") {
+        document.getElementById('login-screen').style.display = 'flex';
+    } else {
+        currentUser = pseudoStored;
+        document.getElementById('login-screen').style.display = 'none';
+    }
+}
+
+// On force l'appel au démarrage
+setTimeout(forceLogin, 500); 
+
+// On écrase la fonction de sauvegarde pour être sûr
+window.saveUser = function() {
+    const p = document.getElementById('user-pseudo').value.trim();
+    if(p.length < 2) {
+        showNotice("⚠️ ERREUR", "Choisis un pseudo d'au moins 2 lettres.");
+        return;
+    }
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    document.getElementById('login-screen').style.display = 'none';
+    showNotice("🇬🇦 BIENVENUE", `Bonne chance ${p} ! Prouve que tu connais le pays.`);
+};
+// --- BLOC : GÉNÉRATEUR DE CERTIFICATS ---
+window.showCertificate = function(levelName, color) {
+    const certModal = document.createElement('div');
+    certModal.className = 'overlay-screen';
+    certModal.style.zIndex = "20000";
+    
+    certModal.innerHTML = `
+        <div style="width:90%; background:white; color:black; padding:30px; border-radius:15px; text-align:center; border:10px double ${color}; position:relative;">
+            <h1 style="margin:0; color:${color};">CERTIFICAT</h1>
+            <p style="font-size:1.2rem; margin:10px 0;">Félicitations à</p>
+            <h2 style="text-decoration:underline; font-size:2rem; margin:10px 0;">${currentUser}</h2>
+            <p>A terminé avec succès le</p>
+            <h3 style="background:${color}; color:white; display:inline-block; padding:5px 15px; border-radius:5px;">${levelName}</h3>
+            <p style="margin-top:20px; font-style:italic;">"La République Gabonaise te salue ! 🇬🇦"</p>
+            <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;">
+                <small>Délivré par Gabon Quiz VIP - ${new Date().toLocaleDateString()}</small>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px; width:100%; padding:15px; background:#333; color:white; border:none; border-radius:10px; font-weight:bold;">RETOURNER AU MENU</button>
+        </div>
+    `;
+    document.body.appendChild(certModal);
+};
+
+// Intégration à la fin du jeu
+const originalFeedback = window.showFeedback;
+window.showFeedback = function(isC, c, e) {
+    // Si on arrive à la fin des questions de la catégorie
+    if (currentIndex >= currentQuestions.length - 1 && lives > 0) {
+        let vType = localStorage.getItem('vip_type');
+        if (vType === '500') {
+            showCertificate("EXPERT TOTAL (NIVEAU 3)", "#3A75C4"); // Bleu
+        } else if (vType === '300') {
+            showCertificate("CHAMPION NIVEAU 2", "#FCD116"); // Jaune
+        } else {
+            showCertificate("DIPLÔME NIVEAU 1", "#009E60"); // Vert
+        }
+    }
+    if (typeof originalFeedback === "function") originalFeedback(isC, c, e);
+};
+// --- BLOC : EXPLOSION DE CONFETTIS GABONAIS ---
+window.launchVictoryConfetti = function() {
+    // Couleurs du drapeau : Vert, Jaune, Bleu
+    var colors = ['#009E60', '#FCD116', '#3A75C4'];
+
+    var end = Date.now() + (3 * 1000); // Explosion pendant 3 secondes
+
+    (function frame() {
+        confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors
+        });
+        confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+};
+
+// On modifie l'affichage du certificat pour inclure l'explosion
+const originalShowCertificate = window.showCertificate;
+window.showCertificate = function(levelName, color) {
+    if (typeof originalShowCertificate === "function") {
+        originalShowCertificate(levelName, color);
+        // On attend une demi-seconde pour que le certificat apparaisse, puis BOUM !
+        setTimeout(launchVictoryConfetti, 500);
+    }
+};
