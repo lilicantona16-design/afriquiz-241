@@ -914,3 +914,13 @@ window.forceLogin = function() {
 setTimeout(() => {
     window.forceLogin();
 }, 1000);
+// FORCE LA DÉFINITION POUR ÉVITER L'ERREUR
+if (typeof forceLogin !== 'function') {
+    window.forceLogin = function() {
+        const p = localStorage.getItem('quiz_pseudo');
+        if (p) {
+            document.getElementById('login-screen').style.display = 'none';
+            currentUser = p;
+        }
+    };
+}
