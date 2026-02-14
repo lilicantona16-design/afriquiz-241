@@ -399,11 +399,11 @@ window.checkVipCode = function() {
     else if (val === "VIP500" || val === "GABON2024") {
         localStorage.setItem('isVip', 'true');
         localStorage.setItem('vip_type', '500');
-        showNotice("👑 PACK VIP TOTAL ACTIVÉ", "Accès illimité à tous les niveaux et au Manuel d'étude !");
+        ("👑 PACK VIP TOTAL ACTIVÉ", "Accès illimité à tous les niveaux et au Manuel d'étude !");
         location.reload();
     } 
     else {
-        showNotice("❌ CODE INVALIDE", "Vérifie ton code ou contacte le 076 36 73 82.");
+        ("❌ CODE INVALIDE", "Vérifie ton code ou contacte le 076 36 73 82.");
     }
 };
 
@@ -437,16 +437,21 @@ window.loadData = async function() {
     await oldLoadData();
     cacheQuestions(); // Sauvegarde pour la prochaine fois
 };
-// --- BLOC : RÉACTIVATION DU PSEUDO ---
-function forceLogin() {
-    const pseudoStored = localStorage.getItem('quiz_pseudo');
-    if (!pseudoStored || pseudoStored === "") {
-        document.getElementById('login-screen').style.display = 'flex';
-    } else {
-        currentUser = pseudoStored;
-        document.getElementById('login-screen').style.display = 'none';
+window.saveUser = function() {
+    const p = document.getElementById('user-pseudo').value.trim();
+    if(p.length < 2) {
+        showNotice("⚠️ ERREUR", "Choisis un pseudo d'au moins 2 lettres.");
+        return;
     }
-}
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    
+    // --- CETTE LIGNE EST CELLE QUI DÉBLOQUE TOUT ---
+    document.getElementById('login-screen').style.display = 'none';
+    
+    showNotice("🇬🇦 BIENVENUE", `Bonne chance ${p} ! Prouve que tu connais le pays.`);
+};
+
 
 // On force l'appel au démarrage
 setTimeout(forceLogin, 500); 
