@@ -99,6 +99,8 @@
             </div>
         </div>
     <div id="certificate-container"></div>
+    </div> <div id="extra-elements"></div>
+    <div id="certificate-container"></div>
     <div id="overlay-container"></div>
     <div id="notification-area"></div>
 
@@ -106,29 +108,29 @@
     <script src="script.js"></script>
 
     <script>
-        // Ce script gère les éléments visuels une fois la page chargée
-        window.addEventListener('load', () => {
-            // Force la fermeture de l'avis au démarrage
-            const ratingScreen = document.getElementById('rating-screen');
-            if (ratingScreen) ratingScreen.style.display = 'none';
+        // CETTE FONCTION DÉBLOQUE LE BOUTON D'ACCORD
+        window.closeWelcome = function() {
+            const login = document.getElementById('login-screen');
+            if (login) {
+                login.style.display = 'none';
+            }
+        };
 
-            // Ajoute le bouton "Passer" à l'avis pour ne plus être bloqué
-            const ratingContent = document.querySelector('#rating-screen .modal-content');
-            if (ratingContent && !document.querySelector('.skip-link')) {
-                const skipBtn = document.createElement('span');
-                skipBtn.className = 'skip-link';
-                skipBtn.innerHTML = "Plus tard";
-                skipBtn.style.cssText = "display:block;margin-top:10px;cursor:pointer;color:#888;text-decoration:underline;font-size:0.8rem;";
-                skipBtn.onclick = () => { ratingScreen.style.display = 'none'; };
-                ratingContent.appendChild(skipBtn);
+        window.addEventListener('load', () => {
+            // Force l'avis à rester caché au départ
+            const rating = document.getElementById('rating-screen');
+            if (rating) rating.style.display = 'none';
+
+            // Ajout du bouton WhatsApp dans le shop
+            const shop = document.getElementById('shop-screen');
+            if (shop && !document.querySelector('.wa-btn')) {
+                const waBtn = document.createElement('button');
+                waBtn.className = 'wa-btn';
+                waBtn.innerHTML = "✅ ENVOYER MON REÇU WHATSAPP";
+                waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
+                shop.appendChild(waBtn);
             }
         });
-        
-        // Fonction pour débloquer le bouton "D'ACCORD"
-        window.closeWelcome = function() {
-            const welcomeMsg = document.querySelector('.overlay-screen'); 
-            if (welcomeMsg) welcomeMsg.style.display = 'none';
-        };
     </script>
 </body>
 </html>

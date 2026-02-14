@@ -839,3 +839,9 @@ window.showCertificate = function(level, color) {
         };
     }
 };
+// Force la fermeture si l'utilisateur clique sur n'importe quel bouton de l'écran d'accueil
+document.querySelectorAll('#login-screen button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('login-screen').style.display = 'none';
+    });
+});
