@@ -80,3 +80,31 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
     text-shadow: 0 0 5px rgba(252, 209, 22, 0.5);
     font-weight: bold;
 }
+/* --- STYLE DES NIVEAUX ET CERTIFICATS --- */
+#level-indicator {
+    font-size: 0.9rem;
+    background: rgba(252, 209, 22, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #FCD116;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.overlay-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+/* Animation pour le message Niveau Débloqué */
+@keyframes pulse-gold {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); text-shadow: 0 0 15px #FCD116; }
+    100% { transform: scale(1); }
+}

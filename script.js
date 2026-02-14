@@ -540,3 +540,90 @@ window.showCertificate = function(levelName, color) {
         setTimeout(launchVictoryConfetti, 500);
     }
 };
+// --- BLOC : INTERFACE DE NIVEAUX ET NOTIFICATIONS ---
+
+// Fonction pour mettre à jour l'affichage du niveau en haut du jeu
+window.updateLevelDisplay = function() {
+    let levelTitle = "Niveau 1 : Facile";
+    if (currentIndex >= 10 && currentIndex < 30) levelTitle = "Niveau 2 : Difficile";
+    if (currentIndex >= 30) levelTitle = "Niveau 3 : Expert Pro";
+    
+    // On l'ajoute dans le header du quiz
+    const header = document.querySelector('.quiz-header');
+    if (header) {
+        let lDiv = document.getElementById('level-indicator');
+        if (!lDiv) {
+            lDiv = document.createElement('div');
+            lDiv.id = 'level-indicator';
+            lDiv.style.color = '#FCD116';
+            lDiv.style.fontWeight = 'bold';
+            header.appendChild(lDiv);
+        }
+        lDiv.innerText = levelTitle;
+    }
+};
+
+// On écrase l'affichage de la question pour intégrer le niveau
+const oldShowQ = window.showQuestion;
+window.showQuestion = function() {
+    if (typeof oldShowQ === "function") oldShowQ();
+    updateLevelDisplay();
+};
+// --- BLOC : PROGRESSION AUTOMATIQUE ET CERTIFICATS ---
+
+window.checkLevelProgression = function() {
+    let vType = localStorage.getItem('vip_type');
+
+    // FIN NIVEAU 1 (10 questions)
+    if (!vType && currentIndex === 10) {
+        showCertificate("DIPLÔME NIVEAU 1", "#009E60"); // On donne le certificat d'abord
+        setTimeout(() => {
+            showNotice("🔒 NIVEAU 2 DÉBLOQUÉ", "Félicitations ! Pour accéder au Niveau 2 (20+ questions), le ticket est de 300F.");
+            showShop(); // Direction la boutique automatiquement
+        }, 4000);
+        return true;
+    }
+
+    // FIN NIVEAU 2 (30 questions au total : 10+20)
+    if (vType === '300' && currentIndex === 30) {
+        showCertificate("CHAMPION NIVEAU 2", "#FCD116");
+        showNotice("🏆 CAP VERS LE NIVEAU 3", "Tu es un chef ! Le Niveau 3 (Expert Pro) est maintenant ouvert.");
+        return false; // On laisse continuer vers le niveau 3
+    }
+
+    // FIN NIVEAU 3 (Toutes les questions)
+    if (currentIndex >= currentQuestions.length - 1) {
+        showCertificate("EXPERT TOTAL GABONAIS", "#3A75C4");
+        return true;
+    }
+    return false;
+};
+// --- BLOC : REDIRECTION POST-PAIEMENT ---
+
+window.checkVipCode = function() {
+    const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    let unlocked = false;
+    let targetCat = "";
+
+    if (val === "GAB300") { unlocked = true; targetCat = "Provinces"; localStorage.setItem('vip_type', '300'); }
+    else if (val === "AFR300") { unlocked = true; targetCat = "Afrique"; localStorage.setItem('vip_type', '300'); }
+    else if (val === "MON300") { unlocked = true; targetCat = "Monde"; localStorage.setItem('vip_type', '300'); }
+    else if (val === "VIP500" || val === "GABON2024") { unlocked = true; localStorage.setItem('vip_type', '500'); }
+
+    if (unlocked) {
+        localStorage.setItem('isVip', 'true');
+        showNotice("✅ CODE VALIDÉ", "Chargement de vos questions VIP...");
+        
+        setTimeout(() => {
+            document.getElementById('shop-screen').style.display = 'none';
+            // Si c'est un pack spécifique, on lance la catégorie, sinon on retourne au menu pour choisir
+            if (targetCat !== "") {
+                startQuiz(targetCat);
+            } else {
+                location.reload();
+            }
+        }, 2000);
+    } else {
+        showNotice("❌ ERREUR", "Code invalide. Réessayez.");
+    }
+};
