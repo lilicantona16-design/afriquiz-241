@@ -102,19 +102,18 @@
     <script src="script.js"></script>
 </body>
 </html>
-<div id="login-screen" class="overlay-screen" style="display: none; z-index: 99999;">
-    <div class="login-card" style="background:#1a1a1a; padding:30px; border-radius:20px; text-align:center; border:2px solid #FCD116; width:85%; max-width:350px;">
-        <h2 style="color:#FCD116;">INSCRIPTION 🇬🇦</h2>
-        <p style="color:white;">Entre ton pseudo pour enregistrer ta progression</p>
-        <input type="text" id="user-pseudo-input" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border-radius:10px; border:none; margin-bottom:20px;">
-        <button onclick="validerInscription()" class="main-btn" style="width:100%;">COMMENCER L'AVENTURE</button>
+<div id="login-screen" class="overlay-screen" style="display:none; z-index: 100000; background:rgba(0,0,0,0.9);">
+    <div style="background:#fff; padding:30px; border-radius:15px; text-align:center; width:85%; max-width:350px;">
+        <h2 style="color:#000; margin-top:0;">BIENVENUE 🇬🇦</h2>
+        <p style="color:#666;">Inscris-toi pour enregistrer ta progression.</p>
+        <input type="text" id="user-pseudo" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border:2px solid #ccc; border-radius:10px; margin-bottom:15px; font-size:1.1rem;">
+        <button onclick="saveUser()" style="width:100%; padding:15px; background:#009E60; color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem;">COMMENCER LE JEU</button>
     </div>
 </div>
 
-<div id="custom-notice" class="overlay-screen" style="display:none; z-index:100000;">
-    <div id="notice-content" style="background:#1a1a1a; border:2px solid #FCD116; padding:20px; border-radius:15px; text-align:center; color:white; width:80%; max-width:320px;">
-        <h3 id="notice-title" style="color:#FCD116; margin-top:0;"></h3>
-        <p id="notice-text"></p>
-        <button onclick="closeNotice()" class="main-btn" style="width:100%;">D'ACCORD</button>
-    </div>
-</div>
+<style>
+    /* Bouton WhatsApp Vert */
+    .whatsapp-btn { background-color: #25D366 !important; color: white !important; font-weight: bold; }
+    /* Style pour les notifications internes (pas de navigateur) */
+    .custom-notice { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; border: 2px solid #FCD116; padding: 20px; border-radius: 15px; z-index: 99999; width: 80%; text-align: center; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+</style>

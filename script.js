@@ -183,109 +183,144 @@ function shareGame() {
 
 if(currentUser) document.getElementById('login-screen').style.display = 'none';
 loadData();
-// --- GESTION MÉMOIRE ET PROGRESSION ---
-function validerInscription() {
-    const p = document.getElementById('user-pseudo-input').value.trim();
-    if(p.length < 2) { 
-        customAlert("Erreur", "Pseudo trop court !"); 
-        return; 
+// =========================================================
+// GESTION DE LA PROGRESSION ET MÉMOIRE (ANTI-RÉPÉTITION)
+// =========================================================
+function saveAnsweredQuestion(id) {
+    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
+    if (!history.includes(id)) {
+        history.push(id);
+        localStorage.setItem('quiz_history', JSON.stringify(history));
     }
+}
+
+function getFreshQuestions(cat) {
+    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
+    return allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase() && !history.includes(q.id));
+}
+
+// =========================================================
+// SYSTÈME DE NOTIFICATION INTERNE (SANS NAVIGATEUR)
+// =========================================================
+window.showNotice = function(title, msg) {
+    const div = document.createElement('div');
+    div.className = "custom-notice";
+    div.innerHTML = `<h3 style="color:#FCD116;margin-top:0;">${title}</h3><p>${msg}</p><button onclick="this.parentElement.remove()" style="background:#FCD116; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%;">OK</button>`;
+    document.body.appendChild(div);
+};
+
+// =========================================================
+// GESTION DU PSEUDO (INSCRIPTION UNIQUE)
+// =========================================================
+window.saveUser = function() {
+    const p = document.getElementById('user-pseudo').value.trim();
+    if(p.length < 2) { showNotice("⚠️ ERREUR", "Pseudo trop court."); return; }
     localStorage.setItem('quiz_pseudo', p);
     currentUser = p;
     document.getElementById('login-screen').style.display = 'none';
-    customAlert("Bienvenue", "Bonne chance " + p + " !");
-}
+    showNotice("🇬🇦 PRÊT ?", `Bonne chance ${p}, prouve tes connaissances !`);
+};
 
-function checkUserStatus() {
-    if(!localStorage.getItem('quiz_pseudo')) {
-        document.getElementById('login-screen').style.display = 'flex';
-    }
-}
-
-// --- NOTIFICATIONS INTERNES (PAS DE NAVIGATEUR) ---
-function customAlert(title, message) {
-    document.getElementById('notice-title').innerText = title;
-    document.getElementById('notice-text').innerHTML = message;
-    document.getElementById('custom-notice').style.display = 'flex';
-}
-
-function closeNotice() {
-    document.getElementById('custom-notice').style.display = 'none';
-}
-
-// --- SYSTÈME DE FILTRE POUR NE JAMAIS RÉPÉTER ---
-function getSmartQuestions(cat) {
-    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-    // Filtre : même catégorie ET ID non présent dans l'historique
-    let available = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase() && !history.includes(q.id));
-    
-    if(available.length === 0) {
-        localStorage.removeItem('quiz_history'); // On recommence si tout est fini
-        return allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
-    }
-    return available;
-}
-
-// --- LOGIQUE DE NIVEAUX 1, 2, 3 ---
-function checkLevelTransition() {
+// =========================================================
+// LOGIQUE DES NIVEAUX ET CERTIFICATS
+// =========================================================
+function checkProgression() {
     let vType = localStorage.getItem('vip_type');
     
-    // FIN NIVEAU 1 (Gratuit - 10 questions)
-    if (!vType && currentIndex === 10) {
-        showProCertificate("NIVEAU 1 : INITIÉ", "#009E60", "passerAuPaiement");
+    // FIN NIVEAU 1 : Gratuit (10 questions)
+    if (!vType && currentIndex >= 10) {
+        showCertificate("NIVEAU 1 : INITIÉ", "#009E60");
         return true;
     }
-    // FIN NIVEAU 2 (VIP 300 - 30 questions)
-    if (vType === '300' && currentIndex === 30) {
-        showProCertificate("NIVEAU 2 : CHAMPION", "#FCD116", "rechargerNiveau3");
+    // FIN NIVEAU 2 : Payant (20 questions de plus)
+    if (vType === '300' && currentIndex >= 30) {
+        showCertificate("NIVEAU 2 : CHAMPION", "#FCD116");
         return true;
     }
-    // FIN NIVEAU 3 (Expert - Toutes les questions)
+    // FIN NIVEAU 3 : Final
     if (currentIndex >= currentQuestions.length) {
-        showProCertificate("NIVEAU 3 : EXPERT PRO", "#3A75C4", "retourMenu");
+        showCertificate("NIVEAU 3 : EXPERT PRO", "#3A75C4");
         return true;
     }
     return false;
 }
 
-function showProCertificate(titre, couleur, action) {
+window.showCertificate = function(level, color) {
     clearInterval(timer);
-    const modal = document.createElement('div');
-    modal.className = "overlay-screen";
-    modal.style.zIndex = "100001";
-    modal.innerHTML = `
-        <div class="certificat-container" style="border-color:${couleur}">
-            <h1 style="color:${couleur}">DIPLÔME</h1>
-            <p>Félicitations à <b>${currentUser}</b></p>
-            <div style="background:${couleur}; color:white; padding:10px; margin:10px 0; border-radius:8px;">${titre}</div>
-            <p style="font-size:12px">Validé le ${new Date().toLocaleDateString()}</p>
-            <button onclick="${action}()" class="main-btn" style="width:100%; margin-top:10px;">CONTINUER</button>
+    const cert = document.createElement('div');
+    cert.className = "overlay-screen";
+    cert.style.zIndex = "60000";
+    cert.innerHTML = `
+        <div style="width:85%; max-width:320px; background:#fff; padding:20px; border-radius:15px; text-align:center; border:8px double ${color}; color:#000;">
+            <h2 style="color:${color}; margin:0;">DIPLÔME</h2>
+            <p>Félicitations</p>
+            <h3 style="text-transform:uppercase;">${currentUser}</h3>
+            <div style="background:${color}; color:#fff; padding:8px; border-radius:5px; font-weight:bold; margin:10px 0;">${level}</div>
+            <p style="font-size:0.8rem; font-style:italic;">"L'Union fait la Force 🇬🇦"</p>
+            <button id="cert-btn" style="width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:8px; font-weight:bold; margin-top:10px;">PASSER AU NIVEAU SUIVANT</button>
         </div>
     `;
-    document.body.appendChild(modal);
-    if(typeof confetti === 'function') confetti();
-}
+    document.body.appendChild(cert);
+    if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
-// ACTIONS APRÈS CERTIFICAT
-function passerAuPaiement() {
-    location.reload(); // Pour revenir au menu et forcer le passage boutique
-    setTimeout(() => { showShop(); }, 500);
-}
-
-// --- OVERRIDE DES FONCTIONS EXISTANTES POUR INTÉGRER LA MÉMOIRE ---
-const originalCheck = window.checkAnswer;
-window.checkAnswer = function(c, cor, e) {
-    if(c === cor) {
-        let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-        history.push(currentQuestions[currentIndex].id);
-        localStorage.setItem('quiz_history', JSON.stringify(history));
-    }
-    if(typeof originalCheck === "function") originalCheck(c, cor, e);
+    document.getElementById('cert-btn').onclick = function() {
+        cert.remove();
+        if (!localStorage.getItem('vip_type')) {
+            showShop(); // Redirection AUTO vers paiement après Niveau 1
+        } else {
+            location.reload(); // Recharger pour lancer le niveau suivant avec les nouvelles questions
+        }
+    };
 };
 
-// --- MODE HORS-LIGNE ---
-window.addEventListener('online',  loadData);
-window.addEventListener('offline', () => customAlert("Mode Offline", "Tu joues sur la mémoire locale du téléphone."));
+// =========================================================
+// MANUEL D'ÉTUDE (50% GRATUIT / 50% VIP)
+// =========================================================
+window.showStudyMode = async function() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('study-screen').style.display = 'block';
+    const { data } = await _supabase.from('questions').select('*').limit(100);
+    const list = document.getElementById('study-list');
+    let vType = localStorage.getItem('vip_type');
 
-// LANCEMENT
-setTimeout(checkUserStatus, 1000);
+    if (data) {
+        list.innerHTML = data.map((q, i) => {
+            const locked = (vType !== '500' && i >= 40); // 40 gratuites, le reste VIP 500
+            return `<div class="study-card" style="${locked ? 'filter:blur(4px); opacity:0.5;' : ''}">
+                <b>${i+1}. ${q.question}</b><br><span style="color:#FCD116;">R: ${q.correct_answer}</span>
+                ${locked ? '<br><small style="color:red;">🔒 ACCÈS VIP 500F</small>' : ''}
+            </div>`;
+        }).join('');
+    }
+};
+
+// =========================================================
+// RÉGLAGES DÉFINITIFS DES CODES VIP
+// =========================================================
+window.checkVipCode = function() {
+    const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    let type = "";
+    if (["GAB300", "AFR300", "MON300"].includes(val)) type = "300";
+    if (["VIP500", "GABON2024"].includes(val)) type = "500";
+
+    if (type !== "") {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('vip_type', type);
+        showNotice("💎 ACTIVÉ", "Accès débloqué ! Chargement du niveau...");
+        setTimeout(() => location.reload(), 2000);
+    } else {
+        showNotice("❌ ERREUR", "Code invalide. Contacte le 076367382");
+    }
+};
+
+// =========================================================
+// INITIALISATION AU CHARGEMENT
+// =========================================================
+window.addEventListener('load', () => {
+    if (!currentUser) document.getElementById('login-screen').style.display = 'flex';
+    // Chargement hors-ligne
+    if (!navigator.onLine) {
+        const cache = localStorage.getItem('cached_questions');
+        if (cache) allQuestions = JSON.parse(cache);
+    }
+});
