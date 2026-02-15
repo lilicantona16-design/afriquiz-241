@@ -708,3 +708,105 @@ window.saveUser = function() {
     const loginScreen = document.getElementById('login-screen');
     if(loginScreen) loginScreen.style.display = 'none';
 };
+/* ============================================================
+   MOTEUR DE JEU ULTIME : SON, AVIS RÉELS ET SYSTÈME ANTI-RÉPÉTITION
+   ============================================================ */
+
+// 1. GESTION DES COMMENTAIRES RÉELS (SUPABASE)
+async function postComment() {
+    const msg = document.getElementById('user-comment').value.trim();
+    if(!msg || !currentUser) return showNote("Écris quelque chose !");
+
+    // Envoi à Supabase
+    const { error } = await _supabase.from('comments').insert([
+        { pseudo: currentUser, text: msg, score: score }
+    ]);
+
+    if(!error) {
+        document.getElementById('user-comment').value = "";
+        showNote("Avis partagé avec la communauté !");
+        loadGlobalComments(); // Recharge les avis de tout le monde
+    }
+}
+
+async function loadGlobalComments() {
+    const { data, error } = await _supabase
+        .from('comments')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(20);
+
+    if (data) {
+        const div = document.getElementById('comments-display');
+        div.innerHTML = data.map(c => `
+            <div class="comment-item">
+                <b>${c.pseudo}</b> : ${c.text}
+                <small>Score : ${c.score || 0} pts</small>
+            </div>
+        `).join('');
+    }
+}
+
+// 2. MUSIQUE ET SONS
+let isMusicOn = true;
+const musicMap = {
+    'Provinces': 'https://www.bensound.com/bensound-music/bensound-africa.mp3', // Exemple
+    'Afrique': 'https://www.bensound.com/bensound-music/bensound-epic.mp3',
+    'Monde': 'https://www.bensound.com/bensound-music/bensound-adventure.mp3'
+};
+
+function toggleMusic() {
+    const audio = document.getElementById('bg-music');
+    isMusicOn = !isMusicOn;
+    if(isMusicOn) {
+        audio.play();
+        document.getElementById('music-btn').innerText = "🔊 Musique : ON";
+    } else {
+        audio.pause();
+        document.getElementById('music-btn').innerText = "🔈 Musique : OFF";
+    }
+}
+
+// 3. FIX QUESTIONS NIVEAU 2 ET 3 (SANS RÉPÉTITION)
+window.startQuiz = function(cat) {
+    // Filtrer les questions qui n'ont PAS encore été répondues par ce joueur
+    let history = JSON.parse(localStorage.getItem('quiz_history')) || [];
+    
+    currentQuestions = allQuestions.filter(q => 
+        q.category.toLowerCase() === cat.toLowerCase() && 
+        !history.includes(q.id)
+    );
+
+    // Si on a épuisé les questions, on vide l'historique pour recommencer
+    if(currentQuestions.length < 5) {
+        localStorage.setItem('quiz_history', JSON.stringify([]));
+        currentQuestions = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
+    }
+
+    currentQuestions.sort(() => 0.5 - Math.random());
+    currentIndex = 0; score = 0; lives = 3;
+
+    // Lancer la musique de la catégorie
+    const audio = document.getElementById('bg-music');
+    audio.src = musicMap[cat] || musicMap['Provinces'];
+    if(isMusicOn) audio.play();
+
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    showQuestion();
+};
+
+// Injection dans checkAnswer pour enregistrer l'historique
+const originalCheckAnswer = checkAnswer;
+window.checkAnswer = function(choice, correct, expl) {
+    const q = currentQuestions[currentIndex];
+    let history = JSON.parse(localStorage.getItem('quiz_history')) || [];
+    if(!history.includes(q.id)) {
+        history.push(q.id);
+        localStorage.setItem('quiz_history', JSON.stringify(history));
+    }
+    originalCheckAnswer(choice, correct, expl);
+};
+
+// Charger les avis au démarrage
+loadGlobalComments();

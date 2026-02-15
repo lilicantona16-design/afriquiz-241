@@ -206,3 +206,22 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
 .already-seen {
     border-left: 4px solid #3A75C4 !important;
 }
+#comments-display {
+    max-height: 250px;
+    overflow-y: auto;
+    background: #111;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.comment-item {
+    border-bottom: 1px solid #222;
+    padding: 8px 0;
+    animation: fadeIn 0.5s;
+}
+
+.comment-item b { color: #FCD116; } /* Pseudo en Or */
+.comment-item small { color: #888; display: block; font-size: 0.7rem; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
