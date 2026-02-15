@@ -495,3 +495,128 @@ async function loadComments() {
 
 // Charger les commentaires au démarrage
 loadComments();
+/* ============================================================
+   MOTEUR DE JEU FINAL : 300+ QUESTIONS ET PROGRESSION RÉELLE
+   ============================================================ */
+
+// 1. CHARGEMENT DU MANUEL (300 QUESTIONS)
+window.showStudyMode = async function() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('study-screen').style.display = 'block';
+    const list = document.getElementById('study-list');
+    list.innerHTML = "<p style='text-align:center;'>Préparation du manuel complet (300 questions)...</p>";
+
+    // On récupère 300 questions spécifiquement
+    const { data, error } = await _supabase.from('questions').select('*').limit(300);
+
+    if (data) {
+        list.innerHTML = data.map((q, i) => {
+            const isLocked = (i >= 50 && !isVip); // 50 questions gratuites, le reste VIP
+            return `
+                <div class="manual-q ${isLocked ? 'manual-locked' : ''}">
+                    <small>Question n°${i+1}</small><br>
+                    <b>${isLocked ? "CONTENU VIP (Pack 500F)" : q.question}</b><br>
+                    <span style="color:#FCD116;">${isLocked ? "Débloquez pour lire la réponse" : "R: " + q.correct_answer}</span>
+                </div>
+            `;
+        }).join('');
+    }
+};
+
+// 2. GESTION DES NIVEAUX SANS RÉPÉTITION
+let usedQuestions = JSON.parse(localStorage.getItem('used_questions')) || [];
+
+window.startQuiz = function(cat) {
+    // Filtrer les questions par catégorie ET enlever celles déjà jouées
+    currentQuestions = allQuestions.filter(q => 
+        q.category.toLowerCase() === cat.toLowerCase() && 
+        !usedQuestions.includes(q.id)
+    );
+
+    // Si plus de questions neuves, on réinitialise l'historique pour ce joueur
+    if (currentQuestions.length < 10) {
+        usedQuestions = [];
+        localStorage.setItem('used_questions', JSON.stringify([]));
+        currentQuestions = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
+    }
+
+    currentQuestions.sort(() => 0.5 - Math.random());
+    currentIndex = 0; 
+    score = 0; 
+    lives = 3;
+    
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    showQuestion();
+};
+
+// 3. LOGIQUE DE PROGRESSION (10 -> 20 -> TOUT)
+window.showQuestion = function() {
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    let limit = 10; // Niveau 1 par défaut
+
+    if (currentLvl === 2) limit = 20; 
+    if (currentLvl === 3) limit = 1000; // Pas de limite au niveau 3
+
+    // Vérifier si on a atteint la fin du niveau
+    if (currentIndex >= limit) {
+        clearInterval(timer);
+        displayCertificate(currentLvl);
+        return;
+    }
+
+    // Protection : si on n'a plus de questions dans la liste filtrée
+    if (!currentQuestions[currentIndex]) {
+        showNote("Bravo ! Tu as épuisé toutes les nouvelles questions !");
+        location.reload();
+        return;
+    }
+
+    updateHeader();
+    startTimer();
+    
+    const q = currentQuestions[currentIndex];
+    // On enregistre que cette question a été vue
+    usedQuestions.push(q.id);
+    localStorage.setItem('used_questions', JSON.stringify(usedQuestions));
+
+    document.getElementById('question-text').innerText = q.question;
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    // Affichage du badge Niveau 1, 2 ou 3
+    let badge = document.getElementById('lvl-badge');
+    if(!badge) {
+        badge = document.createElement('div');
+        badge.id = 'lvl-badge';
+        badge.className = 'level-indicator';
+        document.getElementById('quiz-screen').prepend(badge);
+    }
+    badge.innerText = `NIVEAU ${currentLvl} (${currentIndex + 1}/${limit === 1000 ? '∞' : limit})`;
+
+    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
+        if(!opt) return;
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.className = 'main-btn';
+        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
+        container.appendChild(btn);
+    });
+};
+
+// 4. RÉPARATION DU BOUTON CONTINUER APRÈS CERTIFICAT
+window.closeCertAndNext = function() {
+    document.getElementById('certificate-container').style.display = 'none';
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    
+    if (currentLvl === 1) {
+        showNote("Passage au Niveau 2 (Paiement requis)");
+        showShop(); // Ouvre la boutique pour payer les 300F
+    } else if (currentLvl === 2) {
+        localStorage.setItem('user_game_level', 3);
+        showNote("Félicitations ! Niveau 3 Débloqué (Expert Pro)");
+        location.reload(); // Relance pour appliquer le niveau 3
+    } else {
+        location.reload();
+    }
+};

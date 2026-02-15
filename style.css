@@ -167,3 +167,42 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
     border-radius: 8px;
     border: 1px solid #333;
 }
+/* --- OPTIMISATION MANUEL 300+ ET COMPTEUR --- */
+
+/* Permet de défiler fluidement dans 300 questions */
+#study-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 50px;
+}
+
+/* Badge de progression (ex: Niveau 2 - 5/20) */
+.level-indicator {
+    background: linear-gradient(90deg, #FCD116, #f39c12);
+    color: #000;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Animation pour le passage d'une question à l'autre */
+#question-text {
+    animation: fadeInRight 0.3s ease-in-out;
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Style spécifique pour les questions déjà vues (optionnel) */
+.already-seen {
+    border-left: 4px solid #3A75C4 !important;
+}
