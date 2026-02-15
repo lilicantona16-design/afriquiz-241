@@ -363,7 +363,7 @@ window.showInstallGuide = () => showNote("📲 Android: 3 points > Installer. iP
 
 // 3. GESTION DE LA PROGRESSION DANS LE QUIZ
 // On modifie la fonction showQuestion existante pour gérer les blocages
-const originalShowQuestion = showQuestion;
+   originalShowQuestion = showQuestion;
 showQuestion = function() {
     const config = GAME_LEVELS[currentLvl];
 
