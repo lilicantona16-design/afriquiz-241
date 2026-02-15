@@ -100,20 +100,42 @@
         </div>
     </div>
     <script src="script.js"></script>
-</body>
-</html>
-<div id="login-screen" class="overlay-screen" style="display:none; z-index: 100000; background:rgba(0,0,0,0.9);">
-    <div style="background:#fff; padding:30px; border-radius:15px; text-align:center; width:85%; max-width:350px;">
-        <h2 style="color:#000; margin-top:0;">BIENVENUE 🇬🇦</h2>
-        <p style="color:#666;">Inscris-toi pour enregistrer ta progression.</p>
-        <input type="text" id="user-pseudo" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border:2px solid #ccc; border-radius:10px; margin-bottom:15px; font-size:1.1rem;">
-        <button onclick="saveUser()" style="width:100%; padding:15px; background:#009E60; color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem;">COMMENCER LE JEU</button>
+    <div id="game-alert" class="custom-game-notification" style="display:none;"></div>
+
+<div id="certificate-container" style="display:none;">
+    <div id="cert-content">
+        <div style="font-size: 40px;">🏆</div>
+        <h2 id="cert-title">CERTIFICAT DE RÉUSSITE</h2>
+        <p>Félicitations Champion(ne)</p>
+        <h3 id="cert-name">---</h3>
+        <p>Tu as brillamment validé le :</p>
+        <div id="cert-level" style="font-weight: bold; color: #c5a059; font-size: 1.2rem;">NIVEAU 1</div>
+        <p>Catégorie : <span id="cert-cat">Gabon Master</span></p>
+        <hr style="border: 0.5px solid #eee; margin: 15px 0;">
+        <button onclick="closeCertAndNext()" class="main-btn" style="background: #27ae60; color: white;">CONTINUER</button>
     </div>
 </div>
 
 <style>
-    /* Bouton WhatsApp Vert */
-    .whatsapp-btn { background-color: #25D366 !important; color: white !important; font-weight: bold; }
-    /* Style pour les notifications internes (pas de navigateur) */
-    .custom-notice { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; border: 2px solid #FCD116; padding: 20px; border-radius: 15px; z-index: 99999; width: 80%; text-align: center; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+    .manual-locked { 
+        filter: blur(5px); 
+        opacity: 0.6; 
+        pointer-events: none; 
+        position: relative;
+    }
+    .manual-locked::after {
+        content: "🔒 SECTION VIP (500F)";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: gold;
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        border-radius: 5px;
+        white-space: nowrap;
+    }
 </style>
+</body>
+</html>

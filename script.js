@@ -183,144 +183,315 @@ function shareGame() {
 
 if(currentUser) document.getElementById('login-screen').style.display = 'none';
 loadData();
-// =========================================================
-// GESTION DE LA PROGRESSION ET MÉMOIRE (ANTI-RÉPÉTITION)
-// =========================================================
-function saveAnsweredQuestion(id) {
-    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-    if (!history.includes(id)) {
-        history.push(id);
-        localStorage.setItem('quiz_history', JSON.stringify(history));
+/* ============================================================
+   EXTENSION PRO : NIVEAUX, CERTIFICATS ET FLUX VIP
+   ============================================================ */
+
+// Configuration des paliers de niveaux
+const LEVEL_CONFIG = {
+    1: { questions: 10, price: 0, label: "Débutant" },
+    2: { questions: 20, price: 300, label: "Difficile" },
+    3: { questions: 30, price: 0, label: "Expert Pro" } // Gratuit si Niveau 2 payé
+};
+
+let currentDifficultyLevel = parseInt(localStorage.getItem('game_level')) || 1;
+
+// 1. REECRITURE DE showQuestion POUR GERER LES NIVEAUX
+const originalShowQuestion = showQuestion;
+showQuestion = function() {
+    // Vérification du niveau
+    if (currentDifficultyLevel === 1 && currentIndex >= 10) {
+        showCustomCertificate(1);
+        return;
     }
-}
+    if (currentDifficultyLevel === 2 && currentIndex >= 20) {
+        showCustomCertificate(2);
+        return;
+    }
+    if (currentDifficultyLevel === 3 && currentIndex >= 30) {
+        showCustomCertificate(3);
+        return;
+    }
 
-function getFreshQuestions(cat) {
-    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-    return allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase() && !history.includes(q.id));
-}
-
-// =========================================================
-// SYSTÈME DE NOTIFICATION INTERNE (SANS NAVIGATEUR)
-// =========================================================
-window.showNotice = function(title, msg) {
-    const div = document.createElement('div');
-    div.className = "custom-notice";
-    div.innerHTML = `<h3 style="color:#FCD116;margin-top:0;">${title}</h3><p>${msg}</p><button onclick="this.parentElement.remove()" style="background:#FCD116; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%;">OK</button>`;
-    document.body.appendChild(div);
-};
-
-// =========================================================
-// GESTION DU PSEUDO (INSCRIPTION UNIQUE)
-// =========================================================
-window.saveUser = function() {
-    const p = document.getElementById('user-pseudo').value.trim();
-    if(p.length < 2) { showNotice("⚠️ ERREUR", "Pseudo trop court."); return; }
-    localStorage.setItem('quiz_pseudo', p);
-    currentUser = p;
-    document.getElementById('login-screen').style.display = 'none';
-    showNotice("🇬🇦 PRÊT ?", `Bonne chance ${p}, prouve tes connaissances !`);
-};
-
-// =========================================================
-// LOGIQUE DES NIVEAUX ET CERTIFICATS
-// =========================================================
-function checkProgression() {
-    let vType = localStorage.getItem('vip_type');
+    // Affichage du badge de niveau dans l'interface
+    const quizScreen = document.getElementById('quiz-screen');
+    let badge = document.getElementById('level-tag');
+    if(!badge) {
+        badge = document.createElement('div');
+        badge.id = 'level-tag';
+        badge.className = 'level-indicator';
+        quizScreen.prepend(badge);
+    }
+    badge.innerText = `NIVEAU ${currentDifficultyLevel} : ${LEVEL_CONFIG[currentDifficultyLevel].label}`;
     
-    // FIN NIVEAU 1 : Gratuit (10 questions)
-    if (!vType && currentIndex >= 10) {
-        showCertificate("NIVEAU 1 : INITIÉ", "#009E60");
-        return true;
-    }
-    // FIN NIVEAU 2 : Payant (20 questions de plus)
-    if (vType === '300' && currentIndex >= 30) {
-        showCertificate("NIVEAU 2 : CHAMPION", "#FCD116");
-        return true;
-    }
-    // FIN NIVEAU 3 : Final
-    if (currentIndex >= currentQuestions.length) {
-        showCertificate("NIVEAU 3 : EXPERT PRO", "#3A75C4");
-        return true;
-    }
-    return false;
-}
-
-window.showCertificate = function(level, color) {
-    clearInterval(timer);
-    const cert = document.createElement('div');
-    cert.className = "overlay-screen";
-    cert.style.zIndex = "60000";
-    cert.innerHTML = `
-        <div style="width:85%; max-width:320px; background:#fff; padding:20px; border-radius:15px; text-align:center; border:8px double ${color}; color:#000;">
-            <h2 style="color:${color}; margin:0;">DIPLÔME</h2>
-            <p>Félicitations</p>
-            <h3 style="text-transform:uppercase;">${currentUser}</h3>
-            <div style="background:${color}; color:#fff; padding:8px; border-radius:5px; font-weight:bold; margin:10px 0;">${level}</div>
-            <p style="font-size:0.8rem; font-style:italic;">"L'Union fait la Force 🇬🇦"</p>
-            <button id="cert-btn" style="width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:8px; font-weight:bold; margin-top:10px;">PASSER AU NIVEAU SUIVANT</button>
-        </div>
-    `;
-    document.body.appendChild(cert);
-    if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
-    document.getElementById('cert-btn').onclick = function() {
-        cert.remove();
-        if (!localStorage.getItem('vip_type')) {
-            showShop(); // Redirection AUTO vers paiement après Niveau 1
-        } else {
-            location.reload(); // Recharger pour lancer le niveau suivant avec les nouvelles questions
-        }
-    };
+    originalShowQuestion(); // Appelle le reste de ta fonction d'origine
 };
 
-// =========================================================
-// MANUEL D'ÉTUDE (50% GRATUIT / 50% VIP)
-// =========================================================
-window.showStudyMode = async function() {
+// 2. SYSTEME DE CERTIFICAT ET REDIRECTION
+function showCustomCertificate(level) {
+    clearInterval(timer);
+    const certContainer = document.getElementById('certificate-container');
+    const certName = document.getElementById('cert-name');
+    const certLevel = document.getElementById('cert-level');
+    
+    certName.innerText = currentUser || "Champion";
+    certLevel.innerText = "NIVEAU " + level;
+    certContainer.style.display = 'block';
+    
+    // Jouer un son ou confettis ici si tu veux
+}
+
+function closeCertAndNext() {
+    document.getElementById('certificate-container').style.display = 'none';
+    
+    if (currentDifficultyLevel === 1) {
+        // Rediriger vers boutique pour Niveau 2
+        showGameNotification("Bravo ! Débloque le Niveau 2 (300F) pour continuer.");
+        showShop(); 
+    } else if (currentDifficultyLevel === 2) {
+        // Passage au niveau 3 automatique
+        currentDifficultyLevel = 3;
+        localStorage.setItem('game_level', 3);
+        startQuiz(currentQuestions[0].category); 
+    } else {
+        showGameNotification("Félicitations ! Tu as terminé le jeu !");
+        location.reload();
+    }
+}
+
+// 3. REECRITURE DU MANUEL (50% GRATUIT / 50% VIP)
+async function showStudyMode() {
     document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('study-screen').style.display = 'block';
+    const screen = document.getElementById('study-screen');
+    screen.style.display = 'block';
+    
     const { data } = await _supabase.from('questions').select('*').limit(100);
     const list = document.getElementById('study-list');
-    let vType = localStorage.getItem('vip_type');
+    
+    list.innerHTML = data.map((q, index) => {
+        const isLocked = index >= 40 && !isVip;
+        return `
+            <div class="manual-q ${isLocked ? 'manual-locked' : ''}">
+                <b>${index + 1}. ${isLocked ? "CONTENU VIP BLOQUÉ" : q.question}</b><br>
+                <span style="color:#009E60;">${isLocked ? "Payez 500F pour voir" : "R: " + q.correct_answer}</span>
+                ${isLocked ? '<span class="vip-badge-small">VIP</span>' : ''}
+            </div>
+        `;
+    }).join('');
+}
 
+// 4. GESTION DES CODES SPECIFIQUES (300F / 500F)
+function checkVipCode() {
+    const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    const btnWhatsapp = document.querySelector('.btn-whatsapp'); // Ton bouton vert
+    
+    let accessGranted = false;
+    
+    if (code === "GAB300" || code === "AFR300" || code === "MON300") {
+        currentDifficultyLevel = 2;
+        localStorage.setItem('game_level', 2);
+        accessGranted = true;
+    } else if (code === "VIP500" || code === "GABON2024") {
+        isVip = true;
+        localStorage.setItem('isVip', 'true');
+        currentDifficultyLevel = 2;
+        localStorage.setItem('game_level', 2);
+        accessGranted = true;
+    }
+
+    if (accessGranted) {
+        showGameNotification("✅ Code validé ! Niveau débloqué.");
+        setTimeout(() => { location.reload(); }, 1500);
+    } else {
+        showGameNotification("❌ Code incorrect.");
+    }
+}
+
+// 5. NOTIFICATIONS INTERNES (Remplace alert)
+function showGameNotification(text) {
+    const note = document.createElement('div');
+    note.className = 'custom-game-notification';
+    note.innerText = text;
+    document.body.appendChild(note);
+    setTimeout(() => { note.remove(); }, 3000);
+}
+
+// Remplacer les alertes par les notifications dans tes fonctions existantes
+function showHowToPlay() { showGameNotification("Règles : 15s par question. 3 vies. Niveau 1 gratuit."); }
+function showInstallGuide() { showGameNotification("Menu > Installer l'application (Android) ou Partager > Ecran d'accueil (iPhone)"); }
+
+// 6. PERSISTENCE : Reprendre au dernier index
+function saveCurrentProgress() {
+    localStorage.setItem('quiz_current_index', currentIndex);
+}
+
+// Modifier checkAnswer pour sauvegarder
+const originalCheckAnswer = checkAnswer;
+checkAnswer = function(choice, correct, expl) {
+    originalCheckAnswer(choice, correct, expl);
+    saveCurrentProgress();
+};
+
+// Charger le pseudo au début si absent
+if(!currentUser) {
+    document.getElementById('login-screen').style.display = 'flex';
+}
+/* ============================================================
+   LOGIQUE FINALE : NIVEAUX, CERTIFICATS ET NOTIFICATIONS PRO
+   ============================================================ */
+
+// 1. CONFIGURATION DES NIVEAUX
+const GAME_LEVELS = {
+    1: { name: "NIVEAU 1 : DÉBUTANT", qCount: 10, isFree: true },
+    2: { name: "NIVEAU 2 : DIFFICILE", qCount: 20, isFree: false },
+    3: { name: "NIVEAU 3 : EXPERT PRO", qCount: 30, isFree: false }
+};
+
+let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+
+// 2. NOTIFICATION PERSONNALISÉE (Remplace alert)
+function showNote(msg) {
+    const box = document.getElementById('game-alert');
+    box.innerText = msg;
+    box.style.display = 'block';
+    setTimeout(() => { box.style.display = 'none'; }, 3500);
+}
+
+// Redéfinition des fonctions d'aide pour utiliser les notifications
+window.showHowToPlay = () => showNote("⏱️ 15s par question. ❤️ 3 vies. Niveau 1 gratuit (10 questions) !");
+window.showInstallGuide = () => showNote("📲 Android: 3 points > Installer. iPhone: Partager > Écran d'accueil.");
+
+// 3. GESTION DE LA PROGRESSION DANS LE QUIZ
+// On modifie la fonction showQuestion existante pour gérer les blocages
+const originalShowQuestion = showQuestion;
+showQuestion = function() {
+    const config = GAME_LEVELS[currentLvl];
+
+    // Si le joueur a fini les questions de son niveau actuel
+    if (currentIndex >= config.qCount) {
+        clearInterval(timer);
+        displayCertificate(currentLvl);
+        return;
+    }
+
+    // Affichage du Badge de Niveau
+    const container = document.getElementById('quiz-screen');
+    let badge = document.getElementById('lvl-badge');
+    if(!badge) {
+        badge = document.createElement('div');
+        badge.id = 'lvl-badge';
+        badge.className = 'level-indicator';
+        container.prepend(badge);
+    }
+    badge.innerText = config.name;
+
+    originalShowQuestion();
+};
+
+// 4. AFFICHAGE ET GESTION DU CERTIFICAT
+function displayCertificate(lvl) {
+    const cert = document.getElementById('certificate-container');
+    document.getElementById('cert-name').innerText = currentUser || "Champion";
+    document.getElementById('cert-level').innerText = "NIVEAU " + lvl + " VALIDÉ";
+    document.getElementById('cert-cat').innerText = currentQuestions[0].category;
+    cert.style.display = 'block';
+}
+
+function closeCertAndNext() {
+    document.getElementById('certificate-container').style.display = 'none';
+    
+    if (currentLvl === 1) {
+        showNote("Félicitations ! Débloquez le Niveau 2 pour continuer.");
+        showShop(); // Redirection automatique vers la boutique
+    } else if (currentLvl === 2) {
+        currentLvl = 3;
+        localStorage.setItem('user_game_level', 3);
+        showNote("Passage au Niveau 3 : EXPERT PRO !");
+        startQuiz(currentQuestions[0].category);
+    } else {
+        showNote("Incroyable ! Vous avez terminé tout le jeu !");
+        location.reload();
+    }
+}
+
+// 5. VALIDATION DES CODES (300F et 500F)
+window.checkVipCode = function() {
+    const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    let success = false;
+
+    // Codes pour Niveau 2 (300F)
+    if (["GAB300", "AFR300", "MON300"].includes(code)) {
+        currentLvl = 2;
+        localStorage.setItem('user_game_level', 2);
+        success = true;
+    } 
+    // Codes pour Accès Total + Manuel (500F)
+    else if (["VIP500", "GABON2024"].includes(code)) {
+        isVip = true;
+        localStorage.setItem('isVip', 'true');
+        currentLvl = 2;
+        localStorage.setItem('user_game_level', 2);
+        success = true;
+    }
+
+    if (success) {
+        showNote("✅ CODE VALIDE ! Niveau débloqué.");
+        setTimeout(() => { location.reload(); }, 2000);
+    } else {
+        showNote("❌ Code invalide. Vérifiez ou contactez le support.");
+    }
+};
+
+// 6. MANUEL D'ÉTUDE (80 QUESTIONS AVEC 50% GRATUIT)
+async function showStudyMode() {
+    document.getElementById('home-screen').style.display = 'none';
+    const screen = document.getElementById('study-screen');
+    screen.style.display = 'block';
+    const list = document.getElementById('study-list');
+    list.innerHTML = "Chargement du manuel...";
+
+    const { data } = await _supabase.from('questions').select('*').limit(80);
+    
     if (data) {
         list.innerHTML = data.map((q, i) => {
-            const locked = (vType !== '500' && i >= 40); // 40 gratuites, le reste VIP 500
-            return `<div class="study-card" style="${locked ? 'filter:blur(4px); opacity:0.5;' : ''}">
-                <b>${i+1}. ${q.question}</b><br><span style="color:#FCD116;">R: ${q.correct_answer}</span>
-                ${locked ? '<br><small style="color:red;">🔒 ACCÈS VIP 500F</small>' : ''}
-            </div>`;
+            const locked = (i >= 40 && !isVip); // Bloque après la 40ème question
+            return `
+                <div class="manual-q ${locked ? 'manual-locked' : ''}">
+                    <b>${i + 1}. ${locked ? "CONTENU RÉSERVÉ VIP" : q.question}</b><br>
+                    <span style="color:#FCD116;">${locked ? "Payez 500F pour débloquer" : "R: " + q.correct_answer}</span>
+                </div>
+            `;
         }).join('');
     }
-};
+}
 
-// =========================================================
-// RÉGLAGES DÉFINITIFS DES CODES VIP
-// =========================================================
-window.checkVipCode = function() {
-    const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    let type = "";
-    if (["GAB300", "AFR300", "MON300"].includes(val)) type = "300";
-    if (["VIP500", "GABON2024"].includes(val)) type = "500";
+// 7. FIX : ÉTOILES ET COMMENTAIRES SUPABASE
+async function postComment() {
+    const msg = document.getElementById('user-comment').value.trim();
+    if(!msg || !currentUser) return showNote("Entrez un message !");
 
-    if (type !== "") {
-        localStorage.setItem('isVip', 'true');
-        localStorage.setItem('vip_type', type);
-        showNotice("💎 ACTIVÉ", "Accès débloqué ! Chargement du niveau...");
-        setTimeout(() => location.reload(), 2000);
-    } else {
-        showNotice("❌ ERREUR", "Code invalide. Contacte le 076367382");
+    const { error } = await _supabase.from('comments').insert([
+        { pseudo: currentUser, text: msg, score: score }
+    ]);
+
+    if(!error) {
+        document.getElementById('user-comment').value = "";
+        showNote("Message publié !");
+        loadComments();
     }
-};
+}
 
-// =========================================================
-// INITIALISATION AU CHARGEMENT
-// =========================================================
-window.addEventListener('load', () => {
-    if (!currentUser) document.getElementById('login-screen').style.display = 'flex';
-    // Chargement hors-ligne
-    if (!navigator.onLine) {
-        const cache = localStorage.getItem('cached_questions');
-        if (cache) allQuestions = JSON.parse(cache);
+async function loadComments() {
+    const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(10);
+    if (data) {
+        const div = document.getElementById('comments-display');
+        div.innerHTML = data.map(c => `
+            <div>
+                <span style="color:gold;">⭐</span> <b>${c.pseudo}</b>: ${c.text}
+            </div>
+        `).join('');
     }
-});
+}
+
+// Charger les commentaires au démarrage
+loadComments();

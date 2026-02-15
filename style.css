@@ -44,126 +44,126 @@ body {
 #comments-display { background: #111; border-radius: 10px; max-height: 180px; overflow-y: auto; padding: 10px; margin: 10px 0; font-size: 0.9rem; text-align: left; }
 .comment-input-area { display: flex; gap: 5px; }
 input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #222; color: white; }
-/* =========================================================
-   DESIGN PRO ET ADAPTATION MOBILE (À METTRE TOUT EN BAS)
-   ========================================================= */
+/* ============================================================
+   CORRECTIONS FINALES : DESIGN PRO ET ADAPTATION MOBILE
+   ============================================================ */
 
-/* 1. Notifications Internes (Remplace les alertes du navigateur) */
-.custom-notice {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #1a1a1a;
-    border: 3px solid #FCD116;
-    padding: 25px;
-    border-radius: 20px;
-    z-index: 110000;
-    width: 85%;
-    max-width: 350px;
-    text-align: center;
-    color: white;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* 2. Bouton WhatsApp Vert Officiel */
-.whatsapp-btn {
-    background-color: #25D366 !important;
+/* 1. BOUTON WHATSAPP VERT (Remplacement du jaune par le vert officiel) */
+.wa-btn {
+    background-color: #25D366 !important; /* Vert WhatsApp */
     color: white !important;
-    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    transition: transform 0.2s;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 15px !important;
-    border-radius: 10px;
-    text-decoration: none;
-    margin-top: 15px;
-    transition: transform 0.2s;
 }
 
-.whatsapp-btn:active {
-    transform: scale(0.95);
+.wa-btn:active {
+    transform: scale(0.98);
 }
 
-/* 3. Manuel d'Étude (Grille et Cartes) */
-#study-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 15px;
-}
-
-.study-card {
-    background: #222;
-    border-left: 5px solid #FCD116;
-    padding: 15px;
-    border-radius: 10px;
-    color: white;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-
-/* 4. Écran d'Inscription (Login) */
-#login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#login-screen input {
-    background: #f4f4f4;
-    color: #000;
+/* 2. CERTIFICAT PRO (Adapté iPhone/Android - Plus petit et chic) */
+#certificate-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 360px;
+    background: #fff; /* Fond blanc pour faire pro */
+    color: #1a1a1a;
+    padding: 25px;
+    border: 8px double #FCD116; /* Bordure or gabonaise */
+    border-radius: 15px;
     text-align: center;
-    font-weight: bold;
+    z-index: 10000;
+    box-shadow: 0 0 100px rgba(0,0,0,0.8);
 }
 
-/* 5. Indicateur de Niveau (En haut du Quiz) */
-#level-indicator {
-    background: rgba(252, 209, 22, 0.2);
-    color: #FCD116;
-    padding: 5px 15px;
+#cert-title {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #000;
+    text-decoration: underline;
+    margin-bottom: 15px;
+}
+
+#cert-name {
+    font-size: 1.6rem;
+    color: #3A75C4; /* Bleu Gabon */
+    text-transform: uppercase;
+    margin: 10px 0;
+}
+
+/* 3. NOTIFICATIONS IN-GAME (Évite les alertes du navigateur) */
+.custom-game-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: 1px solid #FCD116;
+    z-index: 11000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    font-weight: bold;
+    text-align: center;
+    min-width: 280px;
+    animation: slideInDown 0.4s ease-out;
+}
+
+@keyframes slideInDown {
+    from { top: -100px; opacity: 0; }
+    to { top: 20px; opacity: 1; }
+}
+
+/* 4. DESIGN DU MANUEL (Floutage des questions VIP) */
+.manual-q {
+    background: #1a1a1a;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border-left: 5px solid #009E60; /* Vert Gabon */
+}
+
+.manual-locked {
+    filter: blur(4px);
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* 5. FIX ÉTOILES SUR MOBILE */
+#star-rating span {
+    display: inline-block;
+    padding: 0 5px;
+    font-size: 40px; /* Plus gros pour toucher au doigt */
+}
+
+/* 6. INDICATEUR DE NIVEAU DANS LE QUIZ */
+.level-indicator {
+    background: #FCD116;
+    color: #000;
+    display: inline-block;
+    padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 5px;
-    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
-/* 6. Fix pour les certificats trop grands sur petit téléphone */
-.overlay-screen div {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-/* 7. Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -60%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-/* 8. Mur des Champions (Commentaires) */
-#comments-display {
-    max-height: 250px;
-    overflow-y: auto;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 10px;
-    margin-top: 10px;
-}
-
+/* 7. AJUSTEMENT DU MUR DES CHAMPIONS */
 #comments-display div {
-    background: rgba(255,255,255,0.05);
-    margin-bottom: 8px;
+    background: #222;
     padding: 10px;
+    margin-bottom: 8px;
     border-radius: 8px;
-    font-size: 0.85rem;
-}
-
-/* Masquer les barres de défilement pour un look "App" */
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
+    border: 1px solid #333;
 }
