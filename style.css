@@ -177,3 +177,7 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
 #rating-screen.active {
     display: flex !important;
 }
+.vip-card { background: #222; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid #FCD116; }
+.buy-btn { display: block; background: #009E60; color: #fff; padding: 12px; text-align: center; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+.shop-content { padding: 20px; color: white; }
+.study-card { background: #333; padding: 10px; margin-bottom: 8px; border-radius: 8px; font-size: 0.9rem; }
