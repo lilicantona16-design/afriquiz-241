@@ -70,11 +70,7 @@
             <div class="code-area">
                 <input type="text" id="vip-code-input" placeholder="Entrez votre code reçu">
                 <button onclick="checkVipCode()">VALIDER</button>
-            <div class="vip-card">
-    <h3>PACK NIVEAU 2 (300F)</h3>
-    <p>Débloque les questions difficiles.</p>
-    <a href="https://wa.me/24176367382?text=Bonjour+je+veux+le+code+300F" class="buy-btn">PAYER PAR AIRTEL/MOOV</a>
-</div>
+            </div>
             <button onclick="window.location.href='https://wa.me/24176367382'" class="wa-btn">ENVOYER MON REÇU WHATSAPP</button>
         </div>
 
@@ -88,8 +84,8 @@
             <div class="modal-content">
                 <h2 class="gold-text">BIENVENUE 🇬🇦</h2>
                 <input type="text" id="user-pseudo" placeholder="Ton Pseudo...">
- <button onclick="saveUser(); document.getElementById('login-screen').style.display='none';" class="start-btn">D'ACCORD</button>
-           </div>
+                <button onclick="saveUser()" class="start-btn">COMMENCER</button>
+            </div>
         </div>
 
         <div id="rating-screen" class="overlay-screen" style="display:none;">
@@ -102,63 +98,7 @@
                 <button onclick="submitReview()" class="start-btn">ENVOYER</button>
             </div>
         </div>
-    <div id="certificate-container"></div>
-    </div> <div id="extra-elements"></div>
-    <div id="certificate-container"></div>
-    <div id="overlay-container"></div>
-    <div id="notification-area"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    </div>
     <script src="script.js"></script>
-
-    <script>
-        // CETTE FONCTION DÉBLOQUE LE BOUTON D'ACCORD
-        window.closeWelcome = function() {
-            const login = document.getElementById('login-screen');
-            if (login) {
-                login.style.display = 'none';
-            }
-        };
-
-        window.addEventListener('load', () => {
-            // Force l'avis à rester caché au départ
-            const rating = document.getElementById('rating-screen');
-            if (rating) rating.style.display = 'none';
-
-            // Ajout du bouton WhatsApp dans le shop
-            const shop = document.getElementById('shop-screen');
-            if (shop && !document.querySelector('.wa-btn')) {
-                const waBtn = document.createElement('button');
-                waBtn.className = 'wa-btn';
-                waBtn.innerHTML = "✅ ENVOYER MON REÇU WHATSAPP";
-                waBtn.onclick = () => window.location.href='https://wa.me/24176367382';
-                shop.appendChild(waBtn);
-            }
-        });
-    </script>
-</body>
-</html>
-<script>
-    // FORCE LE DÉBLOCAGE DU BOUTON D'ACCORD
-    document.addEventListener('click', function(e) {
-        // Si on clique sur un bouton qui contient le texte "D'ACCORD"
-        if (e.target && e.target.innerText.includes("D'ACCORD")) {
-            // On cherche l'écran noir de bienvenue
-            const loginScreen = document.getElementById('login-screen');
-            if (loginScreen) {
-                loginScreen.style.display = 'none'; // On le cache
-            }
-            // Au cas où l'ID est différent, on cache aussi tout écran superposé
-            const overlays = document.querySelectorAll('.overlay-screen');
-            overlays.forEach(ov => ov.style.display = 'none');
-        }
-    });
-
-    // MASQUAGE AUTOMATIQUE AU CHARGEMENT (SÉCURITÉ)
-    window.addEventListener('load', () => {
-        const rating = document.getElementById('rating-screen');
-        if (rating) rating.style.display = 'none';
-    });
-</script>
 </body>
 </html>
