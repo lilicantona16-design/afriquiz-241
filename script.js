@@ -620,3 +620,91 @@ window.closeCertAndNext = function() {
         location.reload();
     }
 };
+/* ============================================================
+   REPARATION FINALE : FIX TYPEERROR CONSTANT VARIABLE
+   ============================================================ */
+
+// 1. On utilise 'var' ou rien pour permettre la réassignation si nécessaire
+var gameEngineActive = true;
+
+// 2. On remplace la logique de showQuestion de manière sécurisée
+const backupShowQuestion = window.showQuestion; 
+
+window.showQuestion = function() {
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    let limit = 10; 
+
+    if (currentLvl === 2) limit = 20; 
+    if (currentLvl === 3) limit = 1000; 
+
+    // Vérifier si la limite du niveau est atteinte
+    if (currentIndex >= limit) {
+        if (typeof timer !== 'undefined') clearInterval(timer);
+        if (typeof displayCertificate === 'function') {
+            displayCertificate(currentLvl);
+        } else {
+            alert("Niveau " + currentLvl + " Terminé !");
+            showShop();
+        }
+        return;
+    }
+
+    // Protection contre l'absence de questions
+    if (!currentQuestions || !currentQuestions[currentIndex]) {
+        console.log("Plus de questions disponibles");
+        return;
+    }
+
+    // On appelle la fonction de base pour afficher la question
+    // On utilise un try/catch pour éviter que l'erreur 'constant' ne bloque tout
+    try {
+        // Mise à jour du badge de niveau (Compteur 1/10, 1/20 etc)
+        let badge = document.getElementById('lvl-badge');
+        if(!badge && document.getElementById('quiz-screen')) {
+            badge = document.createElement('div');
+            badge.id = 'lvl-badge';
+            badge.className = 'level-indicator';
+            document.getElementById('quiz-screen').prepend(badge);
+        }
+        if(badge) {
+            badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit === 1000 ? '∞' : limit}`;
+        }
+
+        // Exécution de la logique d'affichage originale
+        // Note: On ne réassigne pas, on appelle juste.
+        if (typeof updateHeader === 'function') updateHeader();
+        if (typeof startTimer === 'function') startTimer();
+        
+        const q = currentQuestions[currentIndex];
+        document.getElementById('question-text').innerText = q.question;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
+            if(!opt) return;
+            const btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.className = 'main-btn';
+            btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
+            container.appendChild(btn);
+        });
+
+    } catch (e) {
+        console.error("Erreur dans le moteur de rendu :", e);
+    }
+};
+
+// 3. Correction de la fonction saveUser pour s'assurer qu'elle est globale
+window.saveUser = function() {
+    const input = document.getElementById('user-pseudo');
+    if(!input) return;
+    const p = input.value.trim();
+    if(p.length < 2) {
+        if(typeof showNote === 'function') showNote("Pseudo trop court !");
+        return;
+    }
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    const loginScreen = document.getElementById('login-screen');
+    if(loginScreen) loginScreen.style.display = 'none';
+};
