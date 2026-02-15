@@ -797,7 +797,6 @@ window.startQuiz = function(cat) {
 };
 
 // Injection dans checkAnswer pour enregistrer l'historique
-const originalCheckAnswer = checkAnswer;
 window.checkAnswer = function(choice, correct, expl) {
     const q = currentQuestions[currentIndex];
     let history = JSON.parse(localStorage.getItem('quiz_history')) || [];
