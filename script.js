@@ -2,6 +2,9 @@
 // =========================================================
 // 1. CONFIGURATION, SUPABASE & VARIABLES
 // =========================================================
+// =========================================================
+// 1. INITIALISATION & VARIABLES GLOBALES
+// =========================================================
 const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -12,29 +15,11 @@ let currentIndex = 0;
 let score = 0;
 let lives = 3;
 let timer;
+let isVip = localStorage.getItem('isVip') === 'true';
 let currentUser = localStorage.getItem('quiz_pseudo') || "";
 
 // =========================================================
-// 2. SYSTÈME DE MÉMOIRE PRO (NE JAMAIS REVOIR UNE QUESTION)
-// =========================================================
-function saveProgress(id) {
-    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-    if (!history.includes(id)) {
-        history.push(id);
-        localStorage.setItem('quiz_history', JSON.stringify(history));
-    }
-}
-
-function getFreshQuestions(category) {
-    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
-    return allQuestions.filter(q => 
-        q.category.toLowerCase() === category.toLowerCase() && 
-        !history.includes(q.id)
-    );
-}
-
-// =========================================================
-// 3. CHARGEMENT & MODE HORS-LIGNE
+// 2. FONCTIONS DE CHARGEMENT ET MÉMOIRE
 // =========================================================
 async function loadData() {
     if (!navigator.onLine) {
@@ -49,36 +34,50 @@ async function loadData() {
     }
 }
 
-// =========================================================
-// 4. LOGIQUE DES NIVEAUX ET QUIZ
-// =========================================================
-window.startQuiz = function(cat) {
-    currentQuestions = getFreshQuestions(cat);
-    
-    if (currentQuestions.length === 0) {
-        showNotice("🏆 FÉLICITATIONS", "Tu as terminé toutes les questions ! On recommence le cycle.");
-        localStorage.removeItem('quiz_history');
-        location.reload();
-        return;
+function saveProgress(questionId) {
+    let answered = JSON.parse(localStorage.getItem('answered_questions') || "[]");
+    if (!answered.includes(questionId)) {
+        answered.push(questionId);
+        localStorage.setItem('answered_questions', JSON.stringify(answered));
     }
+}
 
+function getNewQuestions(category) {
+    let answered = JSON.parse(localStorage.getItem('answered_questions') || "[]");
+    let fresh = allQuestions.filter(q => q.category.toLowerCase() === category.toLowerCase() && !answered.includes(q.id));
+    if (fresh.length === 0) {
+        localStorage.removeItem('answered_questions');
+        return allQuestions.filter(q => q.category.toLowerCase() === category.toLowerCase());
+    }
+    return fresh;
+}
+
+// =========================================================
+// 3. LOGIQUE DU QUIZ
+// =========================================================
+function startQuiz(cat) {
+    currentQuestions = getNewQuestions(cat);
+    if(currentQuestions.length === 0) return showNotice("INFO", "Bientôt disponible !");
     currentQuestions.sort(() => 0.5 - Math.random());
     currentIndex = 0; score = 0; lives = 3;
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     showQuestion();
-};
+}
 
 function showQuestion() {
     let vType = localStorage.getItem('vip_type');
     
-    // BLOCAGE NIVEAU 1 -> VERS NIVEAU 2
+    // Blocage Niveaux
     if (!vType && currentIndex >= 10) {
         showCertificate("NIVEAU 1 : INITIÉ", "#009E60");
         return;
     }
 
     updateHeader();
+    updateLevelDisplay();
+    startTimer();
+
     const q = currentQuestions[currentIndex];
     document.getElementById('question-text').innerText = q.question;
     const container = document.getElementById('options-container');
@@ -89,140 +88,153 @@ function showQuestion() {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = 'main-btn';
-        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation, q.id);
+        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
         container.appendChild(btn);
     });
-    startTimer();
 }
 
-function checkAnswer(choice, correct, expl, qId) {
+function checkAnswer(choice, correct, expl) {
     clearInterval(timer);
     const isCorrect = (choice === correct);
-    if(isCorrect) { score++; saveProgress(qId); } else { lives--; }
+    if(isCorrect) {
+        score++;
+        saveProgress(currentQuestions[currentIndex].id);
+    } else {
+        lives--;
+    }
     
     document.getElementById('explanation-text').innerHTML = `
         <b style="color:${isCorrect?'#009E60':'#ff4444'}">${isCorrect?'✅ CORRECT':'❌ ERREUR'}</b><br>${expl || ""}
     `;
     document.getElementById('feedback-area').style.display = 'block';
-    if(lives <= 0) { showNotice("💔 FINI", "Plus de vies ! Réessaie."); location.reload(); }
+    
+    if(lives <= 0) {
+        showNotice("💔 FINI", "Plus de vies ! Réessaie.");
+        location.reload();
+    }
 }
 
-window.nextQuestion = function() {
+function nextQuestion() {
     document.getElementById('feedback-area').style.display = 'none';
     currentIndex++;
     
     let vType = localStorage.getItem('vip_type');
     if (vType === '300' && currentIndex === 20) {
-        showCertificate("NIVEAU 2 : CHAMPION", "#FCD116");
+        showCertificate("CHAMPION NIVEAU 2", "#FCD116");
         return;
     }
     if (currentIndex >= currentQuestions.length) {
-        showCertificate("NIVEAU 3 : EXPERT TOTAL", "#3A75C4");
+        showCertificate("EXPERT GABONAIS", "#3A75C4");
         return;
     }
     showQuestion();
-};
+}
 
 // =========================================================
-// 5. CERTIFICAT PRO DESIGN (MOBILE ADAPTÉ)
+// 4. INTERFACE ET NOTIFICATIONS
 // =========================================================
+function showNotice(title, message) {
+    const modal = document.createElement('div');
+    modal.className = 'overlay-screen';
+    modal.style.zIndex = "50000";
+    modal.innerHTML = `
+        <div style="background:#1a1a1a; border:2px solid #FCD116; padding:25px; border-radius:20px; text-align:center; width:85%; max-width:350px; color:white;">
+            <h3 style="color:#FCD116;">${title}</h3><p>${message}</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#FCD116; color:black; border:none; padding:12px; border-radius:10px; font-weight:bold; width:100%;">D'ACCORD</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
 window.showCertificate = function(levelName, color) {
-    clearInterval(timer);
     const certModal = document.createElement('div');
-    certModal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;align-items:center;justify-content:center;";
-    
+    certModal.className = 'overlay-screen';
+    certModal.style.zIndex = "30000";
     certModal.innerHTML = `
-        <div style="width:80%;max-width:300px;background:#fff;padding:20px;border-radius:15px;text-align:center;border:6px double ${color};">
-            <h2 style="margin:0;color:${color};font-size:1.4rem;">DIPLÔME</h2>
-            <p style="margin:5px 0;color:#333;">Félicitations</p>
-            <h3 style="margin:5px 0;font-size:1.2rem;text-transform:uppercase;color:#000;">${currentUser}</h3>
-            <div style="background:${color};color:#fff;padding:6px;border-radius:5px;font-weight:bold;margin:10px 0;font-size:0.8rem;">${levelName}</div>
-            <button id="btn-go-next" style="width:100%;padding:12px;background:#222;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">CONTINUER L'AVENTURE</button>
+        <div style="width:85%; max-width:320px; background:#fff; color:#000; padding:20px; border-radius:10px; text-align:center; border:5px solid ${color};">
+            <h2 style="color:${color};">DIPLÔME</h2>
+            <p>Félicitations</p><h3>${currentUser}</h3>
+            <div style="background:${color}; color:#fff; padding:5px; border-radius:5px; font-weight:bold; margin:10px 0;">${levelName}</div>
+            <button id="btn-next-step" style="margin-top:15px; width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:8px; font-weight:bold;">CONTINUER</button>
         </div>
     `;
     document.body.appendChild(certModal);
-    if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#009E60','#FCD116','#3A75C4'] });
+    launchVictoryConfetti();
 
-    document.getElementById('btn-go-next').onclick = function() {
+    document.getElementById('btn-next-step').onclick = function() {
         certModal.remove();
-        let vType = localStorage.getItem('vip_type');
-        if (!vType || (vType === '300' && levelName.includes('NIVEAU 2'))) {
-            showShop(); // Redirige vers boutique pour payer niveau suivant
-        } else {
-            location.reload();
-        }
+        if (!localStorage.getItem('vip_type')) showShop();
+        else location.reload();
     };
 };
 
-// =========================================================
-// 6. BOUTIQUE, PAIEMENT WHATSAPP & CODES
-// =========================================================
-window.showShop = function() {
-    document.querySelectorAll('.full-screen, .overlay-screen').forEach(s => s.style.display = 'none');
-    document.getElementById('shop-screen').style.display = 'block';
-};
+function launchVictoryConfetti() {
+    var colors = ['#009E60', '#FCD116', '#3A75C4'];
+    var end = Date.now() + 2000;
+    (function frame() {
+        confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+        confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+        if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+}
 
-window.checkVipCode = function() {
+// =========================================================
+// 5. GESTION UTILISATEUR ET BOUTIQUE
+// =========================================================
+function saveUser() {
+    const p = document.getElementById('user-pseudo').value.trim();
+    if(p.length < 2) return showNotice("⚠️ ERREUR", "Pseudo trop court.");
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    document.getElementById('login-screen').style.display = 'none';
+    showNotice("🇬🇦 BIENVENUE", `Bonne chance ${p} !`);
+}
+
+function showShop() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'block';
+}
+
+function checkVipCode() {
     const val = document.getElementById('vip-code-input').value.toUpperCase().trim();
     let type = "";
     if (["GAB300", "AFR300", "MON300"].includes(val)) type = "300";
-    if (["VIP500", "GABON2024"].includes(val)) type = "500";
+    if (["VIP500", "GABON2024", "GAB500"].includes(val)) type = "500";
 
     if (type !== "") {
         localStorage.setItem('isVip', 'true');
         localStorage.setItem('vip_type', type);
-        showNotice("💎 ACTIVÉ", "Niveau débloqué !");
-        setTimeout(() => location.reload(), 1500);
-    } else {
-        showNotice("❌ ERREUR", "Code invalide. Contacte le 076367382");
-    }
-};
+        showNotice("✅ SUCCÈS", "Accès VIP activé !");
+        setTimeout(() => location.reload(), 2000);
+    } else showNotice("❌ ERREUR", "Code invalide.");
+}
 
 // =========================================================
-// 7. MANUEL D'ÉTUDE & AVIS
+// 6. COMMENTAIRES ET AVIS (SUPABASE)
 // =========================================================
-window.showStudyMode = async function() {
-    let vip = localStorage.getItem('vip_type');
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('study-screen').style.display = 'block';
-    const { data } = await _supabase.from('questions').select('*').limit(100);
-    const list = document.getElementById('study-list');
-    list.innerHTML = data.map((q, i) => {
-        const locked = (vip !== '500' && i > 15);
-        return `<div class="study-card" style="filter:${locked?'blur(4px)':'none'}">
-            <b>Q: ${q.question}</b><br><span style="color:#FCD116">R: ${q.correct_answer}</span>
-        </div>`;
-    }).join('');
-};
+async function postComment() {
+    const msgInput = document.getElementById('user-comment');
+    const msg = msgInput.value.trim();
+    if(!msg || !currentUser) return;
+    const { error } = await _supabase.from('comments').insert([{ pseudo: currentUser, text: msg, score: score }]);
+    if (!error) { msgInput.value = ""; displayComments(); }
+}
 
-window.submitReview = async function() {
-    const feedback = document.getElementById('user-feedback').value.trim();
-    if (!feedback) return;
-    await _supabase.from('comments').insert([{ pseudo: currentUser, text: feedback, type: 'review' }]);
-    document.getElementById('rating-screen').style.display = 'none';
-    showNotice("🙏 MERCI", "Ton avis est enregistré.");
-};
+async function displayComments() {
+    const div = document.getElementById('comments-display');
+    if(!div) return;
+    const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(10);
+    if (data) div.innerHTML = data.map(c => `<div style="border-bottom:1px solid #333; padding:5px;"><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
+}
 
 // =========================================================
-// 8. FONCTIONS INDISPENSABLES (PSEUDO, TIMER, ETC.)
+// 7. UTILITAIRES (TIMER, HEADER)
 // =========================================================
-window.saveUser = function() {
-    const p = document.getElementById('user-pseudo').value.trim();
-    if(p.length < 2) return;
-    localStorage.setItem('quiz_pseudo', p);
-    currentUser = p;
-    document.getElementById('login-screen').style.display = 'none';
-};
-
-window.forceLogin = function() {
-    const login = document.getElementById('login-screen');
-    if (!currentUser) login.style.display = 'flex'; else login.style.display = 'none';
-};
-
 function startTimer() {
     clearInterval(timer); let timeLeft = 15;
     timer = setInterval(() => {
-        timeLeft--; document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
+        timeLeft--;
+        document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
         if(timeLeft <= 0) { clearInterval(timer); lives--; nextQuestion(); }
     }, 1000);
 }
@@ -232,20 +244,17 @@ function updateHeader() {
     document.getElementById('score-display').innerHTML = `Score: ${score} | ${h}`;
 }
 
-window.showNotice = function(t, m) {
-    const modal = document.createElement('div');
-    modal.className = "overlay-screen";
-    modal.innerHTML = `<div style="background:#1a1a1a;padding:20px;border-radius:15px;border:2px solid #FCD116;text-align:center;width:80%;color:#fff;">
-        <h3 style="color:#FCD116">${t}</h3><p>${m}</p>
-        <button onclick="this.parentElement.parentElement.remove()" class="main-btn">D'ACCORD</button>
-    </div>`;
-    document.body.appendChild(modal);
-};
+function updateLevelDisplay() {
+    let title = "Niveau 1 : Facile";
+    if (currentIndex >= 10) title = "Niveau 2 : Difficile";
+    const header = document.querySelector('.quiz-header');
+    if (header) {
+        let lDiv = document.getElementById('level-indicator') || document.createElement('div');
+        lDiv.id = 'level-indicator'; lDiv.innerText = title;
+        header.appendChild(lDiv);
+    }
+}
 
-window.displayComments = async function() {
-    const div = document.getElementById('comments-display');
-    const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(5);
-    if (data) div.innerHTML = data.map(c => `<div style="font-size:0.8rem;"><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
-};
-
-window.onload = () => { loadData(); window.forceLogin(); };
+// DÉMARRAGE
+if(currentUser) document.getElementById('login-screen').style.display = 'none';
+loadData();
