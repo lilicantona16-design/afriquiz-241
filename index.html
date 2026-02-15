@@ -102,3 +102,19 @@
     <script src="script.js"></script>
 </body>
 </html>
+<div id="login-screen" class="overlay-screen" style="display: none; z-index: 99999;">
+    <div class="login-card" style="background:#1a1a1a; padding:30px; border-radius:20px; text-align:center; border:2px solid #FCD116; width:85%; max-width:350px;">
+        <h2 style="color:#FCD116;">INSCRIPTION 🇬🇦</h2>
+        <p style="color:white;">Entre ton pseudo pour enregistrer ta progression</p>
+        <input type="text" id="user-pseudo-input" placeholder="Ton Pseudo..." style="width:100%; padding:15px; border-radius:10px; border:none; margin-bottom:20px;">
+        <button onclick="validerInscription()" class="main-btn" style="width:100%;">COMMENCER L'AVENTURE</button>
+    </div>
+</div>
+
+<div id="custom-notice" class="overlay-screen" style="display:none; z-index:100000;">
+    <div id="notice-content" style="background:#1a1a1a; border:2px solid #FCD116; padding:20px; border-radius:15px; text-align:center; color:white; width:80%; max-width:320px;">
+        <h3 id="notice-title" style="color:#FCD116; margin-top:0;"></h3>
+        <p id="notice-text"></p>
+        <button onclick="closeNotice()" class="main-btn" style="width:100%;">D'ACCORD</button>
+    </div>
+</div>

@@ -44,3 +44,43 @@ body {
 #comments-display { background: #111; border-radius: 10px; max-height: 180px; overflow-y: auto; padding: 10px; margin: 10px 0; font-size: 0.9rem; text-align: left; }
 .comment-input-area { display: flex; gap: 5px; }
 input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #222; color: white; }
+/* BOUTON WHATSAPP VERT */
+.btn-whatsapp-vert {
+    background-color: #25D366 !important;
+    color: white !important;
+    font-weight: bold;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+/* DESIGN CERTIFICAT MOBILE PRO */
+.certificat-container {
+    width: 90%;
+    max-width: 320px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    border: 8px double #000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    color: #000;
+}
+
+/* ÉTOILES ACTIVES */
+.star-rating .active {
+    color: #FCD116 !important;
+    text-shadow: 0 0 5px rgba(252, 209, 22, 0.8);
+}
+
+/* MANUEL ÉTUDE : FLOU POUR LES GRATUITS */
+.study-locked {
+    filter: blur(4px);
+    pointer-events: none;
+    opacity: 0.6;
+}

@@ -183,3 +183,109 @@ function shareGame() {
 
 if(currentUser) document.getElementById('login-screen').style.display = 'none';
 loadData();
+// --- GESTION MÉMOIRE ET PROGRESSION ---
+function validerInscription() {
+    const p = document.getElementById('user-pseudo-input').value.trim();
+    if(p.length < 2) { 
+        customAlert("Erreur", "Pseudo trop court !"); 
+        return; 
+    }
+    localStorage.setItem('quiz_pseudo', p);
+    currentUser = p;
+    document.getElementById('login-screen').style.display = 'none';
+    customAlert("Bienvenue", "Bonne chance " + p + " !");
+}
+
+function checkUserStatus() {
+    if(!localStorage.getItem('quiz_pseudo')) {
+        document.getElementById('login-screen').style.display = 'flex';
+    }
+}
+
+// --- NOTIFICATIONS INTERNES (PAS DE NAVIGATEUR) ---
+function customAlert(title, message) {
+    document.getElementById('notice-title').innerText = title;
+    document.getElementById('notice-text').innerHTML = message;
+    document.getElementById('custom-notice').style.display = 'flex';
+}
+
+function closeNotice() {
+    document.getElementById('custom-notice').style.display = 'none';
+}
+
+// --- SYSTÈME DE FILTRE POUR NE JAMAIS RÉPÉTER ---
+function getSmartQuestions(cat) {
+    let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
+    // Filtre : même catégorie ET ID non présent dans l'historique
+    let available = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase() && !history.includes(q.id));
+    
+    if(available.length === 0) {
+        localStorage.removeItem('quiz_history'); // On recommence si tout est fini
+        return allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
+    }
+    return available;
+}
+
+// --- LOGIQUE DE NIVEAUX 1, 2, 3 ---
+function checkLevelTransition() {
+    let vType = localStorage.getItem('vip_type');
+    
+    // FIN NIVEAU 1 (Gratuit - 10 questions)
+    if (!vType && currentIndex === 10) {
+        showProCertificate("NIVEAU 1 : INITIÉ", "#009E60", "passerAuPaiement");
+        return true;
+    }
+    // FIN NIVEAU 2 (VIP 300 - 30 questions)
+    if (vType === '300' && currentIndex === 30) {
+        showProCertificate("NIVEAU 2 : CHAMPION", "#FCD116", "rechargerNiveau3");
+        return true;
+    }
+    // FIN NIVEAU 3 (Expert - Toutes les questions)
+    if (currentIndex >= currentQuestions.length) {
+        showProCertificate("NIVEAU 3 : EXPERT PRO", "#3A75C4", "retourMenu");
+        return true;
+    }
+    return false;
+}
+
+function showProCertificate(titre, couleur, action) {
+    clearInterval(timer);
+    const modal = document.createElement('div');
+    modal.className = "overlay-screen";
+    modal.style.zIndex = "100001";
+    modal.innerHTML = `
+        <div class="certificat-container" style="border-color:${couleur}">
+            <h1 style="color:${couleur}">DIPLÔME</h1>
+            <p>Félicitations à <b>${currentUser}</b></p>
+            <div style="background:${couleur}; color:white; padding:10px; margin:10px 0; border-radius:8px;">${titre}</div>
+            <p style="font-size:12px">Validé le ${new Date().toLocaleDateString()}</p>
+            <button onclick="${action}()" class="main-btn" style="width:100%; margin-top:10px;">CONTINUER</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    if(typeof confetti === 'function') confetti();
+}
+
+// ACTIONS APRÈS CERTIFICAT
+function passerAuPaiement() {
+    location.reload(); // Pour revenir au menu et forcer le passage boutique
+    setTimeout(() => { showShop(); }, 500);
+}
+
+// --- OVERRIDE DES FONCTIONS EXISTANTES POUR INTÉGRER LA MÉMOIRE ---
+const originalCheck = window.checkAnswer;
+window.checkAnswer = function(c, cor, e) {
+    if(c === cor) {
+        let history = JSON.parse(localStorage.getItem('quiz_history') || "[]");
+        history.push(currentQuestions[currentIndex].id);
+        localStorage.setItem('quiz_history', JSON.stringify(history));
+    }
+    if(typeof originalCheck === "function") originalCheck(c, cor, e);
+};
+
+// --- MODE HORS-LIGNE ---
+window.addEventListener('online',  loadData);
+window.addEventListener('offline', () => customAlert("Mode Offline", "Tu joues sur la mémoire locale du téléphone."));
+
+// LANCEMENT
+setTimeout(checkUserStatus, 1000);
