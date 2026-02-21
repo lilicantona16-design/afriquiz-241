@@ -810,45 +810,66 @@ window.checkAnswer = function(choice, correct, expl) {
 // Charger les avis au démarrage
 loadGlobalComments();
 /* ============================================================
-   FIX FINAL : PROGRESSION RÉELLE ET ANTI-RÉPÉTITION
+   MOTEUR DE JEU DYNAMIQUE (FIX 10 QUESTIONS & DOUBLONS)
    ============================================================ */
 
-// On écrase l'affichage de la question pour gérer la progression 10 -> 20 -> 30
-window.showQuestion = function() {
-    // 1. Déterminer la limite selon le niveau
-    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
-    let limit = 10; // Niveau 1
-    if (currentLvl === 2) limit = 20; // Niveau 2
-    if (currentLvl === 3) limit = 500; // Niveau 3 (Illimité)
+window.startQuiz = function(cat) {
+    // 1. On filtre les questions par catégorie
+    let categoryPool = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
 
-    // 2. Vérifier si on a atteint la fin du niveau
+    if (categoryPool.length === 0) {
+        showNote("Pas de questions dans cette catégorie !");
+        return;
+    }
+
+    // 2. LE SECRET : Mélanger TOUTES les questions de la base avant de choisir
+    // On mélange les 500 questions de façon aléatoire
+    categoryPool.sort(() => Math.random() - 0.5);
+
+    // 3. On définit la limite selon le niveau stocké
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    let limit = (currentLvl === 2) ? 20 : (currentLvl === 3 ? 100 : 10);
+
+    // 4. On prépare la liste pour cette partie (On prend ce qu'il faut)
+    currentQuestions = categoryPool; 
+    
+    currentIndex = 0; 
+    score = 0; 
+    lives = 3;
+
+    // 5. Affichage
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    
+    // On lance la première question
+    showQuestion();
+};
+
+window.showQuestion = function() {
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    let limit = (currentLvl === 2) ? 20 : (currentLvl === 3 ? 100 : 10);
+
+    // BLOQUEUR DE SÉCURITÉ : Si on atteint la limite du niveau
     if (currentIndex >= limit) {
         clearInterval(timer);
         displayCertificate(currentLvl);
         return;
     }
 
-    // 3. Empêcher les mêmes questions (Mélange forcé)
-    // On récupère les questions de la catégorie choisie
-    if (currentIndex === 0) {
-        // Au début de chaque partie, on mélange les questions
-        currentQuestions.sort(() => Math.random() - 0.5);
-    }
-
     const q = currentQuestions[currentIndex];
+    
+    // Si la question n'existe pas, on arrête
     if (!q) {
         showNote("Plus de questions disponibles !");
         location.reload();
         return;
     }
 
-    // 4. Affichage du compteur (ex: 12/20)
-    let badge = document.getElementById('lvl-badge');
-    if(badge) {
-        badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit}`;
-    }
+    // Mise à jour du texte de progression (ex: 11 / 20)
+    const badge = document.getElementById('lvl-badge');
+    if(badge) badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit}`;
 
-    // 5. Rendu visuel
+    // Rendu standard
     updateHeader();
     startTimer();
     document.getElementById('question-text').innerText = q.question;
@@ -865,125 +886,8 @@ window.showQuestion = function() {
     });
 };
 
-// 6. Correction de la validation du code (Pour passer au niveau 2)
-window.checkVipCode = function() {
-    const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    
-    // Codes Niveau 2 (300F) ou Niveau 3 (500F)
-    if (["GAB300", "VIP500", "GABON2024"].includes(code)) {
-        // On monte le niveau dans la mémoire du téléphone
-        let nextLvl = (code === "GAB300") ? 2 : 3;
-        localStorage.setItem('user_game_level', nextLvl);
-        if(nextLvl === 3) localStorage.setItem('isVip', 'true');
-
-        showNote("✅ NIVEAU " + nextLvl + " DÉBLOQUÉ !");
-        
-        // Redémarrage automatique pour appliquer les changements
-        setTimeout(() => { location.reload(); }, 2000);
-    } else {
-        showNote("❌ Code incorrect.");
-    }
-};
-/* ============================================================
-   RÉPARATION MOTEUR : TIRAGE ALÉATOIRE SUR 500+ QUESTIONS
-   ============================================================ */
-
-window.startQuiz = function(cat) {
-    // 1. On s'assure que 'allQuestions' contient bien toutes les questions Supabase
-    if (allQuestions.length === 0) {
-        showNote("Chargement des questions... Réessaye.");
-        loadData();
-        return;
-    }
-
-    // 2. Filtrer par catégorie
-    let categoryPool = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
-
-    if (categoryPool.length === 0) {
-        showNote("Bientôt disponible pour cette catégorie !");
-        return;
-    }
-
-    // 3. LE SECRET : Mélanger TOUT le stock de la catégorie avant de choisir
-    // Cela garantit que les 10 ou 20 questions ne seront JAMAIS les mêmes
-    categoryPool.sort(() => Math.random() - 0.5);
-
-    // 4. On prépare la liste de jeu pour cette partie
-    // On prend un grand échantillon pour être sûr de ne pas bloquer
-    currentQuestions = categoryPool; 
-
-    // 5. Réinitialiser les variables de jeu
-    currentIndex = 0; 
-    score = 0; 
-    lives = 3;
-
-    // 6. Lancer l'interface
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('quiz-screen').style.display = 'block';
-    
-    // On force l'affichage de la première question
-    showQuestion();
-};
-
-// RÉCRITURE DE LA LOGIQUE DE BLOCAGE
-window.showQuestion = function() {
-    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
-    
-    // Définition STRICTE de la limite
-    let limit = 10;
-    if (currentLvl == 2) limit = 20;
-    if (currentLvl == 3) limit = 50;
-
-    // A. SI ON DÉPASSE LA LIMITE DU NIVEAU -> CERTIFICAT
-    if (currentIndex >= limit) {
-        clearInterval(timer);
-        displayCertificate(currentLvl);
-        return; 
-    }
-
-    // B. SI ON N'A PLUS DE QUESTIONS DANS LA BASE (Rare avec 500 questions)
-    const q = currentQuestions[currentIndex];
-    if (!q) {
-        showNote("Fin des questions disponibles !");
-        location.reload();
-        return;
-    }
-
-    // C. AFFICHAGE DU COMPTEUR ET DE LA QUESTION
-    updateHeader();
-    startTimer();
-    
-    // Mise à jour du badge visuel (ex: 12 / 20)
-    let badge = document.getElementById('lvl-badge');
-    if(badge) {
-        badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit}`;
-    }
-
-    document.getElementById('question-text').innerText = q.question;
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
-
-    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
-        if(!opt) return;
-        const btn = document.createElement('button');
-        btn.innerText = opt;
-        btn.className = 'main-btn';
-        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
-        container.appendChild(btn);
-    });
-};
-/* --- RÉPARATION DE LA SUITE DES QUESTIONS --- */
 window.nextQuestion = function() {
-    // On cache le feedback
     document.getElementById('feedback-area').style.display = 'none';
-    
-    // On passe à l'index suivant
-    currentIndex++;
-    
-    // On appelle la fonction d'affichage (celle qui gère la limite 10 ou 20)
-    if (typeof showQuestion === 'function') {
-        showQuestion();
-    } else {
-        console.error("La fonction showQuestion est introuvable !");
-    }
+    currentIndex++; // On passe à l'index suivant (11, 12, 13...)
+    showQuestion(); // On relance l'affichage
 };
