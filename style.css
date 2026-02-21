@@ -225,3 +225,31 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
 .comment-item small { color: #888; display: block; font-size: 0.7rem; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Style du compteur de niveau dynamique */
+.level-indicator {
+    background: linear-gradient(135deg, #009E60 0%, #FCD116 50%, #3A75C4 100%);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin: 10px auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border: 2px solid white;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* Animation pour indiquer que le niveau a changé */
+#quiz-screen h2 {
+    transition: all 0.3s ease;
+}
+
+/* Conteneur de la question pour éviter les sauts d'affichage au Niveau 2 */
+#question-text {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

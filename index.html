@@ -41,18 +41,24 @@
         </div>
 
         <div id="quiz-screen" style="display:none;">
-            <div class="quiz-header">
-                <button onclick="location.reload()" class="quit-btn">✖</button>
-                <span id="score-display">Score: 0 | ❤️❤️❤️</span>
-            </div>
-            <p id="timer-text">⏱️ 15s</p>
-            <h2 id="question-text">Chargement...</h2>
-            <div id="options-container"></div>
-            <div id="feedback-area" style="display:none;">
-                <p id="explanation-text"></p>
-                <button onclick="nextQuestion()" class="continue-btn">CONTINUER</button>
-            </div>
-        </div>
+    <div class="quiz-header">
+        <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
+        <span id="score-display">Score: 0 | ❤️❤️❤️</span>
+    </div>
+    
+    <div id="timer-bar-container" style="width:100%; height:5px; background:#222; margin: 10px 0;">
+        <div id="timer-bar" style="width:100%; height:100%; background:#FCD116; transition: width 1s linear;"></div>
+    </div>
+
+    <p id="timer-text">⏱️ 15s</p>
+    <h2 id="question-text">Chargement de la question...</h2>
+    <div id="options-container"></div>
+    
+    <div id="feedback-area" style="display:none; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+        <p id="explanation-text"></p>
+        <button onclick="nextQuestion()" class="continue-btn">QUESTION SUIVANTE ➔</button>
+    </div>
+</div>
 
         <div id="shop-screen" class="modal-full" style="display:none;">
             <button onclick="location.reload()" class="quit-btn">✖ Retour</button>
@@ -69,7 +75,7 @@
             </table>
             <div class="code-area">
                 <input type="text" id="vip-code-input" placeholder="Entrez votre code reçu">
-                <button onclick="checkVipCode()">VALIDER</button>
+                <button onclick="checkVipCode()">VALIDER LE CODE</button>
             </div>
             <button onclick="window.location.href='https://wa.me/24176367382'" class="wa-btn">ENVOYER MON REÇU WHATSAPP</button>
         </div>
@@ -144,6 +150,6 @@
     <button onclick="toggleMusic()" id="music-btn" class="small-btn">🔊 Musique : ON</button>
 </div>
 
-<audio id="bg-music" loop src="https://www.bensound.com/bensound-music/bensound-africa.mp3"></audio>
+<audio id="bg-music" loop preload="auto"></audio>
 </body>
 </html>
