@@ -972,3 +972,18 @@ window.showQuestion = function() {
         container.appendChild(btn);
     });
 };
+/* --- RÉPARATION DE LA SUITE DES QUESTIONS --- */
+window.nextQuestion = function() {
+    // On cache le feedback
+    document.getElementById('feedback-area').style.display = 'none';
+    
+    // On passe à l'index suivant
+    currentIndex++;
+    
+    // On appelle la fonction d'affichage (celle qui gère la limite 10 ou 20)
+    if (typeof showQuestion === 'function') {
+        showQuestion();
+    } else {
+        console.error("La fonction showQuestion est introuvable !");
+    }
+};
