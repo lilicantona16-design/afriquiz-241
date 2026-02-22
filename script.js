@@ -34,7 +34,8 @@ const musicMap = {
 window.showHowToPlay = function() {
     const m = document.getElementById('info-modal');
     document.getElementById('info-title').innerText = "❓ COMMENT JOUER";
-    document.getElementById('info-body').innerHTML = "• Réponds avant la fin du chrono ⏱️<br>• Tu as 3 vies ❤️<br>• Niveau 1 : 10 questions (Gratuit)<br>• Niveau 2 : 20 questions (Payant)";
+    document.getElementById('info-body').innerHTML = "• Réponds avant la fin du chrono ⏱️<br>• Tu as 3 vies ❤️<br>• Niveau 1 : 10 questions (Gratuit)<br>• Niveau 2 : 20 questions (Payant)<br>• Niveau 3 : 30 questions (Payant)";
+    m.style.setProperty('display', 'flex', 'important');
     m.style.setProperty('display', 'flex', 'important');
 };
 
@@ -96,7 +97,7 @@ window.showQuestion = function() {
     let storageKey = 'level_' + window.currentPlayingCat;
 let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
 
-let limit = 10; // Niveau 1
+let limit = 10; // au 1
 if (categoryLevel === 2) limit = 20; // Niveau 2
 if (categoryLevel >= 3) limit = 30; // Niveau 3 (EXTRÊME)
     if (currentIndex >= limit) {
