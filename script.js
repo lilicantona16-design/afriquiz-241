@@ -14,7 +14,7 @@ let lives = 3;
 let timer;
 let isVip = localStorage.getItem('isVip') === 'true';
 let currentUser = localStorage.getItem('quiz_pseudo') || "";
-let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+let currentLvl = 2;
 let isMusicOn = true;
 
 const musicMap = {
