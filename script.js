@@ -25,13 +25,18 @@ const musicMap = {
    2. FONCTIONS SOCIALES & INFOS
    ============================================================ */
 window.showHowToPlay = function() {
-    alert("🎮 RÈGLES DU JEU :\n\n- Réponds en 15s ⏱️\n- Tu as 3 vies ❤️\n- Niveau 1 (Gratuit) : 10 questions.\n- Niveau 2 (Payant) : 20 questions + Questions VIP !");
+    const m = document.getElementById('info-modal');
+    document.getElementById('info-title').innerText = "❓ COMMENT JOUER";
+    document.getElementById('info-body').innerHTML = "• Réponds avant la fin du chrono ⏱️<br>• Tu as 3 vies ❤️<br>• Niveau 1 : 10 questions (Gratuit)<br>• Niveau 2 : 20 questions (Payant)";
+    m.style.setProperty('display', 'flex', 'important');
 };
 
 window.showInstallGuide = function() {
-    alert("📲 INSTALLATION :\n- Android : Menu > Installer.\n- iPhone : Partager > Écran d'accueil.");
+    const m = document.getElementById('info-modal');
+    document.getElementById('info-title').innerText = "📲 INSTALLATION";
+    document.getElementById('info-body').innerHTML = "<b>Android :</b> Menu ⋮ > 'Installer l'appli'<br><br><b>iPhone :</b> Partager ⎋ > 'Sur l'écran d'accueil'";
+    m.style.setProperty('display', 'flex', 'important');
 };
-
 window.shareGame = function() {
     const text = "Prouve que tu es un vrai Gabonais 🇬🇦 ! Joue ici : " + window.location.href;
     window.open("https://wa.me/?text=" + encodeURIComponent(text));
