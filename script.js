@@ -1,6 +1,6 @@
 // 1. INITIALISATION PROPRE (Indispensable pour charger les questions)
 /* ============================================================
-   1. CONFIGURATION & INITIALISATION (SUPABASE + VARIABLES)
+   1. CONFIGURATION & INITIALISATION (SUPABASE & ÉTAT)
    ============================================================ */
 const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
@@ -24,22 +24,73 @@ const musicMap = {
 };
 
 /* ============================================================
-   2. MOTEUR DE JEU (QUIZ, NIVEAUX & MÉLANGE)
+   2. FONCTIONS UTILITAIRES & SOCIALES (PARTAGER, INSTALLER, RÈGLES)
    ============================================================ */
+window.showHowToPlay = function() {
+    alert("🎮 RÈGLES DU JEU :\n\n- Réponds en 15s ⏱️\n- Tu as 3 vies ❤️\n- Niveau 1 (Gratuit) : 10 questions.\n- Niveau 2 (VIP) : 20 questions + Manuel complet !");
+};
 
+window.showInstallGuide = function() {
+    alert("📲 INSTALLER SUR TON MOBILE :\n\n- Sur Android : Clique sur les 3 points en haut à droite > 'Installer l'application'.\n- Sur iPhone : Clique sur le bouton 'Partager' en bas > 'Sur l'écran d'accueil'.");
+};
+
+window.shareGame = function() {
+    const text = "Prouve que tu es un vrai Gabonais 🇬🇦 ! Joue ici : " + window.location.href;
+    window.open("https://wa.me/?text=" + encodeURIComponent(text));
+};
+
+function showNote(msg) {
+    const box = document.getElementById('game-alert');
+    if(box) {
+        box.innerText = msg; box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 3000);
+    } else { alert(msg); }
+}
+
+/* ============================================================
+   3. GESTION VIP & BOUTIQUE
+   ============================================================ */
+window.checkVipCode = function() {
+    const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    let success = false;
+
+    if (["GAB300", "AFR300", "MON300"].includes(code)) {
+        localStorage.setItem('user_game_level', 2);
+        success = true;
+    } else if (["VIP500", "GABON2024"].includes(code)) {
+        localStorage.setItem('isVip', 'true');
+        localStorage.setItem('user_game_level', 2);
+        success = true;
+    }
+
+    if (success) {
+        showNote("✅ CODE VALIDE ! Niveau débloqué.");
+        setTimeout(() => { location.reload(); }, 1500);
+    } else {
+        showNote("❌ Code invalide.");
+    }
+};
+
+function showShop() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'block';
+}
+
+/* ============================================================
+   4. MOTEUR DE JEU (QUIZ, NIVEAUX, MÉLANGE)
+   ============================================================ */
 window.startQuiz = function(cat) {
-    // Filtrage et Historique pour éviter les répétitions
     let history = JSON.parse(localStorage.getItem('quiz_history')) || [];
     let pool = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase() && !history.includes(q.id));
 
     if (pool.length < 5) {
-        localStorage.setItem('quiz_history', JSON.stringify([])); // Reset si épuisé
+        localStorage.setItem('quiz_history', JSON.stringify([]));
         pool = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
     }
 
     if(pool.length === 0) return alert("Bientôt disponible !");
 
-    // Vrai mélange (Fisher-Yates)
+    // Mélange réel (Fisher-Yates)
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -48,7 +99,7 @@ window.startQuiz = function(cat) {
     currentQuestions = pool;
     currentIndex = 0; score = 0; lives = 3;
 
-    // Musique
+    // Musique dynamique
     const audio = document.getElementById('bg-music');
     if (audio) {
         audio.src = musicMap[cat] || musicMap['Provinces'];
@@ -61,7 +112,7 @@ window.startQuiz = function(cat) {
 };
 
 window.showQuestion = function() {
-    // Calcul de la limite dynamique (Niveau 1=10, Niveau 2=20, Niveau 3=100)
+    // Gestion des limites par niveau
     currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
     let limit = (currentLvl === 2) ? 20 : (currentLvl === 3 ? 100 : 10);
 
@@ -74,7 +125,7 @@ window.showQuestion = function() {
     const q = currentQuestions[currentIndex];
     if (!q) return location.reload();
 
-    // Mise à jour du badge de progression
+    // Badge de niveau
     let badge = document.getElementById('lvl-badge') || document.getElementById('level-tag');
     if(badge) badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit}`;
 
@@ -100,7 +151,7 @@ window.checkAnswer = function(choice, correct, expl) {
     const isCorrect = (choice === correct);
     if(isCorrect) score++; else lives--;
     
-    // Historique pour ne plus revoir la question
+    // Historique anti-répétition
     let history = JSON.parse(localStorage.getItem('quiz_history')) || [];
     const q = currentQuestions[currentIndex];
     if (q && !history.includes(q.id)) {
@@ -115,7 +166,7 @@ window.checkAnswer = function(choice, correct, expl) {
     document.getElementById('feedback-area').style.display = 'block';
     
     if(lives <= 0) { 
-        alert("💔 Plus de vies ! Score : " + score); 
+        alert("💔 Score : " + score + " | Retente ta chance !"); 
         location.reload(); 
     }
 };
@@ -127,12 +178,11 @@ window.nextQuestion = function() {
 };
 
 /* ============================================================
-   3. CERTIFICATS & PROGRESSION
+   5. CERTIFICATS & MANUEL D'ÉTUDE
    ============================================================ */
-
 function displayCertificate(lvl) {
     const cert = document.getElementById('certificate-container');
-    if(!cert) return alert("Niveau " + lvl + " validé !");
+    if(!cert) { alert("Félicitations ! Niveau " + lvl + " terminé."); return; }
     document.getElementById('cert-name').innerText = currentUser || "Champion";
     document.getElementById('cert-level').innerText = "NIVEAU " + lvl + " VALIDÉ";
     document.getElementById('cert-cat').innerText = currentQuestions[0]?.category || "Quiz";
@@ -142,75 +192,37 @@ function displayCertificate(lvl) {
 window.closeCertAndNext = function() {
     document.getElementById('certificate-container').style.display = 'none';
     if (currentLvl === 1) {
-        showNote("Félicitations ! Débloque le Niveau 2 pour continuer.");
+        showNote("Débloque le Niveau 2 pour continuer.");
         showShop();
     } else if (currentLvl === 2) {
         localStorage.setItem('user_game_level', 3);
-        showNote("Niveau 3 débloqué !");
         location.reload();
     } else {
         location.reload();
     }
 };
-
-/* ============================================================
-   4. MANUEL D'ÉTUDE (300 QUESTIONS)
-   ============================================================ */
 
 window.showStudyMode = async function() {
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('study-screen').style.display = 'block';
     const list = document.getElementById('study-list');
-    list.innerHTML = "Chargement du manuel...";
+    list.innerHTML = "Chargement du manuel (300 questions)...";
 
     const { data } = await _supabase.from('questions').select('*').limit(300);
     if (data) {
         list.innerHTML = data.map((q, i) => {
             const locked = (i >= 50 && !isVip); 
-            return `
-                <div class="manual-q ${locked ? 'manual-locked' : ''}">
-                    <b>${i + 1}. ${locked ? "CONTENU VIP BLOQUÉ" : q.question}</b><br>
-                    <span style="color:#FCD116;">${locked ? "Payez 500F pour débloquer" : "R: " + q.correct_answer}</span>
-                </div>
-            `;
+            return `<div class="manual-q ${locked ? 'manual-locked' : ''}">
+                <b>${i + 1}. ${locked ? "CONTENU VIP BLOQUÉ" : q.question}</b><br>
+                <span style="color:#FCD116;">${locked ? "Paiement 500F requis" : "R: " + q.correct_answer}</span>
+            </div>`;
         }).join('');
     }
 };
 
 /* ============================================================
-   5. BOUTIQUE, CODES & VIP
+   6. COMMENTAIRES & SYSTÈME (TIMER, PSEUDO, AUDIO)
    ============================================================ */
-
-window.checkVipCode = function() {
-    const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    let success = false;
-
-    if (["GAB300", "AFR300", "MON300"].includes(code)) {
-        localStorage.setItem('user_game_level', 2);
-        success = true;
-    } else if (["VIP500", "GABON2024"].includes(code)) {
-        localStorage.setItem('isVip', 'true');
-        localStorage.setItem('user_game_level', 2);
-        success = true;
-    }
-
-    if (success) {
-        showNote("✅ CODE VALIDE !");
-        setTimeout(() => { location.reload(); }, 1500);
-    } else {
-        showNote("❌ Code invalide.");
-    }
-};
-
-function showShop() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('shop-screen').style.display = 'block';
-}
-
-/* ============================================================
-   6. SUPABASE : COMMENTAIRES & ÉTOILES
-   ============================================================ */
-
 async function postComment() {
     const msg = document.getElementById('user-comment').value.trim();
     if(!msg || !currentUser) return showNote("Écris un message !");
@@ -223,39 +235,28 @@ async function postComment() {
 }
 
 async function loadGlobalComments() {
-    const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(15);
+    const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(10);
     if (data) {
         const div = document.getElementById('comments-display');
-        div.innerHTML = data.map(c => `<div><b>${c.pseudo}</b>: ${c.text} <small>(${c.score} pts)</small></div>`).join('');
+        div.innerHTML = data.map(c => `<div class="comment-item"><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
     }
 }
-
-/* ============================================================
-   7. UTILITAIRES (TIMER, PSEUDO, AUDIO)
-   ============================================================ */
 
 function startTimer() {
     clearInterval(timer);
     let timeLeft = 15;
-    document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
     timer = setInterval(() => {
         timeLeft--;
-        document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
+        const t = document.getElementById('timer-text');
+        if(t) t.innerText = `⏱️ ${timeLeft}s`;
         if(timeLeft <= 0) { clearInterval(timer); lives--; nextQuestion(); }
     }, 1000);
 }
 
 function updateHeader() {
     let h = ""; for(let i=0; i<3; i++) h += (i < lives) ? "❤️" : "🖤";
-    document.getElementById('score-display').innerHTML = `Score: ${score} | ${h}`;
-}
-
-function showNote(msg) {
-    const box = document.getElementById('game-alert');
-    if(box) {
-        box.innerText = msg; box.style.display = 'block';
-        setTimeout(() => { box.style.display = 'none'; }, 3000);
-    } else { alert(msg); }
+    const s = document.getElementById('score-display');
+    if(s) s.innerHTML = `Score: ${score} | ${h}`;
 }
 
 window.saveUser = function() {
@@ -266,19 +267,25 @@ window.saveUser = function() {
     document.getElementById('login-screen').style.display = 'none';
 };
 
-function toggleMusic() {
+window.toggleMusic = function() {
     const audio = document.getElementById('bg-music');
     isMusicOn = !isMusicOn;
-    if(isMusicOn) audio.play(); else audio.pause();
-    document.getElementById('music-btn').innerText = isMusicOn ? "🔊 Musique : ON" : "🔈 Musique : OFF";
-}
+    if(audio) {
+        if(isMusicOn) audio.play(); else audio.pause();
+    }
+    const btn = document.getElementById('music-btn');
+    if(btn) btn.innerText = isMusicOn ? "🔊 Musique : ON" : "🔈 Musique : OFF";
+};
 
-// Initialisation au chargement
 async function loadData() {
     const { data } = await _supabase.from('questions').select('*');
     if (data) allQuestions = data;
     loadGlobalComments();
 }
 
-if(currentUser) document.getElementById('login-screen').style.display = 'none';
+// Lancement
+if(currentUser) {
+    const login = document.getElementById('login-screen');
+    if(login) login.style.display = 'none';
+}
 loadData();
