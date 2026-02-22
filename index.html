@@ -99,18 +99,20 @@
         </div>
 
         <div id="certificate-container" style="display:none;">
-            <div id="cert-content">
-                <div style="font-size: 40px;">🏆</div>
-                <h2 id="cert-title">CERTIFICAT DE RÉUSSITE</h2>
-                <p>Félicitations Champion(ne)</p>
-                <h3 id="cert-name">---</h3>
-                <p>Tu as brillamment validé le :</p>
-                <div id="cert-level" style="font-weight: bold; color: #c5a059; font-size: 1.2rem;">NIVEAU 1</div>
-                <p>Catégorie : <span id="cert-cat">Gabon Master</span></p>
-                <hr style="border: 0.5px solid #eee; margin: 15px 0;">
-                <button onclick="closeCertAndNext()" class="main-btn" style="background: #27ae60; color: white;">CONTINUER</button>
-            </div>
-        </div>
+    <div id="cert-content">
+        <div class="cert-icon">🏆</div>
+        <h2 id="cert-title">CERTIFICAT DE RÉUSSITE</h2>
+        <p>Félicitations Champion(ne)</p>
+        <h3 id="cert-name">---</h3>
+        <p>Tu as brillamment validé le :</p>
+        <div id="cert-level">NIVEAU 1</div>
+        <p>Catégorie : <span id="cert-cat">Gabon Master</span></p>
+        <hr class="cert-hr">
+        <button id="cert-action-btn" onclick="closeCertAndNext()" class="main-btn" style="background: #27ae60; color: white; width: 100%;">
+            PASSER AU NIVEAU SUIVANT ➔
+        </button>
+    </div>
+</div>
     </div>
 
     <div id="game-alert" class="custom-game-notification" style="display:none;"></div>

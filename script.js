@@ -88,7 +88,11 @@ window.startQuiz = function(cat) {
 window.showQuestion = function() {
     let storageKey = 'level_' + window.currentPlayingCat;
     let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
-    let limit = (categoryLevel >= 2) ? 20 : 10;
+    
+    // Définition des paliers de questions
+    let limit = 10; // Par défaut Niv 1
+    if (categoryLevel === 2) limit = 20;
+    if (categoryLevel >= 3) limit = 30; // Activation du Niveau 3
 
     if (currentIndex >= limit) {
         clearInterval(timer);
@@ -155,6 +159,11 @@ window.checkVipCode = function() {
     } else if (code === "MON300") {
         localStorage.setItem('level_Monde', 2);
         showNote("✅ MONDE DÉBLOQUÉ !");
+        // À ajouter dans checkVipCode
+if (code === "EXTREME500") {
+    localStorage.setItem('level_' + window.currentPlayingCat, 3);
+    showNote("🔥 NIVEAU 3 ACTIVÉ ! PRÉPARE-TOI !");
+}
     } else if (code === "VIP500") {
         localStorage.setItem('level_Provinces', 2);
         localStorage.setItem('level_Afrique', 2);
@@ -191,14 +200,35 @@ window.showStudyMode = async function() {
 
 function displayCertificate(lvl) {
     const cert = document.getElementById('certificate-container');
+    const btn = document.getElementById('cert-action-btn');
+    
     document.getElementById('cert-name').innerText = currentUser || "Champion";
     document.getElementById('cert-level').innerText = "NIVEAU " + lvl + " VALIDÉ";
     document.getElementById('cert-cat').innerText = window.currentPlayingCat;
-    cert.style.display = 'block';
+
+    // On change le texte du bouton selon le niveau atteint
+    if (lvl === 1) {
+        btn.innerText = "DÉBLOQUER LE NIVEAU 2 🔓";
+    } else if (lvl === 2) {
+        btn.innerText = "DÉBLOQUER LE NIVEAU 3 🔥";
+    } else {
+        btn.innerText = "RETOUR AU MENU PRINCIPAL";
+    }
+
+    cert.style.setProperty('display', 'flex', 'important');
 }
 
 window.closeCertAndNext = function() {
-    location.reload();
+    let storageKey = 'level_' + window.currentPlayingCat;
+    let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
+
+    // Si le joueur vient de finir le niveau 1 ou 2, on l'envoie à la boutique
+    if (categoryLevel < 3) {
+        document.getElementById('certificate-container').style.display = 'none';
+        showShop(); // Ouvre automatiquement la boutique
+    } else {
+        location.reload();
+    }
 };
 
 /* ============================================================
