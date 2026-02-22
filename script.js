@@ -78,6 +78,10 @@ window.startQuiz = function(cat) {
     if(pool.length === 0) return alert("Chargement des questions...");
 
     pool.sort(() => Math.random() - 0.5);
+    // On définit la limite selon le niveau actuel
+let limit = (categoryLevel >= 3) ? 30 : (categoryLevel === 2 ? 20 : 10);
+// On ne prend que le nombre de questions autorisé
+currentQuestions = pool.slice(0, limit);
     currentQuestions = pool;
     currentIndex = 0; score = 0; lives = 3;
 
