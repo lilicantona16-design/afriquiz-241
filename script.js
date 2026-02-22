@@ -64,24 +64,19 @@ function startQuiz(cat) {
 }
 
 function showQuestion() {
-    // 1. On regarde le niveau débloqué (1, 2 ou 3)
+    // On récupère ton niveau (qui est à 2, on le sait maintenant)
     let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
-    
-    // 2. On définit la limite de questions pour ce niveau
-    let limit = 10;
-    if (currentLvl === 2) limit = 20;
-    if (currentLvl === 3) limit = 50;
+    let limit = (currentLvl === 2) ? 20 : 10; 
 
-    // 3. ON REMPLACE TON ANCIEN BLOCAGE PAR CELUI-CI
+    // Nouveau blocage intelligent
     if (currentIndex >= limit) {
-        clearInterval(timer);
-        displayCertificate(currentLvl);
+        alert("Niveau " + currentLvl + " terminé !");
+        // Si tu as une fonction displayCertificate, appelle-la ici
+        if(typeof displayCertificate === 'function') displayCertificate(currentLvl);
+        else location.reload();
         return;
     }
-    
-    if (currentIndex === 4 && !localStorage.getItem('quiz_rated')) {
-        document.getElementById('rating-screen').style.display = 'flex';
-    }
+    // ... garde tout le reste de ta fonction identique (updateHeader, etc.)
     updateHeader();
     startTimer();
     const q = currentQuestions[currentIndex];
