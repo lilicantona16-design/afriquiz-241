@@ -1,9 +1,9 @@
 // 1. INITIALISATION PROPRE (Indispensable pour charger les questions)
 /* ============================================================
-   1. INITIALISATION & CONFIGURATION (SUPABASE + ETAT)
+   1. CONFIGURATION & ÉTAT INITIAL
    ============================================================ */
 const SUPABASE_URL = 'https://cjxbsrudyqumeuvedozo.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf3IAf_8OTy4T59nFl8-vjnWDMApUOHAo';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeGJzcnVkeXF1bWV1dmVkb3pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzkwNzcsImV4cCI6MjA4NTgxNTA3N30.GTK9BWO87eCf36Af_8OTy4T59nFl8-vjnWDMApUOHAo';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let allQuestions = [];
@@ -12,10 +12,8 @@ let currentIndex = 0;
 let score = 0;
 let lives = 3;
 let timer;
-let isVip = localStorage.getItem('isVip') === 'true';
-let currentUser = localStorage.getItem('quiz_pseudo') || "";
-let currentLvl = 2;
 let isMusicOn = true;
+let currentUser = localStorage.getItem('quiz_pseudo') || "";
 
 const musicMap = {
     'Provinces': 'https://cdn.pixabay.com/audio/2022/03/09/audio_c36e4f326c.mp3',
@@ -24,14 +22,14 @@ const musicMap = {
 };
 
 /* ============================================================
-   2. FONCTIONS DE NAVIGATION ET D'INFO (BOUTONS HTML)
+   2. FONCTIONS SOCIALES & INFOS
    ============================================================ */
 window.showHowToPlay = function() {
-    alert("🎮 RÈGLES DU JEU :\n\n- Réponds en 15s ⏱️\n- Tu as 3 vies ❤️\n- Niveau 1 (Gratuit) : 10 questions.\n- Niveau 2 (300F) : Jusqu'à 20 questions.\n- Pack VIP (500F) : Manuel complet + Accès total.");
+    alert("🎮 RÈGLES DU JEU :\n\n- Réponds en 15s ⏱️\n- Tu as 3 vies ❤️\n- Niveau 1 (Gratuit) : 10 questions.\n- Niveau 2 (Payant) : 20 questions + Questions VIP !");
 };
 
 window.showInstallGuide = function() {
-    alert("📲 INSTALLER SUR MOBILE :\n\n- Android : Menu (3 points) > 'Installer'.\n- iPhone : Bouton 'Partager' > 'Sur l'écran d'accueil'.");
+    alert("📲 INSTALLATION :\n- Android : Menu > Installer.\n- iPhone : Partager > Écran d'accueil.");
 };
 
 window.shareGame = function() {
@@ -43,33 +41,38 @@ function showNote(msg) {
     const box = document.getElementById('game-alert');
     if(box) {
         box.innerText = msg; box.style.display = 'block';
-        setTimeout(() => { box.style.display = 'none'; }, 3000);
-    } else { alert(msg); }
+        setTimeout(() => box.style.display = 'none', 3000);
+    } else alert(msg);
 }
 
 /* ============================================================
-   3. MOTEUR DE JEU (QUIZ & LOGIQUE DE NIVEAUX)
+   3. MOTEUR DE JEU (LOGIQUE DE PAIEMENT PAR CATÉGORIE)
    ============================================================ */
 window.startQuiz = function(cat) {
-    // Filtrage des questions par catégorie
+    window.currentPlayingCat = cat;
+    let storageKey = 'level_' + cat;
+    let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
+    
+    // Filtrage questions gratuites de la catégorie
     let pool = allQuestions.filter(q => q.category.toLowerCase() === cat.toLowerCase());
     
-    if(pool.length === 0) return alert("Questions en cours de chargement, réessaie dans 2 secondes.");
-
-    // Mélange des questions (Fisher-Yates)
-    for (let i = pool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pool[i], pool[j]] = [pool[j], pool[i]];
+    // Ajout des questions VIP si payé pour CETTE catégorie
+    if (categoryLevel >= 2) {
+        let vipQuestions = allQuestions.filter(q => q.category.toUpperCase() === 'VIP');
+        pool = pool.concat(vipQuestions); 
     }
 
+    if(pool.length === 0) return alert("Chargement des questions...");
+
+    pool.sort(() => Math.random() - 0.5);
     currentQuestions = pool;
     currentIndex = 0; score = 0; lives = 3;
 
     // Musique
     const audio = document.getElementById('bg-music');
-    if (audio) {
+    if (audio && isMusicOn) {
         audio.src = musicMap[cat] || musicMap['Provinces'];
-        if (isMusicOn) audio.play().catch(e => console.log("Audio bloqué par le navigateur"));
+        audio.play().catch(() => {});
     }
 
     document.getElementById('home-screen').style.display = 'none';
@@ -78,29 +81,20 @@ window.startQuiz = function(cat) {
 };
 
 window.showQuestion = function() {
-    // LOGIQUE DE BLOCAGE PAR NIVEAU
-    currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
-    let limit = 10; // Par défaut Niveau 1
-    if (currentLvl === 2) limit = 20;
-    if (currentLvl === 3) limit = 300;
+    let storageKey = 'level_' + window.currentPlayingCat;
+    let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
+    let limit = (categoryLevel >= 2) ? 20 : 10;
 
     if (currentIndex >= limit) {
         clearInterval(timer);
-        displayCertificate(currentLvl);
+        displayCertificate(categoryLevel);
         return;
     }
 
     const q = currentQuestions[currentIndex];
-    if (!q) {
-        showNote("Félicitations ! Tu as fini toutes les questions.");
-        location.reload();
-        return;
-    }
+    if (!q) return location.reload();
 
-    // Mise à jour de l'interface
-    const badge = document.getElementById('lvl-badge');
-    if(badge) badge.innerText = `NIVEAU ${currentLvl} : ${currentIndex + 1} / ${limit}`;
-
+    document.getElementById('lvl-badge').innerText = `${window.currentPlayingCat.toUpperCase()} - ${currentIndex + 1}/${limit}`;
     updateHeader();
     startTimer();
     
@@ -124,15 +118,11 @@ window.checkAnswer = function(choice, correct, expl) {
     if(isCorrect) score++; else lives--;
     
     document.getElementById('explanation-text').innerHTML = `
-        <b style="color:${isCorrect?'#009E60':'#ff4444'}">${isCorrect?'✅ CORRECT':'❌ ERREUR'}</b><br>
-        ${expl || ""}
+        <b style="color:${isCorrect?'#009E60':'#ff4444'}">${isCorrect?'✅ CORRECT':'❌ ERREUR'}</b><br>${expl || ""}
     `;
     document.getElementById('feedback-area').style.display = 'block';
     
-    if(lives <= 0) { 
-        alert("💔 Plus de vies ! Ton score : " + score); 
-        location.reload(); 
-    }
+    if(lives <= 0) { alert("💔 Plus de vies !"); location.reload(); }
 };
 
 window.nextQuestion = function() {
@@ -142,29 +132,55 @@ window.nextQuestion = function() {
 };
 
 /* ============================================================
-   4. VIP, BOUTIQUE ET CERTIFICATS
+   4. BOUTIQUE & CODES VIP (PAR CATÉGORIE)
    ============================================================ */
+window.showShop = function() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('shop-screen').style.display = 'block';
+};
+
 window.checkVipCode = function() {
     const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
-    let success = false;
-
-    // Codes Niveau 2 (300F)
-    if (["GAB300", "AFR300", "MON300"].includes(code)) {
-        localStorage.setItem('user_game_level', 2);
-        success = true;
-    } 
-    // Codes VIP Complet (500F)
-    else if (["VIP500", "GABON2024"].includes(code)) {
+    if (code === "GAB300") {
+        localStorage.setItem('level_Provinces', 2);
+        showNote("✅ GABON MASTER DÉBLOQUÉ !");
+    } else if (code === "AFR300") {
+        localStorage.setItem('level_Afrique', 2);
+        showNote("✅ AFRIQUE DÉBLOQUÉ !");
+    } else if (code === "MON300") {
+        localStorage.setItem('level_Monde', 2);
+        showNote("✅ MONDE DÉBLOQUÉ !");
+    } else if (code === "VIP500") {
+        localStorage.setItem('level_Provinces', 2);
+        localStorage.setItem('level_Afrique', 2);
+        localStorage.setItem('level_Monde', 2);
         localStorage.setItem('isVip', 'true');
-        localStorage.setItem('user_game_level', 2);
-        success = true;
-    }
+        showNote("👑 PACK VIP TOTAL ACTIVÉ !");
+    } else return showNote("❌ Code invalide.");
 
-    if (success) {
-        showNote("✅ CODE VALIDE ! Nouveau niveau débloqué.");
-        setTimeout(() => { location.reload(); }, 1500);
-    } else {
-        showNote("❌ Code incorrect.");
+    setTimeout(() => location.reload(), 2000);
+};
+
+/* ============================================================
+   5. MANUEL D'ÉTUDE & CERTIFICATS
+   ============================================================ */
+window.showStudyMode = async function() {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('study-screen').style.display = 'block';
+    const list = document.getElementById('study-list');
+    list.innerHTML = "Chargement...";
+    
+    const isFullVip = localStorage.getItem('isVip') === 'true';
+    const { data } = await _supabase.from('questions').select('*').limit(300);
+    
+    if (data) {
+        list.innerHTML = data.map((q, i) => {
+            const locked = (i >= 50 && !isFullVip); 
+            return `<div class="manual-q ${locked ? 'manual-locked' : ''}">
+                <b>${i + 1}. ${locked ? "CONTENU VIP BLOQUÉ" : q.question}</b><br>
+                <span style="color:#FCD116;">${locked ? "Payez 500F" : "R: " + q.correct_answer}</span>
+            </div>`;
+        }).join('');
     }
 };
 
@@ -172,52 +188,16 @@ function displayCertificate(lvl) {
     const cert = document.getElementById('certificate-container');
     document.getElementById('cert-name').innerText = currentUser || "Champion";
     document.getElementById('cert-level').innerText = "NIVEAU " + lvl + " VALIDÉ";
-    document.getElementById('cert-cat').innerText = currentQuestions[0]?.category || "Général";
+    document.getElementById('cert-cat').innerText = window.currentPlayingCat;
     cert.style.display = 'block';
 }
 
 window.closeCertAndNext = function() {
-    document.getElementById('certificate-container').style.display = 'none';
-    if (currentLvl === 1) {
-        showShop();
-    } else if (currentLvl === 2) {
-        localStorage.setItem('user_game_level', 3);
-        location.reload();
-    } else {
-        location.reload();
-    }
-};
-
-window.showShop = function() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('shop-screen').style.display = 'block';
+    location.reload();
 };
 
 /* ============================================================
-   5. MANUEL D'ÉTUDE (LOGIQUE VIP)
-   ============================================================ */
-window.showStudyMode = async function() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('study-screen').style.display = 'block';
-    const list = document.getElementById('study-list');
-    list.innerHTML = "<p style='color:white;text-align:center;'>Chargement des données...</p>";
-
-    const { data } = await _supabase.from('questions').select('*').limit(300);
-    if (data) {
-        list.innerHTML = data.map((q, i) => {
-            const locked = (i >= 50 && !isVip); 
-            return `
-                <div class="manual-q ${locked ? 'manual-locked' : ''}" style="margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
-                    <b style="color:white;">${i + 1}. ${locked ? "CONTENU VIP" : q.question}</b><br>
-                    <span style="color:#FCD116;">${locked ? "Payez 500F pour débloquer" : "R: " + q.correct_answer}</span>
-                </div>
-            `;
-        }).join('');
-    }
-};
-
-/* ============================================================
-   6. SYSTÈME (COMMENTAIRES, PSEUDO, AUDIO, TIMER)
+   6. COMMENTAIRES & SYSTÈME
    ============================================================ */
 async function postComment() {
     const msg = document.getElementById('user-comment').value.trim();
@@ -232,21 +212,23 @@ async function postComment() {
 async function loadGlobalComments() {
     const { data } = await _supabase.from('comments').select('*').order('id', { ascending: false }).limit(10);
     if (data) {
-        const div = document.getElementById('comments-display');
-        div.innerHTML = data.map(c => `<div style="margin-bottom:5px;"><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
+        document.getElementById('comments-display').innerHTML = data.map(c => `<div><b>${c.pseudo}</b>: ${c.text}</div>`).join('');
     }
 }
+
+window.toggleMusic = function() {
+    const audio = document.getElementById('bg-music');
+    isMusicOn = !isMusicOn;
+    if(audio) isMusicOn ? audio.play() : audio.pause();
+    document.getElementById('music-btn').innerText = isMusicOn ? "🔊 Musique : ON" : "🔈 Musique : OFF";
+};
 
 function startTimer() {
     clearInterval(timer);
     let timeLeft = 15;
-    const bar = document.getElementById('timer-bar');
-    if(bar) bar.style.width = "100%";
-    
     timer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer-text').innerText = `⏱️ ${timeLeft}s`;
-        if(bar) bar.style.width = (timeLeft / 15 * 100) + "%";
         if(timeLeft <= 0) { clearInterval(timer); lives--; nextQuestion(); }
     }, 1000);
 }
@@ -258,28 +240,14 @@ function updateHeader() {
 
 window.saveUser = function() {
     const p = document.getElementById('user-pseudo').value.trim();
-    if(p.length < 2) return alert("Pseudo trop court");
-    localStorage.setItem('quiz_pseudo', p);
-    currentUser = p;
-    document.getElementById('login-screen').style.display = 'none';
-};
-
-window.toggleMusic = function() {
-    const audio = document.getElementById('bg-music');
-    isMusicOn = !isMusicOn;
-    if(audio) {
-        if(isMusicOn) audio.play().catch(e => {}); 
-        else audio.pause();
-    }
-    document.getElementById('music-btn').innerText = isMusicOn ? "🔊 Musique : ON" : "🔈 Musique : OFF";
+    if(p.length >= 2) { localStorage.setItem('quiz_pseudo', p); location.reload(); }
 };
 
 async function loadData() {
-    const { data, error } = await _supabase.from('questions').select('*');
+    const { data } = await _supabase.from('questions').select('*');
     if (data) allQuestions = data;
     loadGlobalComments();
 }
 
-// Lancement au démarrage
-if(currentUser) document.getElementById('login-screen').style.display = 'none';
 loadData();
+if(currentUser) document.getElementById('login-screen').style.display = 'none';

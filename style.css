@@ -253,3 +253,58 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
     justify-content: center;
     text-align: center;
 }
+/* Style pour le Manuel d'étude verrouillé */
+.manual-locked { 
+    filter: blur(4px); 
+    opacity: 0.5; 
+    pointer-events: none; 
+    position: relative;
+    user-select: none;
+}
+
+.manual-locked::after {
+    content: "🔒 RÉSERVÉ VIP (500F)";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #c5a059;
+    color: black;
+    padding: 5px 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    white-space: nowrap;
+    filter: none;
+    opacity: 1;
+}
+
+/* Animation de la barre de temps */
+#timer-bar {
+    box-shadow: 0 0 10px #FCD116;
+}
+
+/* Style du Certificat Or */
+#certificate-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+}
+
+#cert-content {
+    background: white;
+    color: black;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    border: 10px double #c5a059;
+    max-width: 80%;
+}
+
+#cert-level {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
