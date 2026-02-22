@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gabon Quiz VIP 🇬🇦</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,7 +22,7 @@
                 <button onclick="startQuiz('Afrique')" class="main-btn">🌍 Afrique</button>
                 <button onclick="startQuiz('Monde')" class="main-btn">🌐 Monde</button>
                 <button onclick="showShop()" class="vip-btn">🛒 BOUTIQUE DES NIVEAUX</button>
-                <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE (80+ RÉPONSES)</button>
+                <button onclick="showStudyMode()" class="study-btn">📖 MANUEL D'ÉTUDE (300+)</button>
             </div>
 
             <div class="action-grid">
@@ -41,25 +42,25 @@
         </div>
 
         <div id="quiz-screen" style="display:none;">
-    <div class="quiz-header">
-        <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
-        <div id="lvl-badge" class="level-indicator">NIVEAU 1</div>
-        <span id="score-display">Score: 0 | ❤️❤️❤️</span>
-    </div>
-    
-    <div id="timer-bar-container" style="width:100%; height:5px; background:#222; margin: 10px 0;">
-        <div id="timer-bar" style="width:100%; height:100%; background:#FCD116; transition: width 1s linear;"></div>
-    </div>
+            <div class="quiz-header">
+                <button onclick="location.reload()" class="quit-btn">✖ Quitter</button>
+                <div id="lvl-badge" class="level-indicator">NIVEAU 1</div>
+                <span id="score-display">Score: 0 | ❤️❤️❤️</span>
+            </div>
+            
+            <div id="timer-bar-container" style="width:100%; height:5px; background:#222; margin: 10px 0;">
+                <div id="timer-bar" style="width:100%; height:100%; background:#FCD116; transition: width 1s linear;"></div>
+            </div>
 
-    <p id="timer-text">⏱️ 15s</p>
-    <h2 id="question-text">Chargement de la question...</h2>
-    <div id="options-container"></div>
-    
-    <div id="feedback-area" style="display:none; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
-        <p id="explanation-text"></p>
-        <button onclick="nextQuestion()" class="continue-btn">QUESTION SUIVANTE ➔</button>
-    </div>
-</div>
+            <p id="timer-text">⏱️ 15s</p>
+            <h2 id="question-text">Chargement...</h2>
+            <div id="options-container"></div>
+            
+            <div id="feedback-area" style="display:none; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                <p id="explanation-text"></p>
+                <button id="next-btn" onclick="nextQuestion()" class="continue-btn">QUESTION SUIVANTE ➔</button>
+            </div>
+        </div>
 
         <div id="shop-screen" class="modal-full" style="display:none;">
             <button onclick="location.reload()" class="quit-btn">✖ Retour</button>
@@ -82,13 +83,12 @@
         </div>
 
         <div id="study-screen" class="modal-full" style="display:none; background: #0a0a0a;">
-    <div style="position: sticky; top: 0; background: #0a0a0a; padding: 10px; z-index: 10; border-bottom: 1px solid #222;">
-        <button onclick="location.reload()" class="quit-btn">✖ Retour au Menu</button>
-        <h2 class="gold-text" style="margin: 10px 0;">📖 MANUEL VIP (300+)</h2>
-    </div>
-    <div id="study-list" style="padding: 15px;">
+            <div style="position: sticky; top: 0; background: #0a0a0a; padding: 10px; z-index: 10; border-bottom: 1px solid #222;">
+                <button onclick="location.reload()" class="quit-btn">✖ Retour au Menu</button>
+                <h2 class="gold-text" style="margin: 10px 0;">📖 MANUEL VIP (300+)</h2>
+            </div>
+            <div id="study-list" style="padding: 15px;"></div>
         </div>
-</div>
 
         <div id="login-screen" class="overlay-screen">
             <div class="modal-content">
@@ -98,59 +98,28 @@
             </div>
         </div>
 
-        <div id="rating-screen" class="overlay-screen" style="display:none;">
-            <div class="modal-content">
-                <h3 class="gold-text">TON AVIS COMPTE ! ⭐</h3>
-                <div id="star-rating">
-                    <span onclick="setRate(1)">☆</span><span onclick="setRate(2)">☆</span><span onclick="setRate(3)">☆</span><span onclick="setRate(4)">☆</span><span onclick="setRate(5)">☆</span>
-                </div>
-                <textarea id="user-feedback" placeholder="Un petit mot sur le jeu ?"></textarea>
-                <button onclick="submitReview()" class="start-btn">ENVOYER</button>
+        <div id="certificate-container" style="display:none;">
+            <div id="cert-content">
+                <div style="font-size: 40px;">🏆</div>
+                <h2 id="cert-title">CERTIFICAT DE RÉUSSITE</h2>
+                <p>Félicitations Champion(ne)</p>
+                <h3 id="cert-name">---</h3>
+                <p>Tu as brillamment validé le :</p>
+                <div id="cert-level" style="font-weight: bold; color: #c5a059; font-size: 1.2rem;">NIVEAU 1</div>
+                <p>Catégorie : <span id="cert-cat">Gabon Master</span></p>
+                <hr style="border: 0.5px solid #eee; margin: 15px 0;">
+                <button onclick="closeCertAndNext()" class="main-btn" style="background: #27ae60; color: white;">CONTINUER</button>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+
     <div id="game-alert" class="custom-game-notification" style="display:none;"></div>
-
-<div id="certificate-container" style="display:none;">
-    <div id="cert-content">
-        <div style="font-size: 40px;">🏆</div>
-        <h2 id="cert-title">CERTIFICAT DE RÉUSSITE</h2>
-        <p>Félicitations Champion(ne)</p>
-        <h3 id="cert-name">---</h3>
-        <p>Tu as brillamment validé le :</p>
-        <div id="cert-level" style="font-weight: bold; color: #c5a059; font-size: 1.2rem;">NIVEAU 1</div>
-        <p>Catégorie : <span id="cert-cat">Gabon Master</span></p>
-        <hr style="border: 0.5px solid #eee; margin: 15px 0;">
-        <button onclick="closeCertAndNext()" class="main-btn" style="background: #27ae60; color: white;">CONTINUER</button>
+    
+    <div id="audio-controls" style="position: fixed; bottom: 20px; left: 20px; z-index: 3000;">
+        <button onclick="toggleMusic()" id="music-btn" class="small-btn">🔊 Musique : ON</button>
     </div>
-</div>
+    <audio id="bg-music" loop preload="auto"></audio>
 
-<style>
-    .manual-locked { 
-        filter: blur(5px); 
-        opacity: 0.6; 
-        pointer-events: none; 
-        position: relative;
-    }
-    .manual-locked::after {
-        content: "🔒 SECTION VIP (500F)";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.8);
-        color: gold;
-        padding: 5px 10px;
-        font-size: 0.8rem;
-        border-radius: 5px;
-        white-space: nowrap;
-    }
-</style>
-<div id="audio-controls" style="position: fixed; bottom: 20px; left: 20px; z-index: 3000;">
-    <button onclick="toggleMusic()" id="music-btn" class="small-btn">🔊 Musique : ON</button>
-</div>
-
-<audio id="bg-music" loop preload="auto"></audio>
+    <script src="script.js"></script>
 </body>
 </html>
