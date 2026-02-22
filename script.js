@@ -94,13 +94,11 @@ window.startQuiz = function(cat) {
 
 window.showQuestion = function() {
     let storageKey = 'level_' + window.currentPlayingCat;
-    let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
-    
-    // Définition des paliers de questions
-    let limit = 10; // Par défaut Niv 1
-    if (categoryLevel === 2) limit = 20;
-    if (categoryLevel >= 3) limit = 30; // Activation du Niveau 3
+let categoryLevel = parseInt(localStorage.getItem(storageKey)) || 1;
 
+let limit = 10; // Niveau 1
+if (categoryLevel === 2) limit = 20; // Niveau 2
+if (categoryLevel >= 3) limit = 30; // Niveau 3 (EXTRÊME)
     if (currentIndex >= limit) {
         clearInterval(timer);
         displayCertificate(categoryLevel);
@@ -110,9 +108,7 @@ window.showQuestion = function() {
     const q = currentQuestions[currentIndex];
     if (!q) return location.reload();
 
-    document.getElementById('lvl-badge').innerText = `${window.currentPlayingCat.toUpperCase()} - ${currentIndex + 1}/${limit}`;
-    updateHeader();
-    startTimer();
+    document.getElementById('lvl-badge').innerText = `${window.currentPlayingCat.toUpperCase()} - NIVEAU ${categoryLevel} : ${currentIndex + 1}/${limit}`;
     
     document.getElementById('question-text').innerText = cleanText(q.question);
     const container = document.getElementById('options-container');
@@ -132,6 +128,8 @@ window.checkAnswer = function(choice, correct, expl) {
     clearInterval(timer);
     const isCorrect = (choice === correct);
     if(isCorrect) score++; else lives--;
+    localStorage.setItem('totalScore_' + currentUser, (parseInt(localStorage.getItem('totalScore_' + currentUser)) || 0) + 1);
+
     
     document.getElementById('explanation-text').innerHTML = `
         <b style="color:${isCorrect?'#009E60':'#ff4444'}">${isCorrect?'✅ CORRECT':'❌ ERREUR'}</b><br>${expl || ""}
@@ -157,30 +155,33 @@ window.showShop = function() {
 
 window.checkVipCode = function() {
     const code = document.getElementById('vip-code-input').value.toUpperCase().trim();
+    let note = "";
+
     if (code === "GAB300") {
         localStorage.setItem('level_Provinces', 2);
-        showNote("✅ GABON MASTER DÉBLOQUÉ !");
+        note = "✅ GABON NIVEAU 2 DÉBLOQUÉ (Prix: 300F)";
     } else if (code === "AFR300") {
         localStorage.setItem('level_Afrique', 2);
-        showNote("✅ AFRIQUE DÉBLOQUÉ !");
+        note = "✅ AFRIQUE NIVEAU 2 DÉBLOQUÉ (Prix: 300F)";
     } else if (code === "MON300") {
         localStorage.setItem('level_Monde', 2);
-        showNote("✅ MONDE DÉBLOQUÉ !");
-        // À ajouter dans checkVipCode
-} else if (code === "EXTREME500") { 
+        note = "✅ MONDE NIVEAU 2 DÉBLOQUÉ (Prix: 300F)";
+    } else if (code === "EXTREME500") {
         localStorage.setItem('level_' + window.currentPlayingCat, 3);
-        showNote("🔥 NIVEAU 3 ACTIVÉ ! PRÉPARE-TOI !");
+        note = "🔥 NIVEAU 3 EXTRÊME ACTIVÉ (Prix: 500F)";
     } else if (code === "VIP500") {
+        localStorage.setItem('isVip', 'true');
         localStorage.setItem('level_Provinces', 2);
         localStorage.setItem('level_Afrique', 2);
         localStorage.setItem('level_Monde', 2);
-        localStorage.setItem('isVip', 'true');
-        showNote("👑 PACK VIP TOTAL ACTIVÉ !");
-    } else return showNote("❌ Code invalide.");
+        note = "👑 PACK GLOBAL VIP ACTIVÉ (Prix: 500F)";
+    } else {
+        return showNote("❌ Code invalide. Payez 300F (Niv 2) ou 500F (Niv 3/VIP)");
+    }
 
-    setTimeout(() => location.reload(), 2000);
+    showNote(note);
+    setTimeout(() => { location.reload(); }, 2000);
 };
-
 /* ============================================================
    5. MANUEL D'ÉTUDE & CERTIFICATS
    ============================================================ */
@@ -275,8 +276,12 @@ function startTimer() {
 }
 
 function updateHeader() {
-    let h = ""; for(let i=0; i<3; i++) h += (i < lives) ? "❤️" : "🖤";
-    document.getElementById('score-display').innerHTML = `Score: ${score} | ${h}`;
+    let totalStored = localStorage.getItem('totalScore_' + currentUser) || 0;
+    let h = ""; 
+    for(let i=0; i<3; i++) h += (i < lives) ? "❤️" : "🖤";
+    
+    // Affiche le score de la partie actuelle et le cumul
+    document.getElementById('score-display').innerHTML = `Score: ${score} (Total: ${totalStored}) | ${h}`;
 }
 
 window.saveUser = function() {

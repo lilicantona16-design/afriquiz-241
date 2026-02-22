@@ -395,3 +395,17 @@ body.modal-open {
         font-size: 1rem !important;
     }
 }
+.note-message {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FCD116;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 10001;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+}
