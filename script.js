@@ -896,3 +896,42 @@ window.nextQuestion = function() {
     currentIndex++; // On passe à l'index suivant (11, 12, 13...)
     showQuestion(); // On relance l'affichage
 };
+// FORCE LE PASSAGE AU NIVEAU 2
+window.showQuestion = function() {
+    // On récupère le niveau (qui est bien à 2 dans ton navigateur)
+    let myLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    let myLimit = (myLvl >= 2) ? 20 : 10;
+
+    // Affiche le numéro de question dans la console pour vérifier
+    console.log("Question actuelle : " + currentIndex + " | Limite : " + myLimit);
+
+    if (currentIndex >= myLimit) {
+        clearInterval(timer);
+        if (typeof displayCertificate === 'function') displayCertificate(myLvl);
+        else { alert("Niveau terminé !"); location.reload(); }
+        return;
+    }
+
+    // Le moteur d'affichage
+    updateHeader();
+    startTimer();
+    const q = currentQuestions[currentIndex];
+    if (!q) return;
+
+    document.getElementById('question-text').innerText = q.question;
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    [q.option1, q.option2, q.option3, q.option4].forEach(opt => {
+        if(!opt) return;
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.className = 'main-btn';
+        btn.onclick = () => checkAnswer(opt, q.correct_answer, q.explanation);
+        container.appendChild(btn);
+    });
+    
+    // On met à jour le badge pour être sûr
+    let badge = document.getElementById('lvl-badge');
+    if(badge) badge.innerText = "NIVEAU " + myLvl + " : " + (currentIndex + 1) + "/" + myLimit;
+};
