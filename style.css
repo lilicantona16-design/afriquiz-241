@@ -377,3 +377,21 @@ input, textarea { flex: 1; padding: 12px; border-radius: 10px; border: none; bac
 }
 
 .cert-hr { border: 0.5px solid #ddd; margin: 20px 0; }
+/* Empêche le défilement quand le certificat est ouvert */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Ajustement pour les petits écrans d'iPhone/Android */
+@media screen and (max-width: 480px) {
+    #cert-content {
+        width: 95% !important;
+        padding: 15px !important;
+    }
+    #cert-name {
+        font-size: 1.2rem !important;
+    }
+    #cert-title {
+        font-size: 1rem !important;
+    }
+}

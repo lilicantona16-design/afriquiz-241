@@ -14,7 +14,14 @@ let lives = 3;
 let timer;
 let isMusicOn = true;
 let currentUser = localStorage.getItem('quiz_pseudo') || "";
-
+function cleanText(text) {
+    if (!text) return "";
+    return text
+        .replace(/\ufffd/g, 'é')      // Remplace le losange par 'é'
+        .replace(/\u00e9/g, 'é')      // Assure que les 'é' sont corrects
+        .replace(/â€TM/g, "'")       // Corrige les apostrophes Word
+        .replace(/â€/g, '"');         // Corrige les guillemets Word
+}
 const musicMap = {
     'Provinces': 'https://cdn.pixabay.com/audio/2022/03/09/audio_c36e4f326c.mp3',
     'Afrique': 'https://cdn.pixabay.com/audio/2024/02/08/audio_1e3e7f3c1d.mp3',
@@ -107,7 +114,7 @@ window.showQuestion = function() {
     updateHeader();
     startTimer();
     
-    document.getElementById('question-text').innerText = q.question;
+    document.getElementById('question-text').innerText = cleanText(q.question);
     const container = document.getElementById('options-container');
     container.innerHTML = '';
 
@@ -160,10 +167,9 @@ window.checkVipCode = function() {
         localStorage.setItem('level_Monde', 2);
         showNote("✅ MONDE DÉBLOQUÉ !");
         // À ajouter dans checkVipCode
-if (code === "EXTREME500") {
-    localStorage.setItem('level_' + window.currentPlayingCat, 3);
-    showNote("🔥 NIVEAU 3 ACTIVÉ ! PRÉPARE-TOI !");
-}
+} else if (code === "EXTREME500") { 
+        localStorage.setItem('level_' + window.currentPlayingCat, 3);
+        showNote("🔥 NIVEAU 3 ACTIVÉ ! PRÉPARE-TOI !");
     } else if (code === "VIP500") {
         localStorage.setItem('level_Provinces', 2);
         localStorage.setItem('level_Afrique', 2);
