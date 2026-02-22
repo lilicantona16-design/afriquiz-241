@@ -64,11 +64,21 @@ function startQuiz(cat) {
 }
 
 function showQuestion() {
-    if (!isVip && currentIndex >= 10) {
-        alert("🔒 Niveau 2 bloqué ! Deviens VIP pour continuer.");
-        location.reload();
+    // 1. On regarde le niveau débloqué (1, 2 ou 3)
+    let currentLvl = parseInt(localStorage.getItem('user_game_level')) || 1;
+    
+    // 2. On définit la limite de questions pour ce niveau
+    let limit = 10;
+    if (currentLvl === 2) limit = 20;
+    if (currentLvl === 3) limit = 50;
+
+    // 3. ON REMPLACE TON ANCIEN BLOCAGE PAR CELUI-CI
+    if (currentIndex >= limit) {
+        clearInterval(timer);
+        displayCertificate(currentLvl);
         return;
     }
+    
     if (currentIndex === 4 && !localStorage.getItem('quiz_rated')) {
         document.getElementById('rating-screen').style.display = 'flex';
     }
